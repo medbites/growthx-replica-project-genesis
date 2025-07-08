@@ -10,7 +10,7 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 w-full bg-black/90 backdrop-blur-sm border-b border-gray-800 z-50">
+    <header className="fixed top-0 w-full bg-[#0a0a12]/95 backdrop-blur-md border-b border-gray-800/50 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
@@ -41,7 +41,7 @@ const Header = () => {
             <button className="text-gray-300 hover:text-white transition-colors font-medium">
               Sign In
             </button>
-            <button className="bg-orange-500 text-white px-6 py-2 rounded-md hover:bg-orange-600 transition-colors font-medium">
+            <button className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-2 rounded-full hover:from-purple-600 hover:to-purple-700 transition-all duration-300 font-medium">
               Apply Now
             </button>
           </div>
@@ -75,7 +75,7 @@ const Header = () => {
                 <button className="text-gray-300 hover:text-white transition-colors font-medium text-left">
                   Sign In
                 </button>
-                <button className="bg-orange-500 text-white px-6 py-2 rounded-md hover:bg-orange-600 transition-colors font-medium">
+                <button className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-2 rounded-full hover:from-purple-600 hover:to-purple-700 transition-all duration-300 font-medium">
                   Apply Now
                 </button>
               </div>

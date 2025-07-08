@@ -4,60 +4,71 @@ import { Users, Target, TrendingUp, BookOpen, Award, Network } from 'lucide-reac
 const Features = () => {
   const programs = [
     {
-      icon: Users,
+      icon: Award,
       title: "Growth Leadership Program",
-      description: "16-week intensive program for senior growth professionals and leaders.",
+      description: "A 16-week intensive program designed for senior growth professionals looking to level up their leadership skills.",
       duration: "16 weeks",
-      level: "Senior"
+      level: "Senior Level",
+      price: "₹1,50,000"
     },
     {
       icon: Target,
       title: "Growth Product Manager",
-      description: "Specialized program for PMs focusing on growth and product-led growth.",
+      description: "Specialized 12-week program for Product Managers who want to master product-led growth strategies.",
       duration: "12 weeks", 
-      level: "Mid-Senior"
+      level: "Mid-Senior",
+      price: "₹1,20,000"
     },
     {
       icon: TrendingUp,
       title: "Growth Marketing Bootcamp",
-      description: "Master growth marketing frameworks, channels, and optimization techniques.",
+      description: "Master performance marketing, growth loops, and data-driven marketing in this comprehensive bootcamp.",
       duration: "10 weeks",
-      level: "All Levels"
+      level: "All Levels",
+      price: "₹80,000"
     },
     {
       icon: BookOpen,
       title: "Growth Foundations",
-      description: "Perfect for beginners looking to start their career in growth.",
+      description: "Perfect entry point for professionals new to growth. Learn the fundamentals from industry experts.",
       duration: "8 weeks",
-      level: "Beginner"
+      level: "Beginner",
+      price: "₹50,000"
     },
     {
-      icon: Award,
+      icon: Users,
       title: "Executive Growth Program",
-      description: "For C-suite executives and founders scaling their businesses.",
+      description: "Exclusive program for C-suite executives and founders scaling their businesses to new heights.",
       duration: "6 weeks",
-      level: "Executive"
+      level: "Executive",
+      price: "₹2,00,000"
     },
     {
       icon: Network,
       title: "Community Access",
-      description: "Lifetime access to our exclusive community of growth professionals.",
+      description: "Get lifetime access to our exclusive community of 5000+ growth professionals and industry leaders.",
       duration: "Lifetime",
-      level: "All Programs"
+      level: "All Programs",
+      price: "Included"
     }
   ];
 
   return (
-    <section id="programs" className="py-20 bg-gray-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="programs" className="py-20 bg-[#0a0a12] relative">
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-900/5 to-transparent"></div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">
-            Our
-            <span className="text-orange-500"> Programs</span>
+          <div className="inline-flex items-center px-4 py-2 bg-purple-500/10 border border-purple-500/20 rounded-full text-purple-300 text-sm font-medium mb-6">
+            📚 Our Programs
+          </div>
+          <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-white">
+            Choose Your
+            <span className="gradient-text"> Growth Path</span>
           </h2>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-            Choose from our carefully designed programs that cater to different experience levels 
-            and career goals in growth.
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+            From beginners to executives, we have carefully designed programs that cater to 
+            different experience levels and career goals in growth.
           </p>
         </div>
 
@@ -65,18 +76,18 @@ const Features = () => {
           {programs.map((program, index) => (
             <div
               key={index}
-              className="group p-8 bg-black rounded-2xl border border-gray-800 hover:border-orange-500/50 transition-all duration-300 hover:-translate-y-2"
+              className="group p-8 bg-gray-900/50 backdrop-blur-lg rounded-2xl border border-gray-800/50 hover:border-purple-500/50 transition-all duration-500 card-hover card-glow"
             >
-              <div className="w-14 h-14 bg-orange-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-orange-500/20 transition-colors duration-300">
-                <program.icon className="w-7 h-7 text-orange-500" />
+              <div className="w-14 h-14 bg-gradient-to-r from-purple-500/20 to-purple-600/20 rounded-xl flex items-center justify-center mb-6 group-hover:from-purple-500/30 group-hover:to-purple-600/30 transition-all duration-300">
+                <program.icon className="w-7 h-7 text-purple-400" />
               </div>
               
               <div className="flex justify-between items-start mb-4">
-                <h3 className="text-xl font-semibold text-white group-hover:text-orange-500 transition-colors">
+                <h3 className="text-xl font-semibold text-white group-hover:text-purple-300 transition-colors">
                   {program.title}
                 </h3>
                 <div className="text-right">
-                  <div className="text-sm text-orange-500 font-medium">{program.duration}</div>
+                  <div className="text-sm text-purple-400 font-medium">{program.duration}</div>
                   <div className="text-xs text-gray-500">{program.level}</div>
                 </div>
               </div>
@@ -85,7 +96,12 @@ const Features = () => {
                 {program.description}
               </p>
               
-              <button className="w-full py-3 border border-gray-700 rounded-lg text-gray-300 hover:border-orange-500 hover:text-orange-500 transition-colors font-medium">
+              <div className="flex items-center justify-between mb-6">
+                <span className="text-2xl font-bold text-white">{program.price}</span>
+                <span className="text-sm text-gray-500">Per person</span>
+              </div>
+              
+              <button className="w-full py-3 bg-gradient-to-r from-purple-500/20 to-purple-600/20 border border-purple-500/30 rounded-lg text-purple-300 hover:from-purple-500/30 hover:to-purple-600/30 hover:border-purple-400 transition-all duration-300 font-medium">
                 Learn More
               </button>
             </div>
@@ -93,8 +109,8 @@ const Features = () => {
         </div>
 
         <div className="mt-16 text-center">
-          <button className="bg-orange-500 text-white px-8 py-4 rounded-md hover:bg-orange-600 transition-colors font-semibold">
-            View All Programs
+          <button className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-8 py-4 rounded-full hover:from-purple-600 hover:to-purple-700 transition-all duration-300 font-semibold">
+            View All Programs & Apply
           </button>
         </div>
       </div>
