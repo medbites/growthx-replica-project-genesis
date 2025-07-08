@@ -1,97 +1,103 @@
 
-import { CheckCircle, Award, Globe, Lightbulb } from 'lucide-react';
+import { CheckCircle, Users, Target, Award } from 'lucide-react';
 
 const About = () => {
-  const values = [
+  const stats = [
+    { number: "5000+", label: "Alumni Network" },
+    { number: "50+", label: "Partner Companies" },
+    { number: "15+", label: "Successful Cohorts" },
+    { number: "95%", label: "Job Placement Rate" }
+  ];
+
+  const features = [
     {
       icon: CheckCircle,
-      title: "Proven Results",
-      description: "Track record of helping businesses achieve 3x growth within 12 months"
+      title: "Industry-Relevant Curriculum",
+      description: "Our curriculum is designed by top growth leaders from companies like Flipkart, Swiggy, and Razorpay"
+    },
+    {
+      icon: Users,
+      title: "Peer Learning",
+      description: "Learn alongside ambitious growth professionals from diverse backgrounds and industries"
+    },
+    {
+      icon: Target,
+      title: "Real Projects",
+      description: "Work on live projects with partner companies and build a portfolio that showcases your skills"
     },
     {
       icon: Award,
-      title: "Industry Recognition",
-      description: "Awarded as the leading growth platform by major industry publications"
-    },
-    {
-      icon: Globe,
-      title: "Global Reach",
-      description: "Supporting businesses across 50+ countries with localized expertise"
-    },
-    {
-      icon: Lightbulb,
-      title: "Innovation First",
-      description: "Cutting-edge strategies and tools that stay ahead of market trends"
+      title: "Career Support",
+      description: "Get personalized career guidance, interview prep, and access to exclusive job opportunities"
     }
   ];
 
   return (
-    <section id="about" className="py-20 bg-gradient-to-br from-gray-50 to-white">
+    <section id="about" className="py-20 bg-black text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-8">
             <div className="space-y-4">
-              <h2 className="text-4xl font-bold text-gray-900">
-                Empowering Businesses to
-                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block">
-                  Reach New Heights
-                </span>
+              <h2 className="text-4xl font-bold">
+                Why Choose
+                <span className="text-orange-500 block">GrowthX?</span>
               </h2>
-              <p className="text-xl text-gray-600 leading-relaxed">
-                We believe every business has the potential for extraordinary growth. Our mission is to provide the tools, insights, and expertise needed to unlock that potential and create lasting success.
+              <p className="text-xl text-gray-400 leading-relaxed">
+                We're building India's most exclusive community of growth professionals. 
+                Our alumni work at top companies and lead growth teams that drive millions in revenue.
               </p>
             </div>
 
             <div className="space-y-6">
-              {values.map((value, index) => (
+              {features.map((feature, index) => (
                 <div key={index} className="flex items-start space-x-4">
-                  <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
-                    <value.icon className="w-5 h-5 text-white" />
+                  <div className="w-10 h-10 bg-orange-500/10 rounded-full flex items-center justify-center flex-shrink-0">
+                    <feature.icon className="w-5 h-5 text-orange-500" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                      {value.title}
+                    <h3 className="text-lg font-semibold text-white mb-1">
+                      {feature.title}
                     </h3>
-                    <p className="text-gray-600">
-                      {value.description}
+                    <p className="text-gray-400">
+                      {feature.description}
                     </p>
                   </div>
                 </div>
               ))}
             </div>
-
-            <div className="flex items-center space-x-8 pt-8">
-              <div className="text-center">
-                <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  500+
-                </div>
-                <div className="text-gray-600 font-medium">Success Stories</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  98%
-                </div>
-                <div className="text-gray-600 font-medium">Client Satisfaction</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  50+
-                </div>
-                <div className="text-gray-600 font-medium">Countries</div>
-              </div>
-            </div>
           </div>
 
-          <div className="relative">
-            <div className="relative z-10">
-              <img
-                src="https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?auto=format&fit=crop&w=800&q=80"
-                alt="Team collaboration"
-                className="rounded-2xl shadow-2xl"
-              />
+          <div className="space-y-8">
+            <div className="grid grid-cols-2 gap-6">
+              {stats.map((stat, index) => (
+                <div key={index} className="text-center p-6 bg-gray-900 rounded-2xl border border-gray-800">
+                  <div className="text-3xl font-bold text-orange-500 mb-2">
+                    {stat.number}
+                  </div>
+                  <div className="text-gray-400 font-medium">{stat.label}</div>
+                </div>
+              ))}
             </div>
-            <div className="absolute -top-6 -right-6 w-full h-full bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl opacity-20"></div>
-            <div className="absolute -bottom-6 -left-6 w-full h-full bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl opacity-10"></div>
+
+            <div className="bg-gray-900 rounded-2xl p-8 border border-gray-800">
+              <h3 className="text-xl font-semibold text-white mb-4">Success Stories</h3>
+              <div className="space-y-4">
+                <div className="border-l-4 border-orange-500 pl-4">
+                  <p className="text-gray-400 italic">
+                    "GrowthX transformed my career. I went from a marketing executive to leading 
+                    growth at a unicorn startup within 18 months."
+                  </p>
+                  <p className="text-white font-medium mt-2">- Priya Sharma, Growth Lead at Razorpay</p>
+                </div>
+                <div className="border-l-4 border-orange-500 pl-4">
+                  <p className="text-gray-400 italic">
+                    "The network and knowledge I gained at GrowthX has been invaluable. 
+                    It's not just a program, it's a community for life."
+                  </p>
+                  <p className="text-white font-medium mt-2">- Arjun Patel, VP Growth at Swiggy</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
