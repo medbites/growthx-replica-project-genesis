@@ -1,5 +1,5 @@
 
-import { Mail, Phone, MapPin, Send, Clock, Users } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Clock, Users, Target, Award } from 'lucide-react';
 import { useState } from 'react';
 
 const Contact = () => {
