@@ -34,12 +34,12 @@ const Navigation = () => {
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-background/90 backdrop-blur-lg border-b border-border' : 'bg-transparent'
+      isScrolled ? 'bg-background/90 backdrop-blur-lg border-b border-border/50' : 'bg-transparent'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <Link to="/" className="text-xl font-bold brand-turquoise hover:opacity-80 transition-opacity">
+          <Link to="/" className="text-xl font-bold text-white hover:opacity-80 transition-opacity">
             Hem Prashanth
           </Link>
 
@@ -49,20 +49,24 @@ const Navigation = () => {
               <Link
                 key={link.name}
                 to={link.path}
-                className={`text-sm font-medium transition-colors hover:brand-turquoise ${
-                  isActive(link.path) ? 'brand-turquoise' : 'text-muted-foreground'
+                className={`text-sm font-medium transition-colors hover:text-white ${
+                  isActive(link.path) ? 'text-white' : 'text-muted-foreground'
                 }`}
               >
                 {link.name}
               </Link>
             ))}
+            
+            <Button className="btn-gradient text-white px-6 py-2 rounded-full font-medium">
+              Let's Work Together
+            </Button>
           </div>
 
           {/* Mobile Menu Button */}
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="md:hidden text-white"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -71,20 +75,23 @@ const Navigation = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden pb-4">
-            <div className="flex flex-col space-y-3">
+          <div className="md:hidden pb-4 border-t border-border/50">
+            <div className="flex flex-col space-y-3 pt-4">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.path}
-                  className={`text-sm font-medium transition-colors hover:brand-turquoise ${
-                    isActive(link.path) ? 'brand-turquoise' : 'text-muted-foreground'
+                  className={`text-sm font-medium transition-colors hover:text-white ${
+                    isActive(link.path) ? 'text-white' : 'text-muted-foreground'
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {link.name}
                 </Link>
               ))}
+              <Button className="btn-gradient text-white px-6 py-2 rounded-full font-medium mt-4">
+                Let's Work Together
+              </Button>
             </div>
           </div>
         )}

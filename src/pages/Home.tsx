@@ -1,7 +1,7 @@
 
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ExternalLink, Star, Users, Award, Briefcase, Code, Palette, Brain, Zap } from 'lucide-react';
+import { ArrowRight, Play, Check, Sparkles, Palette, Brain, Grid, Package, Star, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -33,161 +33,148 @@ const Home = () => {
   const featuredProjects = [
     {
       id: 'global-calcium',
-      title: 'Visual Impact: Global Calcium',
+      title: 'Global Calcium',
       description: 'Complete brand transformation with AI-powered visual identity system and packaging redesign.',
-      tags: ['Branding', 'Visual Identity', 'Packaging'],
+      tags: ['Brand Identity', 'AI', 'Packaging'],
       image: 'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=600&h=400&fit=crop',
-      client: 'Global Calcium Ltd.',
-      year: '2024',
-      impact: '340% increase in brand recognition'
+      impact: '340% brand recognition increase'
     },
     {
       id: 'velbiom',
-      title: 'Velbiom – Character Design & 2D Animation',
+      title: 'Velbiom Studios',
       description: 'Character-driven brand system with animated mascots and comprehensive style guide.',
       tags: ['Character Design', 'Animation', 'Brand Systems'],
       image: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=600&h=400&fit=crop',
-      client: 'Velbiom Studios',
-      year: '2024',
       impact: '8M+ social media impressions'
     },
     {
       id: 'med-bites',
-      title: 'MED-bites Branding',
+      title: 'MED-bites',
       description: 'Health-focused food brand with sustainable packaging and digital-first approach.',
       tags: ['Branding', 'Packaging', 'Digital Strategy'],
       image: 'https://images.unsplash.com/photo-1559181567-c3190ca9959b?w=600&h=400&fit=crop',
-      client: 'MED-bites',
-      year: '2023',
       impact: '250% sales growth in Q1'
     },
   ];
 
-  const services = [
+  const designProcess = [
+    {
+      icon: Sparkles,
+      title: 'Discovery',
+      description: 'Deep dive into brand essence, target audience, and competitive landscape to uncover unique positioning opportunities.'
+    },
     {
       icon: Palette,
-      title: 'Brand Identity Systems',
-      description: 'Complete visual identity packages that tell your brand story across all touchpoints',
-      features: ['Logo Design', 'Color Systems', 'Typography', 'Brand Guidelines']
+      title: 'Visual Exploration',
+      description: 'Create multiple design directions exploring typography, color, and visual language that resonates with your audience.'
     },
     {
       icon: Brain,
-      title: 'AI-Powered Design',
-      description: 'Cutting-edge AI tools integrated with human creativity for innovative solutions',
-      features: ['Figma Automation', 'AI Prompt Engineering', 'Smart Templates', 'Data-Driven Design']
+      title: 'AI Enhancement',
+      description: 'Leverage cutting-edge AI tools to iterate rapidly, generate variations, and push creative boundaries beyond traditional limits.'
     },
     {
-      icon: Code,
-      title: 'Digital Experiences',
-      description: 'Seamless digital interfaces that bridge brand and user experience',
-      features: ['Web Design', 'Mobile UI', 'Interactive Prototypes', 'Design Systems']
-    },
-    {
-      icon: Briefcase,
-      title: 'Packaging Solutions',
-      description: 'Physical brand extensions that create memorable shelf presence',
-      features: ['Product Packaging', 'Label Design', 'Sustainable Materials', 'Print Production']
+      icon: Grid,
+      title: 'System Delivery',
+      description: 'Deliver comprehensive brand guidelines, asset libraries, and implementation roadmaps for consistent execution.'
     }
   ];
 
-  const stats = [
-    { label: 'Projects Completed', value: '150+', icon: Award },
-    { label: 'Happy Clients', value: '80+', icon: Users },
-    { label: 'Years Experience', value: '8+', icon: Star },
-    { label: 'Brand Systems', value: '45+', icon: Zap }
+  const blogPosts = [
+    {
+      title: 'Designing Soul Mango with AI',
+      excerpt: 'How I used Gemini and Figma to create a complete brand identity in half the time.',
+      image: 'https://images.unsplash.com/photo-1611348586804-61bf6c080437?w=400&h=300&fit=crop',
+      tag: 'Case Study'
+    },
+    {
+      title: 'Prompt Engineering for Designers',
+      excerpt: 'Essential techniques for getting better results from AI design tools.',
+      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop',
+      tag: 'Tutorial'
+    },
+    {
+      title: 'The Future of Brand Systems',
+      excerpt: 'Why AI-powered design systems are revolutionizing how brands maintain consistency.',
+      image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop',
+      tag: 'Insights'
+    }
   ];
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
       
-      {/* Enhanced Hero Section */}
-      <section className="pt-32 pb-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Hero Section */}
+      <section className="pt-20 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         {/* Background Elements */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-20 right-10 w-72 h-72 bg-brand-turquoise/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 left-10 w-96 h-96 bg-brand-coral/10 rounded-full blur-3xl"></div>
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-20 right-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 left-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
         </div>
         
-        <div className="max-w-6xl mx-auto relative z-10">
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-8 scroll-reveal">
               <div className="space-y-6">
-                <Badge variant="outline" className="border-brand-turquoise text-brand-turquoise px-6 py-2 text-sm font-medium">
-                  ✨ Available for new projects
+                <Badge variant="outline" className="border-purple-400/50 text-purple-300 px-4 py-2 text-sm font-medium">
+                  ✨ Branding with AI-powered imagination
                 </Badge>
                 
-                <h1 className="text-6xl md:text-8xl font-bold leading-tight">
-                  <span className="brand-turquoise">Hem</span>{' '}
-                  <span className="brand-coral">Prashanth</span>
+                <h1 className="text-5xl md:text-7xl font-bold leading-tight text-white">
+                  Build your{' '}
+                  <span className="gradient-text">Visual Identity</span>
                 </h1>
                 
-                <h2 className="text-3xl md:text-4xl font-semibold brand-yellow">
-                  AI Creative Identity & Brand Systems
-                </h2>
-                
-                <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-2xl">
-                  Designing at the intersection of <span className="brand-turquoise font-semibold">culture</span>, 
-                  <span className="brand-coral font-semibold"> clarity</span>, 
-                  and <span className="brand-yellow font-semibold">code</span>.
+                <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl">
+                  From digital-first brands to cultural storytelling—designs that resonate 
+                  across touchpoints and create lasting connections with your audience.
                 </p>
               </div>
               
-              <div className="flex flex-col sm:flex-row gap-6">
-                <Button asChild size="lg" className="bg-brand-turquoise hover:bg-brand-turquoise/90 text-background px-8 py-4 text-lg">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button asChild className="btn-gradient text-white px-8 py-4 text-lg rounded-full">
                   <Link to="/work">
-                    View My Work
+                    View Work
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="border-brand-coral text-brand-coral hover:bg-brand-coral hover:text-background px-8 py-4 text-lg">
-                  <Link to="/contact">
-                    Let's Collaborate
+                <Button asChild variant="outline" className="btn-outline px-8 py-4 text-lg rounded-full">
+                  <Link to="#reel">
+                    <Play className="mr-2 h-5 w-5" />
+                    Watch Reel
                   </Link>
                 </Button>
               </div>
-
-              {/* Stats Row */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-12">
-                {stats.map((stat, index) => (
-                  <div key={stat.label} className="text-center space-y-2" style={{ animationDelay: `${index * 0.1}s` }}>
-                    <div className="flex items-center justify-center mb-2">
-                      <stat.icon className="h-6 w-6 brand-turquoise" />
-                    </div>
-                    <div className="text-2xl md:text-3xl font-bold text-foreground">{stat.value}</div>
-                    <div className="text-sm text-muted-foreground">{stat.label}</div>
-                  </div>
-                ))}
-              </div>
             </div>
 
-            {/* Visual Element */}
+            {/* Dashboard Metrics */}
             <div className="relative scroll-reveal">
               <div className="relative z-10">
-                <div className="bg-card/50 backdrop-blur-lg rounded-3xl p-8 border border-border shadow-2xl">
+                <div className="bg-card/50 backdrop-blur-lg rounded-3xl p-8 border border-border/50 card-glow">
                   <div className="space-y-6">
                     <div className="flex items-center space-x-4">
-                      <div className="w-16 h-16 bg-gradient-to-br from-brand-turquoise to-brand-coral rounded-2xl flex items-center justify-center">
-                        <Palette className="h-8 w-8 text-background" />
+                      <div className="w-16 h-16 gradient-purple rounded-2xl flex items-center justify-center">
+                        <Palette className="h-8 w-8 text-white" />
                       </div>
                       <div>
-                        <div className="font-semibold text-xl text-foreground">Brand Systems</div>
-                        <div className="text-muted-foreground">AI-Powered Design</div>
+                        <div className="font-semibold text-xl text-white">Design Dashboard</div>
+                        <div className="text-muted-foreground">Live Metrics</div>
                       </div>
                     </div>
                     
                     <div className="space-y-4">
-                      <div className="flex justify-between items-center p-4 bg-brand-turquoise/10 rounded-xl border border-brand-turquoise/20">
-                        <span className="brand-turquoise font-medium">Visual Identity</span>
-                        <span className="brand-turquoise font-bold text-xl">98%</span>
+                      <div className="flex justify-between items-center p-4 bg-green-500/10 rounded-xl border border-green-500/20">
+                        <span className="text-green-400 font-medium">Projects Completed</span>
+                        <span className="text-green-400 font-bold text-xl">150+</span>
                       </div>
-                      <div className="flex justify-between items-center p-4 bg-brand-coral/10 rounded-xl border border-brand-coral/20">
-                        <span className="brand-coral font-medium">Brand Recognition</span>
-                        <span className="brand-coral font-bold text-xl">95%</span>
+                      <div className="flex justify-between items-center p-4 bg-blue-500/10 rounded-xl border border-blue-500/20">
+                        <span className="text-blue-400 font-medium">Brands Designed</span>
+                        <span className="text-blue-400 font-bold text-xl">80+</span>
                       </div>
-                      <div className="flex justify-between items-center p-4 bg-brand-yellow/10 rounded-xl border border-brand-yellow/20">
-                        <span className="brand-yellow font-medium">Client Satisfaction</span>
-                        <span className="brand-yellow font-bold text-xl">100%</span>
+                      <div className="flex justify-between items-center p-4 bg-purple-500/10 rounded-xl border border-purple-500/20">
+                        <span className="text-purple-400 font-medium">AI Tools Mastered</span>
+                        <span className="text-purple-400 font-bold text-xl">12+</span>
                       </div>
                     </div>
                   </div>
@@ -198,42 +185,194 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Services Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-muted/30">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-20 scroll-reveal">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">What I Do</h2>
+      {/* Featured Work Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16 scroll-reveal">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">Selected Work</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Comprehensive design solutions that blend cutting-edge AI technology with 
-              timeless design principles to create memorable brand experiences.
+              A showcase of recent brand systems and AI-powered design solutions that drive measurable business impact.
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-8">
-            {services.map((service, index) => (
-              <Card key={service.title} className={`group card-hover cursor-pointer scroll-reveal bg-card border-border`} style={{ animationDelay: `${index * 0.2}s` }}>
-                <CardContent className="p-8">
-                  <div className="flex items-start space-x-4 mb-6">
-                    <div className="w-14 h-14 bg-brand-turquoise/20 rounded-xl flex items-center justify-center group-hover:bg-brand-turquoise/30 transition-colors">
-                      <service.icon className="h-7 w-7 brand-turquoise" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-2xl font-semibold mb-3 group-hover:brand-turquoise transition-colors">
-                        {service.title}
-                      </h3>
-                      <p className="text-muted-foreground text-lg leading-relaxed mb-6">
-                        {service.description}
-                      </p>
-                      <div className="space-y-2">
-                        {service.features.map((feature) => (
-                          <div key={feature} className="flex items-center space-x-2">
-                            <div className="w-1.5 h-1.5 bg-brand-turquoise rounded-full"></div>
-                            <span className="text-sm text-muted-foreground">{feature}</span>
-                          </div>
-                        ))}
-                      </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {featuredProjects.map((project, index) => (
+              <Card key={project.id} className={`group card-hover cursor-pointer scroll-reveal bg-card border-border card-glow`} style={{ animationDelay: `${index * 0.2}s` }}>
+                <Link to={`/work/${project.id}`}>
+                  <div className="relative overflow-hidden rounded-t-lg">
+                    <img 
+                      src={project.image} 
+                      alt={project.title}
+                      className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <Button variant="secondary" className="opacity-90">
+                        Learn More <ExternalLink className="ml-2 h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
+                  <CardContent className="p-6">
+                    <h3 className="text-2xl font-semibold mb-3 text-white group-hover:text-purple-300 transition-colors">
+                      {project.title}
+                    </h3>
+                    <p className="text-muted-foreground mb-4 leading-relaxed">
+                      {project.description}
+                    </p>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {project.tags.map((tag) => (
+                        <Badge key={tag} variant="secondary" className="px-3 py-1 bg-purple-500/10 text-purple-300 border-purple-500/20">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                    <div className="text-sm text-green-400 font-medium">
+                      {project.impact}
+                    </div>
+                  </CardContent>
+                </Link>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Design Process Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16 scroll-reveal">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">My Design Framework</h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              A systematic approach that blends traditional design thinking with cutting-edge AI capabilities.
+            </p>
+          </div>
+          
+          <div className="space-y-8">
+            {designProcess.map((step, index) => (
+              <div key={step.title} className={`flex items-start space-x-6 scroll-reveal`} style={{ animationDelay: `${index * 0.2}s` }}>
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 gradient-purple rounded-xl flex items-center justify-center">
+                    <step.icon className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+                <div className="flex items-center space-x-4 flex-1">
+                  <Check className="h-5 w-5 text-green-400 flex-shrink-0" />
+                  <div>
+                    <h3 className="text-xl font-semibold text-white mb-2">{step.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">{step.description}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* About Me Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="scroll-reveal">
+              <div className="relative">
+                <img 
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=500&fit=crop&crop=face" 
+                  alt="Hem Prashanth"
+                  className="w-full aspect-square object-cover rounded-3xl"
+                />
+                <div className="absolute -bottom-4 -right-4 bg-card border border-border rounded-2xl p-4">
+                  <div className="grid grid-cols-3 gap-4 text-center">
+                    <div>
+                      <div className="text-2xl font-bold text-white">7+</div>
+                      <div className="text-xs text-muted-foreground">Years</div>
+                    </div>
+                    <div>
+                      <div className="text-2xl font-bold text-white">15+</div>
+                      <div className="text-xs text-muted-foreground">Brands</div>
+                    </div>
+                    <div>
+                      <div className="text-2xl font-bold text-white">200+</div>
+                      <div className="text-xs text-muted-foreground">Assets</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="space-y-8 scroll-reveal">
+              <div>
+                <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">About Me</h2>
+                <p className="text-xl text-muted-foreground leading-relaxed mb-6">
+                  I'm a brand system designer focused on meaning, clarity, and craft. 
+                  My work bridges the gap between human creativity and artificial intelligence, 
+                  creating visual identities that resonate across cultures and platforms.
+                </p>
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  With expertise in AI-powered design tools and systematic thinking, 
+                  I help brands tell their stories through cohesive, scalable visual systems.
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-card/50 p-4 rounded-xl border border-border/50">
+                  <Package className="h-6 w-6 text-purple-400 mb-2" />
+                  <div className="font-semibold text-white">Identity</div>
+                </div>
+                <div className="bg-card/50 p-4 rounded-xl border border-border/50">
+                  <Brain className="h-6 w-6 text-purple-400 mb-2" />
+                  <div className="font-semibold text-white">AI Tools</div>
+                </div>
+                <div className="bg-card/50 p-4 rounded-xl border border-border/50">
+                  <Grid className="h-6 w-6 text-purple-400 mb-2" />
+                  <div className="font-semibold text-white">Systems</div>
+                </div>
+                <div className="bg-card/50 p-4 rounded-xl border border-border/50">
+                  <Palette className="h-6 w-6 text-purple-400 mb-2" />
+                  <div className="font-semibold text-white">Webflow</div>
+                </div>
+              </div>
+              
+              <Button asChild variant="outline" className="btn-outline px-8 py-3 text-lg rounded-full">
+                <Link to="/contact">
+                  Let's Connect
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Blog Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16 scroll-reveal">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">Studio Notes</h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Insights, tutorials, and behind-the-scenes looks at AI-powered design processes.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {blogPosts.map((post, index) => (
+              <Card key={post.title} className={`group card-hover cursor-pointer scroll-reveal bg-card border-border card-glow`} style={{ animationDelay: `${index * 0.2}s` }}>
+                <div className="relative overflow-hidden rounded-t-lg">
+                  <img 
+                    src={post.image} 
+                    alt={post.title}
+                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute top-4 left-4">
+                    <Badge className="bg-purple-500/20 text-purple-300 border-purple-500/30">
+                      {post.tag}
+                    </Badge>
+                  </div>
+                </div>
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-semibold mb-3 text-white group-hover:text-purple-300 transition-colors">
+                    {post.title}
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {post.excerpt}
+                  </p>
                 </CardContent>
               </Card>
             ))}
@@ -241,152 +380,74 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Enhanced Featured Work Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-20 scroll-reveal">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Featured Work</h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              A selection of recent projects showcasing comprehensive brand systems, 
-              AI-powered design solutions, and measurable business impact.
-            </p>
-          </div>
-          
-          <div className="space-y-16">
-            {featuredProjects.map((project, index) => (
-              <Card key={project.id} className={`group card-hover cursor-pointer scroll-reveal bg-card border-border overflow-hidden`} style={{ animationDelay: `${index * 0.2}s` }}>
-                <div className={`grid lg:grid-cols-2 gap-0 ${index % 2 === 1 ? 'lg:grid-flow-col-dense' : ''}`}>
-                  <div className={`relative overflow-hidden ${index % 2 === 1 ? 'lg:col-start-2' : ''}`}>
-                    <img 
-                      src={project.image} 
-                      alt={project.title}
-                      className="w-full h-80 lg:h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <Button variant="secondary" className="opacity-90">
-                        View Case Study <ExternalLink className="ml-2 h-4 w-4" />
-                      </Button>
-                    </div>
+      {/* Contact CTA Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-16">
+            <div className="scroll-reveal">
+              <h2 className="text-4xl md:text-5xl font-bold mb-8 text-white">
+                Have a project in mind?
+              </h2>
+              <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+                Let's connect and create something amazing together. From brand identity 
+                to AI-powered design systems, I'm here to help bring your vision to life.
+              </p>
+              
+              <div className="space-y-6">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                    <Star className="h-6 w-6 text-purple-400" />
                   </div>
-                  <div className={`p-8 lg:p-12 flex flex-col justify-center ${index % 2 === 1 ? 'lg:col-start-1' : ''}`}>
-                    <div className="space-y-6">
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {project.tags.map((tag) => (
-                          <Badge key={tag} variant="secondary" className="px-3 py-1">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                      
-                      <h3 className="text-3xl font-bold group-hover:brand-turquoise transition-colors">
-                        {project.title}
-                      </h3>
-                      
-                      <p className="text-lg text-muted-foreground leading-relaxed">
-                        {project.description}
-                      </p>
-                      
-                      <div className="flex items-center justify-between pt-4 border-t border-border">
-                        <div className="space-y-1">
-                          <div className="text-sm text-muted-foreground">Client</div>
-                          <div className="font-medium">{project.client}</div>
-                        </div>
-                        <div className="space-y-1 text-right">
-                          <div className="text-sm text-muted-foreground">Impact</div>
-                          <div className="font-medium brand-turquoise">{project.impact}</div>
-                        </div>
-                      </div>
-                      
-                      <Link to={`/work/${project.id}`} className="inline-flex items-center text-brand-turquoise hover:text-brand-turquoise/80 font-medium transition-colors">
-                        View Full Case Study
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Link>
-                    </div>
+                  <div>
+                    <div className="font-semibold text-white">Quick Response</div>
+                    <div className="text-muted-foreground">Usually within 24 hours</div>
                   </div>
                 </div>
-              </Card>
-            ))}
-          </div>
-          
-          <div className="text-center mt-16 scroll-reveal">
-            <Button asChild variant="outline" size="lg" className="border-brand-turquoise text-brand-turquoise hover:bg-brand-turquoise hover:text-background">
-              <Link to="/work">
-                View All Projects
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Enhanced About Me Preview */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-muted/50">
-        <div className="max-w-4xl mx-auto scroll-reveal">
-          <div className="grid lg:grid-cols-3 gap-12 items-center">
-            <div className="lg:col-span-2">
-              <h2 className="text-4xl md:text-5xl font-bold mb-8">About Me</h2>
-              <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
-                <p>
-                  I specialize in creating <span className="brand-turquoise font-semibold">AI-powered brand systems</span> that 
-                  blend cutting-edge technology with timeless design principles. My work focuses on building 
-                  cohesive visual identities that resonate across cultures while maintaining clarity and 
-                  purpose in every touchpoint.
-                </p>
-                <p>
-                  With expertise in <span className="brand-coral font-semibold">Figma, Gemini, and advanced AI tools</span>, 
-                  I help brands navigate the intersection of human creativity and artificial intelligence, 
-                  creating solutions that are both innovative and deeply human.
-                </p>
-                <p>
-                  My approach centers on understanding the unique story of each brand and translating that 
-                  into <span className="brand-yellow font-semibold">systematic, scalable design solutions</span> that 
-                  drive measurable business impact.
-                </p>
-              </div>
-              <Button asChild variant="outline" size="lg" className="mt-8 border-brand-yellow text-brand-yellow hover:bg-brand-yellow hover:text-background">
-                <Link to="/about">
-                  Read Full Story
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-            <div className="relative">
-              <div className="aspect-square bg-gradient-to-br from-brand-turquoise/20 via-brand-coral/20 to-brand-yellow/20 rounded-3xl flex items-center justify-center">
-                <img 
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face" 
-                  alt="Hem Prashanth"
-                  className="w-64 h-64 object-cover rounded-2xl"
-                />
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                    <Brain className="h-6 w-6 text-purple-400" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-white">AI-Enhanced Process</div>
+                    <div className="text-muted-foreground">Faster iterations, better results</div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Enhanced CTA Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center scroll-reveal">
-          <h2 className="text-4xl md:text-5xl font-bold mb-8">
-            <span className="gradient-brand bg-clip-text text-transparent">
-              Have a project in mind?
-            </span>
-          </h2>
-          <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
-            Let's connect and create something amazing together. From brand identity 
-            to AI-powered design systems, I'm here to help bring your vision to life.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <Button asChild size="lg" className="bg-brand-coral hover:bg-brand-coral/90 text-background px-8 py-4 text-lg">
-              <Link to="/contact">
-                Start a Conversation
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="border-brand-turquoise text-brand-turquoise hover:bg-brand-turquoise hover:text-background px-8 py-4 text-lg">
-              <Link to="/work">
-                Browse Portfolio
-              </Link>
-            </Button>
+            
+            <Card className="bg-card/50 border-border/50 card-glow scroll-reveal">
+              <CardContent className="p-8">
+                <form className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <input
+                        type="text"
+                        placeholder="Your Name"
+                        className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-white placeholder-muted-foreground"
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="email"
+                        placeholder="Email Address"
+                        className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-white placeholder-muted-foreground"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <textarea
+                      rows={4}
+                      placeholder="Tell me about your project..."
+                      className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none text-white placeholder-muted-foreground"
+                    />
+                  </div>
+                  <Button className="w-full btn-gradient text-white py-3 rounded-lg font-medium">
+                    Send Message
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>

@@ -5,31 +5,33 @@
 
 @layer base {
   :root {
-    --background: 0 0% 5%;
-    --foreground: 0 0% 95%;
-    --card: 0 0% 8%;
-    --card-foreground: 0 0% 95%;
-    --popover: 0 0% 8%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 174 100% 50%;
-    --primary-foreground: 0 0% 5%;
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 95%;
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 65%;
-    --accent: 174 100% 50%;
-    --accent-foreground: 0 0% 5%;
+    --background: 218 25% 9%;
+    --foreground: 213 16% 97%;
+    --card: 217 32% 12%;
+    --card-foreground: 213 16% 97%;
+    --popover: 217 32% 12%;
+    --popover-foreground: 213 16% 97%;
+    --primary: 263 70% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 217 32% 17%;
+    --secondary-foreground: 213 16% 97%;
+    --muted: 217 32% 17%;
+    --muted-foreground: 213 9% 65%;
+    --accent: 263 70% 60%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 95%;
-    --border: 0 0% 15%;
-    --input: 0 0% 15%;
-    --ring: 174 100% 50%;
+    --border: 217 32% 17%;
+    --input: 217 32% 17%;
+    --ring: 263 70% 60%;
     --radius: 0.75rem;
     
-    /* Custom brand colors */
-    --turquoise: 174 100% 50%;
-    --coral: 16 100% 65%;
-    --yellow: 45 100% 55%;
+    /* GrowthX inspired colors */
+    --purple-gradient-start: 263 70% 60%;
+    --purple-gradient-end: 320 65% 65%;
+    --neon-blue: 200 100% 70%;
+    --text-primary: 213 16% 97%;
+    --text-muted: 213 9% 65%;
   }
 
   * {
@@ -38,7 +40,8 @@
 
   body {
     @apply bg-background text-foreground font-sans;
-    background: #0a0a0a;
+    background: hsl(var(--background));
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 
   html {
@@ -46,35 +49,28 @@
   }
 }
 
-/* Custom utility classes */
-.brand-turquoise {
-  color: hsl(var(--turquoise));
+/* Custom gradient utilities */
+.gradient-purple {
+  background: linear-gradient(135deg, hsl(var(--purple-gradient-start)) 0%, hsl(var(--purple-gradient-end)) 100%);
 }
 
-.brand-coral {
-  color: hsl(var(--coral));
+.gradient-text {
+  background: linear-gradient(135deg, hsl(var(--purple-gradient-start)) 0%, hsl(var(--purple-gradient-end)) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.brand-yellow {
-  color: hsl(var(--yellow));
+/* Glow effects */
+.glow-purple {
+  box-shadow: 0 0 20px hsla(var(--purple-gradient-start), 0.3);
 }
 
-.bg-brand-turquoise {
-  background-color: hsl(var(--turquoise));
+.glow-blue {
+  box-shadow: 0 0 20px hsla(var(--neon-blue), 0.3);
 }
 
-.bg-brand-coral {
-  background-color: hsl(var(--coral));
-}
-
-.bg-brand-yellow {
-  background-color: hsl(var(--yellow));
-}
-
-.gradient-brand {
-  background: linear-gradient(135deg, hsl(var(--turquoise)) 0%, hsl(var(--coral)) 50%, hsl(var(--yellow)) 100%);
-}
-
+/* Card animations */
 .card-hover {
   transition: all 0.3s ease;
 }
@@ -84,6 +80,28 @@
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
+.card-glow {
+  position: relative;
+}
+
+.card-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  background: linear-gradient(135deg, hsl(var(--purple-gradient-start)), hsl(var(--purple-gradient-end)));
+  border-radius: inherit;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card-glow:hover::before {
+  opacity: 1;
+}
+
+/* Scroll reveal animations */
 .scroll-reveal {
   opacity: 0;
   transform: translateY(30px);
@@ -93,4 +111,25 @@
 .scroll-reveal.revealed {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Button animations */
+.btn-gradient {
+  background: linear-gradient(135deg, hsl(var(--purple-gradient-start)) 0%, hsl(var(--purple-gradient-end)) 100%);
+  transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px hsla(var(--purple-gradient-start), 0.4);
+}
+
+.btn-outline {
+  border: 1px solid hsl(var(--border));
+  transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+  border-color: hsl(var(--neon-blue));
+  box-shadow: 0 0 20px hsla(var(--neon-blue), 0.3);
 }
