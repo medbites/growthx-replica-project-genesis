@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>HEMPRASHANTH Stomp (hyperframes)</title>
+
+    <!--
+      HyperFrames composition — "HEMPRASHANTH" stomp-style kinetic type, 10s.
+
+      Tempo grid: PULSE = 0.25s (120 BPM, half-beats). Every impact reads from it.
+
+        0.10 – 0.45s   Ground line snaps out from centre
+        0.50 – 1.50s   H · E · M stomp in on the beat (heavy, one per 0.5s)
+        2.25 – 4.25s   P R A S H A N T H stomp in twice as fast (one per 0.25s)
+        4.50 – 5.25s   Whole word crouches, jumps and SLAMS: flash, big shake,
+                       shockwave, PRASHANTH turns brand purple→pink
+        6.00 – 7.00s   Three aftershock punches on the beat
+        7.50 – 8.80s   Letter-by-letter hop wave, each landing with a small stomp
+        8.80 – 10.0s   Hold with a gentle breath, dust settles
+
+      Brand colours from the site tokens (src/index.css):
+        background hsl(218 25% 9%)  = #111620
+        purple     hsl(263 70% 60%) = #8b5cf6
+        pink       hsl(320 65% 65%) = #e060a7
+
+      Seek-safe: camera shake, dust and shockwaves are pure functions of timeline
+      time (drawn by one driver tween), no Math.random / Date.now. Letter layout
+      uses pre-measured Anton glyph widths at 240px, baked in below.
+    -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=block" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+
+    <style>
+      :root {
+        --bg: #111620;
+        --bg-deep: #07090e;
+        --white: #f5f6f8;
+        --purple: #8b5cf6;
+        --pink: #e060a7;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--bg);
+      }
+
+      .stage {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        background: radial-gradient(ellipse 75% 70% at 50% 58%, var(--bg) 0%, var(--bg-deep) 100%);
+      }
+      .camera {
+        position: absolute;
+        inset: 0;
+        transform-origin: 50% 59%;
+      }
+
+      .ground {
+        position: absolute;
+        left: 180px;
+        right: 180px;
+        top: 646px;
+        height: 4px;
+        border-radius: 2px;
+        background: linear-gradient(90deg, rgba(139, 92, 246, 0), #8b5cf6 20%, #e060a7 80%, rgba(224, 96, 167, 0));
+        transform: scaleX(0);
+        opacity: 0.85;
+      }
+
+      #fx {
+        position: absolute;
+        inset: 0;
+        width: 1920px;
+        height: 1080px;
+      }
+
+      .word {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1920px;
+        height: 1080px;
+        transform-origin: 960px 640px;
+      }
+      .L {
+        position: absolute;
+        top: 418px; /* box top = GROUND (640) - baseline offset (222) */
+        height: 240px;
+        transform-origin: 50% 222px; /* squash from the baseline */
+        will-change: transform;
+      }
+      .L b {
+        display: block;
+        font-family: "Anton", "Impact", sans-serif;
+        font-weight: 400;
+        font-size: 240px;
+        line-height: 240px;
+        color: var(--white);
+        white-space: pre;
+      }
+      .L b.g {
+        position: absolute;
+        left: 0;
+        top: 0;
+        color: transparent;
+        background: linear-gradient(90deg, #8b5cf6, #e060a7);
+        background-size: 1100px 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        opacity: 0;
+      }
+
+      .flash {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse at 50% 60%, #ffffff 0%, rgba(224, 96, 167, 0.6) 45%, rgba(139, 92, 246, 0) 80%);
+        opacity: 0;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="10"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div class="stage clip" data-start="0" data-duration="10" data-track-index="1">
+        <div class="camera" data-layout-allow-overflow>
+          <div class="ground"></div>
+          <canvas id="fx" width="1920" height="1080"></canvas>
+          <div class="word" data-layout-allow-overflow></div>
+        </div>
+        <div class="flash"></div>
+      </div>
+    </div>
+
+    <script>
+      /* ================================================================
+         CONSTANTS
+         ================================================================ */
+      const TOTAL = 10;
+      const PULSE = 0.25;
+      const GROUND = 640;
+      const NAME = "HEMPRASHANTH";
+      const GRADIENT_FROM = 3; // PRASHANTH turns purple→pink at the big stomp
+
+      // Anton advance widths at 240px (measured once, baked in — no tween-time layout reads).
+      const GLYPH_W = { H: 119.8, E: 98.8, M: 179.1, P: 113.3, R: 114.4, A: 116.5, S: 110.8, N: 119.5, T: 94.9 };
+      const TRACK = 10;
+
+      const widths = NAME.split("").map((c) => GLYPH_W[c]);
+      const totalW = widths.reduce((a, b) => a + b, 0) + TRACK * (NAME.length - 1);
+      const lefts = [];
+      widths.reduce((x, w, i) => {
+        lefts[i] = x;
+        return x + w + TRACK;
+      }, 960 - totalW / 2);
+      const centers = lefts.map((x, i) => x + widths[i] / 2);
+      const gradLeft = lefts[GRADIENT_FROM];
+      const gradWidth = lefts[NAME.length - 1] + widths[NAME.length - 1] - gradLeft;
+
+      // Beat onsets (impact times, on the PULSE grid).
+      const HEM_HITS = [2, 4, 6].map((n) => n * PULSE); // 0.5, 1.0, 1.5
+      const REST_HITS = [9, 10, 11, 12, 13, 14, 15, 16, 17].map((n) => n * PULSE); // 2.25 … 4.25
+      const BIG_HIT = 21 * PULSE; // 5.25
+      const AFTERSHOCKS = [24, 26, 28].map((n) => n * PULSE); // 6.0, 6.5, 7.0
+      const WAVE_START = 31 * PULSE; // 7.75 first wave landing
+      const WAVE_STEP = 0.085;
+
+      /* ================================================================
+         BUILD LETTERS
+         ================================================================ */
+      const wordEl = document.querySelector(".word");
+      const letters = NAME.split("").map((c, i) => {
+        const span = document.createElement("span");
+        span.className = "L";
+        span.style.left = `${lefts[i]}px`;
+        span.style.width = `${widths[i]}px`;
+        const w = document.createElement("b");
+        w.textContent = c;
+        span.appendChild(w);
+        if (i >= GRADIENT_FROM) {
+          const g = document.createElement("b");
+          g.className = "g";
+          g.textContent = c;
+          g.style.backgroundSize = `${gradWidth}px 100%`;
+          g.style.backgroundPosition = `${gradLeft - lefts[i]}px 0`;
+          span.appendChild(g);
+        }
+        wordEl.appendChild(span);
+        return span;
+      });
+      const gradLayers = Array.from(document.querySelectorAll(".L b.g"));
+
+      /* ================================================================
+         IMPACTS — every hit feeds the shake + dust + shockwave field.
+         { t, x, amp, dust, ring }  (x = impact centre, amp = shake px)
+         ================================================================ */
+      const impacts = [];
+      HEM_HITS.forEach((t, i) => impacts.push({ t, x: centers[i], amp: 16, dust: 14, ring: 170 }));
+      REST_HITS.forEach((t, i) => impacts.push({ t, x: centers[i + 3], amp: 8, dust: 9, ring: 120 }));
+      impacts.push({ t: BIG_HIT, x: 960, amp: 36, dust: 60, ring: 900, spread: totalW });
+      AFTERSHOCKS.forEach((t) => impacts.push({ t, x: 960, amp: 7, dust: 0, ring: 520 }));
+      letters.forEach((_, i) =>
+        impacts.push({ t: WAVE_START + i * WAVE_STEP, x: centers[i], amp: 2.5, dust: 4, ring: 0 }),
+      );
+
+      /* ================================================================
+         TIMELINE
+         ================================================================ */
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      window.__timelines["main"] = tl;
+
+      // Ground line.
+      tl.to(".ground", { scaleX: 1, duration: 0.35, ease: "expo.out" }, 0.1);
+
+      // Single letter stomp: fall (stretched) → land on the beat → squash → spring back.
+      function stomp(el, hit, fall, fromY) {
+        tl.fromTo(
+          el,
+          { y: fromY, scaleX: 0.86, scaleY: 1.3 },
+          { y: 0, duration: fall, ease: "power4.in" },
+          hit - fall,
+        );
+        tl.to(el, { scaleX: 1.22, scaleY: 0.72, duration: 0.05, ease: "power2.out" }, hit);
+        tl.to(el, { scaleX: 1, scaleY: 1, duration: 0.32, ease: "back.out(3)" }, hit + 0.05);
+      }
+      HEM_HITS.forEach((t, i) => stomp(letters[i], t, 0.26, -900));
+      REST_HITS.forEach((t, i) => stomp(letters[i + 3], t, 0.17, -760));
+
+      // Big stomp: crouch → jump → slam.
+      const CROUCH = BIG_HIT - 0.75;
+      tl.to(wordEl, { y: 14, scaleY: 0.9, scaleX: 1.03, duration: 0.2, ease: "power2.out" }, CROUCH);
+      tl.to(wordEl, { y: -190, scaleY: 1.08, scaleX: 0.97, duration: 0.3, ease: "power2.out" }, CROUCH + 0.2);
+      tl.to(wordEl, { y: 0, scaleY: 1.12, scaleX: 0.95, duration: 0.25, ease: "power4.in" }, BIG_HIT - 0.25);
+      tl.to(wordEl, { scaleY: 0.78, scaleX: 1.08, duration: 0.06, ease: "power2.out" }, BIG_HIT);
+      tl.to(wordEl, { scaleY: 1, scaleX: 1, duration: 0.5, ease: "back.out(2.6)" }, BIG_HIT + 0.06);
+      tl.set(gradLayers, { opacity: 1 }, BIG_HIT);
+      tl.fromTo(".flash", { opacity: 0 }, { opacity: 0.75, duration: 0.03, ease: "none", immediateRender: false }, BIG_HIT);
+      tl.to(".flash", { opacity: 0, duration: 0.55, ease: "power2.out" }, BIG_HIT + 0.03);
+      tl.fromTo(".camera", { scale: 1 }, { scale: 1.07, duration: 0.03, ease: "none", immediateRender: false }, BIG_HIT);
+      tl.to(".camera", { scale: 1, duration: 0.7, ease: "power3.out" }, BIG_HIT + 0.03);
+
+      // Aftershock punches.
+      AFTERSHOCKS.forEach((t) => {
+        tl.to(wordEl, { scale: 1.045, duration: 0.05, ease: "power2.out" }, t);
+        tl.to(wordEl, { scale: 1, duration: 0.3, ease: "power3.out" }, t + 0.05);
+        tl.fromTo(".ground", { opacity: 1, scaleY: 2.2 }, { opacity: 0.85, scaleY: 1, duration: 0.35, ease: "power2.out", immediateRender: false }, t);
+      });
+
+      // Hop wave: each letter pops up and stomps back down in sequence.
+      letters.forEach((el, i) => {
+        const land = WAVE_START + i * WAVE_STEP;
+        tl.to(el, { y: -70, scaleY: 1.1, scaleX: 0.94, duration: 0.14, ease: "power2.out" }, land - 0.28);
+        tl.to(el, { y: 0, duration: 0.14, ease: "power4.in" }, land - 0.14);
+        tl.to(el, { scaleX: 1.14, scaleY: 0.82, duration: 0.05, ease: "power2.out" }, land);
+        tl.to(el, { scaleX: 1, scaleY: 1, duration: 0.3, ease: "back.out(3)" }, land + 0.05);
+      });
+
+      // Final hold: one finite breath (no infinite repeats).
+      const HOLD = WAVE_START + (NAME.length - 1) * WAVE_STEP + 0.5;
+      tl.to(wordEl, { scale: 1.015, duration: (TOTAL - HOLD) / 2, ease: "sine.inOut", yoyo: true, repeat: 1 }, HOLD);
+
+      /* ================================================================
+         FX DRIVER — shake, dust, shockwaves as pure functions of time.
+         ================================================================ */
+      const cam = document.querySelector(".camera");
+      const ctx = document.getElementById("fx").getContext("2d");
+      const hash = (a, b) => {
+        const s = Math.sin(a * 127.1 + b * 311.7) * 43758.5453;
+        return s - Math.floor(s);
+      };
+
+      function renderFx(time) {
+        // Camera shake: decaying, deterministic oscillation summed over impacts.
+        let sx = 0,
+          sy = 0,
+          rot = 0;
+        impacts.forEach((im, i) => {
+          const dt = time - im.t;
+          if (dt < 0 || dt > 0.6) return;
+          const decay = Math.exp(-dt * 11);
+          sx += im.amp * decay * Math.sin(dt * 88 + i);
+          sy += im.amp * 1.2 * decay * Math.cos(dt * 71 + i * 2);
+          rot += im.amp * 0.018 * decay * Math.sin(dt * 53 + i);
+        });
+        gsap.set(cam, { x: sx, y: sy, rotation: rot });
+
+        ctx.clearRect(0, 0, 1920, 1080);
+        impacts.forEach((im, i) => {
+          const dt = time - im.t;
+          if (dt < 0 || dt > 1.4) return;
+
+          // Ground shockwave: a flattened ellipse racing outward.
+          if (im.ring && dt < 0.55) {
+            const p = dt / 0.55;
+            const r = im.ring * (1 - Math.pow(1 - p, 3));
+            ctx.beginPath();
+            ctx.ellipse(im.x, GROUND + 6, r, r * 0.12, 0, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(224, 96, 167, ${0.55 * (1 - p)})`;
+            ctx.lineWidth = 3 + 5 * (1 - p);
+            ctx.stroke();
+          }
+
+          // Dust puffs kicked out sideways from the landing point.
+          for (let k = 0; k < im.dust; k++) {
+            const life = 0.55 + hash(i, k) * 0.7;
+            if (dt > life) continue;
+            const side = k % 2 ? 1 : -1;
+            const x0 = im.x + (im.spread ? (hash(k, i) - 0.5) * im.spread : side * 30);
+            const vx = side * (140 + hash(i + 7, k) * 420);
+            const vy = -(60 + hash(i + 3, k) * 260);
+            const x = x0 + vx * dt * Math.exp(-dt * 2.2);
+            const y = GROUND - 4 + vy * dt + 420 * dt * dt;
+            if (y > GROUND + 4) continue;
+            const a = (1 - dt / life) * 0.7;
+            const size = 3 + hash(k + 11, i) * 9 * (1 + dt);
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.fillStyle = k % 5 === 0 ? `rgba(224, 96, 167, ${a})` : `rgba(210, 214, 225, ${a * 0.6})`;
+            ctx.fill();
+          }
+        });
+      }
+
+      tl.to(
+        { p: 0 },
+        { p: 1, duration: TOTAL, ease: "none", onUpdate: () => renderFx(tl.time()) },
+        0,
+      );
+      renderFx(0);
+    </script>
+  </body>
+</html>
