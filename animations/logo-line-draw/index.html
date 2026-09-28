@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Divyavastra Logo Line Draw (hyperframes)</title>
+
+    <!--
+      HyperFrames composition — Divyavastra logo line-draw reveal.
+
+      Choreography (5 seconds total):
+        0.15 – 1.05s   Outer ring draws (svg-path-draw, ease none = steady pen)
+        0.45 – 2.10s   Hands, bangles, needle and thread draw one after another
+        1.20 – 2.30s   "Divyavastra" script traces along the top arc
+        1.85 – 2.60s   "GIVING VALUE TO YOUR ART" traces along the bottom arc
+        1.70 – 2.30s   Nails flick in
+        2.70 – 3.40s   Colour fills in: cream disc, skin tone, maroon lines/nails/text
+        2.70 – 4.20s   Whole mark settles with a gentle scale 0.94 → 1.00
+        4.20 – 5.00s   Still hold on the finished logo
+
+      Brand colours (sampled from the Divyavastra logo):
+        maroon  #8e2a35   lines, nails, lettering
+        rose    #c8968b   hands
+        cream   #fbf3ee   disc / draw-on stroke
+      The logo's own maroon would vanish on the maroon stage, so the outline draws
+      in cream first and the full-colour logo resolves on a cream disc.
+
+      The artwork is a hand-traced vector recreation of the supplied PNG. For an
+      exact match, replace the elements inside <g class="draw"> with the paths from
+      the original SVG (keep the class names: line / skin / nail / txt).
+    -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@700&display=block"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+
+    <style>
+      :root {
+        --bg: #4a0d1f;
+        --bg-deep: #26050f;
+        --maroon: #8e2a35;
+        --rose: #c8968b;
+        --cream: #fbf3ee;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--bg);
+      }
+
+      .stage {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background: radial-gradient(ellipse 70% 70% at 50% 50%, var(--bg) 0%, var(--bg-deep) 100%);
+      }
+
+      .glow {
+        position: absolute;
+        width: 1200px;
+        height: 1200px;
+        left: 50%;
+        top: 50%;
+        margin: -600px 0 0 -600px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(251, 243, 238, 0.28) 0%,
+          rgba(200, 150, 139, 0.14) 35%,
+          rgba(200, 150, 139, 0) 62%
+        );
+        opacity: 0;
+      }
+
+      .mark {
+        position: relative;
+        width: 820px;
+        height: 842px;
+        transform: scale(0.94);
+      }
+      .mark svg {
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+
+      #disc {
+        fill: var(--cream);
+        opacity: 0;
+      }
+
+      /* Draw-on layer: cream outlines only. */
+      .draw * {
+        fill: none;
+        stroke: var(--cream);
+        stroke-width: 2.2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .draw .txt {
+        stroke-width: 0.9;
+      }
+
+      /* Full-colour layer, cloned from .draw at setup. */
+      .final {
+        opacity: 0;
+      }
+      .final * {
+        stroke-dasharray: none !important;
+        stroke-dashoffset: 0 !important;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .final .line {
+        fill: none;
+        stroke: var(--maroon);
+        stroke-width: 2.2;
+      }
+      .final .ring {
+        stroke-width: 3.2;
+      }
+      .final .skin {
+        fill: var(--rose);
+        stroke: var(--maroon);
+        stroke-width: 1.6;
+      }
+      .final .nail {
+        fill: var(--maroon);
+        stroke: var(--maroon);
+        stroke-width: 1;
+      }
+      .final .txt {
+        fill: var(--maroon);
+        stroke: none;
+      }
+
+      .wordmark {
+        font-family: "Great Vibes", cursive;
+        font-size: 58px;
+      }
+      .tagline {
+        font-family: "Montserrat", sans-serif;
+        font-weight: 700;
+        font-size: 13.5px;
+        letter-spacing: 0.6px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="5"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div class="stage clip" data-start="0" data-duration="5" data-track-index="1">
+        <div class="glow"></div>
+        <div class="mark">
+          <svg viewBox="0 0 370 380" role="img" aria-label="Divyavastra logo">
+            <defs>
+              <!-- Baselines for the curved lettering (centre 185,190) -->
+              <path id="arc-top" d="M 58.9 167.8 A 128 128 0 0 1 283.1 107.7" />
+              <path id="arc-bottom" d="M 65.5 259 A 138 138 0 0 0 304.5 259" />
+              <!-- Nail teardrop, base at origin, pointing up -->
+              <path id="nail-shape" d="M 0 0 C -4.5 -6 -3.5 -17 0 -24 C 3.5 -17 4.5 -6 0 0 Z" />
+            </defs>
+
+            <circle id="disc" cx="185" cy="190" r="172" />
+
+            <g class="draw">
+              <!-- 1. Outer ring (right side, from the end of the wordmark to the bottom) -->
+              <path class="line ring stroke" d="M 323.6 110 A 160 160 0 0 1 157.2 347.6" />
+
+              <!-- 2. Left hand -->
+              <path
+                class="skin stroke"
+                d="M 94 292 C 88 272 76 258 80 236 C 82 214 86 196 88 176 C 89 165 91 156 96 150
+                   C 101 158 102 172 104 190 C 106 170 110 150 118 136 C 124 146 126 166 126 188
+                   C 130 168 138 150 148 142 C 153 152 151 172 148 192 C 158 186 170 184 180 186
+                   C 176 196 166 204 156 212 C 168 214 176 220 178 228 C 166 234 152 234 142 244
+                   C 136 258 134 276 136 292"
+              />
+              <!-- 3. Right hand (mirror of the left around x = 186) -->
+              <g transform="translate(372 0) scale(-1 1)">
+                <path
+                  class="skin stroke"
+                  d="M 94 292 C 88 272 76 258 80 236 C 82 214 86 196 88 176 C 89 165 91 156 96 150
+                     C 101 158 102 172 104 190 C 106 170 110 150 118 136 C 124 146 126 166 126 188
+                     C 130 168 138 150 148 142 C 153 152 151 172 148 192 C 158 186 170 184 180 186
+                     C 176 196 166 204 156 212 C 168 214 176 220 178 228 C 166 234 152 234 142 244
+                     C 136 258 134 276 136 292"
+                />
+              </g>
+
+              <!-- 4. Bangles -->
+              <path class="line stroke" d="M 90 276 Q 114 286 138 276" />
+              <path class="line stroke" d="M 92 266 Q 114 276 137 266" />
+              <path class="line stroke" d="M 282 276 Q 258 286 234 276" />
+              <path class="line stroke" d="M 280 266 Q 258 276 235 266" />
+
+              <!-- 5. Needle and thread -->
+              <path class="line stroke" d="M 186 148 L 184 250" />
+              <path
+                class="line stroke"
+                d="M 186 158 C 205 175 208 215 192 240 C 176 265 190 300 212 292 C 232 284 226 258 206 262"
+              />
+
+              <!-- 6. Nails (left hand, then mirrored right hand) -->
+              <use class="nail pop" href="#nail-shape" transform="translate(96 156) rotate(-8)" />
+              <use class="nail pop" href="#nail-shape" transform="translate(118 142) rotate(5)" />
+              <use class="nail pop" href="#nail-shape" transform="translate(148 148) rotate(15)" />
+              <use class="nail pop" href="#nail-shape" transform="translate(176 187) rotate(80)" />
+              <use class="nail pop" href="#nail-shape" transform="translate(174 227) rotate(100)" />
+              <use class="nail pop" href="#nail-shape" transform="translate(276 156) rotate(8)" />
+              <use class="nail pop" href="#nail-shape" transform="translate(254 142) rotate(-5)" />
+              <use class="nail pop" href="#nail-shape" transform="translate(224 148) rotate(-15)" />
+              <use class="nail pop" href="#nail-shape" transform="translate(196 187) rotate(-80)" />
+              <use class="nail pop" href="#nail-shape" transform="translate(198 227) rotate(-100)" />
+
+              <!-- 7. Lettering -->
+              <text class="txt wordmark" id="t-word">
+                <textPath href="#arc-top" startOffset="50%" text-anchor="middle">Divyavastra</textPath>
+              </text>
+              <text class="txt tagline" id="t-tag">
+                <textPath href="#arc-bottom" startOffset="50%" text-anchor="middle">
+                  GIVING VALUE TO YOUR ART
+                </textPath>
+              </text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const TOTAL_DURATION = 5.0;
+
+      const RING_START = 0.15;
+      const RING_DUR = 0.9;
+      const ART_START = 0.45;
+      const OVERLAP = 0.72; // next stroke starts at 72% of the previous
+      const NAIL_START = 1.7;
+      const NAIL_STAGGER = 0.05;
+      const WORD_START = 1.2;
+      const WORD_DUR = 1.1;
+      const TAG_START = 1.85;
+      const TAG_DUR = 0.75;
+      const TEXT_DASH = 700; // longer than any single glyph outline
+      const FILL_START = 2.7;
+      const FILL_DUR = 0.7;
+      const SETTLE_DUR = 1.5;
+
+      const svg = document.querySelector(".mark svg");
+      const drawLayer = svg.querySelector(".draw");
+
+      // Full-colour layer: an identical clone that crossfades in over the outlines.
+      const finalLayer = drawLayer.cloneNode(true);
+      finalLayer.setAttribute("class", "final");
+      finalLayer.querySelectorAll("[id]").forEach((el) => el.removeAttribute("id"));
+      svg.appendChild(finalLayer);
+
+      // Setup: measured stroke lengths, set once before the timeline is built.
+      const strokes = Array.from(drawLayer.querySelectorAll(".stroke"));
+      const lengths = strokes.map((el) => el.getTotalLength() * 1.03);
+      strokes.forEach((el, i) => {
+        el.style.strokeDasharray = `${lengths[i]}`;
+        el.style.strokeDashoffset = `${lengths[i]}`;
+      });
+      const texts = [document.getElementById("t-word"), document.getElementById("t-tag")];
+      texts.forEach((el) => {
+        el.style.strokeDasharray = `${TEXT_DASH}`;
+        el.style.strokeDashoffset = `${TEXT_DASH}`;
+      });
+      const nails = Array.from(drawLayer.querySelectorAll(".pop"));
+      gsap.set(nails, { opacity: 0 });
+
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      window.__timelines["main"] = tl;
+
+      // 1. Ring: constant-speed pen trace.
+      tl.to(strokes[0], { strokeDashoffset: 0, duration: RING_DUR, ease: "none" }, RING_START);
+
+      // 2. Hands, bangles, needle, thread — staggered so it reads as one motion.
+      //    Duration scales with stroke length, clamped to the rule's 0.3–0.8s band.
+      let t = ART_START;
+      strokes.slice(1).forEach((el, i) => {
+        const dur = Math.max(0.3, Math.min(0.8, lengths[i + 1] / 700));
+        tl.to(el, { strokeDashoffset: 0, duration: dur, ease: "power2.out" }, t);
+        t += dur * OVERLAP * 0.55;
+      });
+
+      // 3. Nails flick in.
+      nails.forEach((el, i) => {
+        tl.to(el, { opacity: 1, duration: 0.2, ease: "power1.out" }, NAIL_START + i * NAIL_STAGGER);
+      });
+
+      // 4. Lettering traces along its arcs.
+      tl.to(texts[0], { strokeDashoffset: 0, duration: WORD_DUR, ease: "none" }, WORD_START);
+      tl.to(texts[1], { strokeDashoffset: 0, duration: TAG_DUR, ease: "none" }, TAG_START);
+
+      // 5. Colour fill: cream disc, then the full-colour logo over the outlines.
+      tl.to("#disc", { opacity: 1, duration: FILL_DUR, ease: "power1.out" }, FILL_START);
+      tl.to(finalLayer, { opacity: 1, duration: FILL_DUR, ease: "power1.out" }, FILL_START + 0.1);
+      tl.to(drawLayer, { opacity: 0, duration: FILL_DUR, ease: "power1.out" }, FILL_START + 0.25);
+      tl.to(".glow", { opacity: 1, duration: FILL_DUR + 0.4, ease: "power1.out" }, FILL_START);
+
+      // 6. Gentle settle.
+      tl.to(".mark", { scale: 1, duration: SETTLE_DUR, ease: "power3.out" }, FILL_START);
+
+      // Pad to the full composition length (still hold).
+      tl.set({}, {}, TOTAL_DURATION);
+    </script>
+  </body>
+</html>
