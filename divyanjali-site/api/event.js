@@ -1,4 +1,4 @@
-import { getEvents, findEvent, driveId, esc, niceDate, SITE_NAME } from './_shared.js';
+import { getEvents, findEvent, posterKey, esc, niceDate, SITE_NAME } from './_shared.js';
 export const config = { runtime: 'edge' };
 // The home page and event links (/e/CODE): the normal page, with preview card tags
 // for WhatsApp, Instagram, Facebook and LinkedIn.
@@ -15,7 +15,7 @@ export default async function handler(req) {
         desc: niceDate(e) + ' · ' + (e.mode === 'Online' ? 'Online' : (e.venue_name || '')) + (e.why_attend ? '. ' + e.why_attend : ''),
         link: origin + '/e/' + e.event_code,
         // Small copy of the poster: WhatsApp skips preview images over about 300 KB.
-        image: driveId(e.poster_link) ? origin + '/img/' + e.event_code + '?s=og&p=' + driveId(e.poster_link).slice(0, 8) : '',
+        image: e.poster_link ? origin + '/img/' + e.event_code + '?s=og&p=' + encodeURIComponent(posterKey(e.poster_link)) : '',
       }
     : { title: 'Divyanjali Events', desc: 'Performances, arangetrams and workshops by Divyanjali, Bharatanatyam since 1994, Chennai.', link: origin + '/', image: '' };
   const img = card.image || origin + '/assets/og-default.jpg';
