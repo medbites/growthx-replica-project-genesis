@@ -21,6 +21,7 @@
   color-scheme: light;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6}
@@ -197,9 +198,9 @@ footer .logo b,footer .logo{color:#FFFFFF}
     <nav class="nav" aria-label="Main">
       <a class="hide-s" href="#upcoming">Upcoming</a>
       <a class="hide-s" href="#calendar">Calendar</a>
-      <a class="hide-s" href="#past">Past events</a>
-      <a class="hide-s" href="#perform">Perform</a>
-      <a class="btn" href="#enquire">Book &amp; enquire</a>
+      <a class="hide-s" href="#past" data-show="past">Past events</a>
+      <a class="hide-s" href="#perform" data-show="forms">Perform</a>
+      <a class="btn" href="#enquire" data-show="forms">Book &amp; enquire</a>
     </nav>
   </div>
 </header>
@@ -243,14 +244,14 @@ footer .logo b,footer .logo{color:#FFFFFF}
     </div>
   </section>
 
-  <section class="alt" id="past">
+  <section class="alt" id="past" data-show="past">
     <div class="wrap">
       <div class="sec-head"><div><p class="eyebrow">From our stage</p><h2>Past events</h2></div><a class="btn-o" href="#archive">See all past events</a></div>
       <div class="cards" id="pastList"></div>
     </div>
   </section>
 
-  <section id="perform">
+  <section id="perform" data-show="forms">
     <div class="wrap two">
       <div class="stack">
         <p class="eyebrow">For dancers</p>
@@ -291,7 +292,7 @@ footer .logo b,footer .logo{color:#FFFFFF}
     </div>
   </section>
 
-  <section class="alt" id="enquire">
+  <section class="alt" id="enquire" data-show="forms">
     <div class="wrap two">
       <div class="stack">
         <p class="eyebrow">Book &amp; enquire</p>
@@ -353,6 +354,8 @@ const CONFIG = {
   SITE_URL: /^https?:/.test(location.protocol) ? location.origin : 'https://divyanjalidance.com', // share links use the address the site is open on
   PRETTY_LINKS: true,                              // true: /e/CODE (Cloudflare Pages). false: /?e=CODE (GitHub Pages)
   WHATSAPP: '919000000000',                        // country code + number, digits only
+  SHOW_PAST: false,                                // true: show the Past events section and archive
+  SHOW_FORMS: false,                               // true: show the Perform in the Season and Book & enquire forms
   SEASON: 'Dance Season 2026–27 · November to January',
   ADDRESS: '[Address], CIT Nagar, Chennai',
   INSTAGRAM: '#', FACEBOOK: '#',
@@ -611,10 +614,10 @@ function renderEvent(code) {
       (e.past ? '<label class="l" for="w_rating">Rating (optional)<select id="w_rating"><option value="">Choose</option><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></label>' : '') +
       '<label class="l" for="w_msg">Your message<textarea id="w_msg" required></textarea></label><label class="ck" for="w_pub"><input type="checkbox" id="w_pub"> Show my message on this page after review</label><input class="hp" tabindex="-1" autocomplete="off" id="w_hp" aria-hidden="true"><div class="row"><button class="btn" type="submit">Send</button></div><div id="w_box" role="status"></div></form>' +
       '<div class="wall" id="wall"></div></div></section>' +
-    '<section><div class="wrap cta"><div class="stack" style="gap:6px"><p class="eyebrow">' + cta[0] + '</p><h3>' + cta[1] + '</h3></div><div class="row"><a class="btn" href="#enquire" id="ctaBtn">' + cta[2] + '</a><a class="btn-o" href="' + waLink('Hello Divyanjali, I saw ' + e.title + ' (' + e.event_code + ') and would like to know more.') + '" target="_blank" rel="noopener">Reach us on WhatsApp</a></div></div></section>' +
+    '<section><div class="wrap cta"><div class="stack" style="gap:6px"><p class="eyebrow">' + cta[0] + '</p><h3>' + cta[1] + '</h3></div><div class="row">' + (CONFIG.SHOW_FORMS ? '<a class="btn" href="#enquire" id="ctaBtn">' + cta[2] + '</a>' : '') + '<a class="btn-o" href="' + waLink('Hello Divyanjali, I saw ' + e.title + ' (' + e.event_code + ') and would like to know more.') + '" target="_blank" rel="noopener">Reach us on WhatsApp</a></div></div></section>' +
     (more.length ? '<section class="alt"><div class="wrap"><div class="sec-head"><div><p class="eyebrow">More events</p><h2>Coming up</h2></div><a class="btn-o" href="#calendar">Full calendar</a></div><div class="cards">' + more.map(card).join('') + '</div></div></section>' : '');
 
-  $('#ctaBtn').addEventListener('click', () => { state.prefill = { type: cta[3], from: e.event_code, msg: 'About: ' + e.title }; });
+  if ($('#ctaBtn')) $('#ctaBtn').addEventListener('click', () => { state.prefill = { type: cta[3], from: e.event_code, msg: 'About: ' + e.title }; });
   const ics = $('#icsBtn'); if (ics) ics.addEventListener('click', () => downloadIcs(e));
   $('#wishJump').addEventListener('click', (ev) => { ev.preventDefault(); $('#wish').scrollIntoView(); $('#w_name').focus({ preventScroll: true }); });
   $('#shareBtn').addEventListener('click', async () => {
@@ -736,7 +739,7 @@ function route() {
   const code = codeFromUrl();
   if (code) { renderEvent(code); return; }
   $('#eventView').hidden = true;
-  if (location.hash === '#archive') {
+  if (location.hash === '#archive' && CONFIG.SHOW_PAST) {
     document.title = 'Past events · Divyanjali';
     $('#home').hidden = true; $('#archiveView').hidden = false;
     renderArchive(); window.scrollTo(0, 0); return;
@@ -768,6 +771,7 @@ $('#arcQ').addEventListener('input', (ev) => { state.arc.q = ev.target.value; re
 $('#dlg').addEventListener('click', (ev) => { if (ev.target === $('#dlg')) $('#dlg').close(); });
 
 (async function init() {
+  document.querySelectorAll('[data-show]').forEach((el) => { el.hidden = !(el.dataset.show === 'past' ? CONFIG.SHOW_PAST : CONFIG.SHOW_FORMS); });
   $('#season').textContent = CONFIG.SEASON;
   $('#fAddr').textContent = CONFIG.ADDRESS;
   $('#fWa').textContent = 'WhatsApp +' + CONFIG.WHATSAPP;
@@ -782,7 +786,7 @@ $('#dlg').addEventListener('click', (ev) => { if (ev.target === $('#dlg')) $('#d
   state.events = raw.filter((e) => e && e.event_code && e.date).map(normalize).sort((a, b) => a.start - b.start);
   $('#demo').hidden = !state.demo;
   route();
-  watchSlots();
+  if (CONFIG.SHOW_FORMS) watchSlots();
 })();
 </script>
 </body>
