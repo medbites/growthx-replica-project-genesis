@@ -7,14 +7,20 @@
 
 // The sheet the website uses. Leave empty to use the sheet this script is attached to.
 const SHEET_ID = '1kV0M-v6YTZ9LCVMgpGiGH-56VGsoIMVxKuWFqiZKLHU';
-function book() { return SHEET_ID ? SpreadsheetApp.openById(SHEET_ID) : SpreadsheetApp.getActive(); }
+function book() {
+  const a = SpreadsheetApp.getActive();
+  if (!SHEET_ID || (a && a.getId() === SHEET_ID)) return a;
+  return SpreadsheetApp.openById(SHEET_ID);
+}
 const TZ = 'Asia/Kolkata';
 const TABS = {
   Events: ['event_code', 'status', 'date', 'start_time', 'duration', 'title', 'type', 'format', 'mode', 'lead_artist', 'guru', 'dancers', 'orchestra', 'music', 'venue_name', 'venue_address', 'maps_link', 'entry', 'ticket_link', 'presented_by', 'sponsor', 'why_attend', 'invite_message', 'about', 'poster_link', 'photos_link', 'video_link', 'photo_check'],
   Private: ['event_code', 'online_join_link', 'contact_person', 'contact_phone', 'notes'],
   Responses: ['timestamp', 'event_code', 'event_title', 'kind', 'name', 'city', 'rating', 'message', 'show_public', 'approved', 'notes'],
   Enquiries: ['timestamp', 'enquiry_type', 'from_event_code', 'name', 'organisation', 'whatsapp', 'email', 'date_needed', 'message', 'status', 'notes'],
-  Settings: ['key', 'value', '', 'status', 'type', 'format', 'mode', 'music', 'entry', 'approved', 'enquiry_status']
+  Slots: ['slot_id', 'date', 'start_time', 'end_time', 'venue_name', 'venue_address', 'maps_link', 'slot_for', 'status', 'application_id', 'notes'],
+  Applications: ['timestamp', 'application_id', 'slot_id', 'slot_when', 'artist_name', 'format', 'dancers', 'guru', 'programme', 'music', 'whatsapp', 'email', 'city', 'video_link', 'message', 'status', 'event_code', 'reply_link', 'notes'],
+  Settings: ['key', 'value', '', 'status', 'type', 'format', 'mode', 'music', 'entry', 'approved', 'enquiry_status', 'slot_status', 'slot_for', 'application_status']
 };
 const LISTS = {
   status: ['Draft', 'Published', 'Cancelled'],
@@ -24,8 +30,12 @@ const LISTS = {
   music: ['Live', 'Recorded'],
   entry: ['Free', 'Free, register', 'Ticketed', 'By invitation'],
   approved: ['Yes', 'No'],
-  enquiry_status: ['New', 'Contacted', 'Won', 'Lost']
+  enquiry_status: ['New', 'Contacted', 'Won', 'Lost'],
+  slot_status: ['Open', 'Held', 'Booked', 'Closed'],
+  slot_for: ['Solo', 'Group', 'Solo or group'],
+  application_status: ['Pending', 'Approved', 'Rejected']
 };
+const SETTINGS_DEFAULTS = [['admin_email', ''], ['whatsapp_number', '91XXXXXXXXXX'], ['season_banner', 'Dance Season 2026–27 · November to January'], ['site_url', 'https://divyanjalidance.com'], ['artist_form', 'Open']];
 // Public fields the website may read. Everything else stays private.
 const PUBLIC_FIELDS = TABS.Events.filter((h) => h !== 'status' && h !== 'photo_check');
 
@@ -35,6 +45,7 @@ function onOpen() {
     .addItem('Set up the sheet (run once)', 'setup')
     .addItem('Check photo links', 'checkPhotos')
     .addItem('Fill missing event codes', 'fillCodes')
+    .addItem('Update season slots', 'syncSeason')
     .addSeparator()
     .addItem('Run website test', 'runTests')
     .addItem('Remove test rows', 'removeTests')
@@ -56,9 +67,8 @@ function setup() {
     p.setWarningOnly(true);
   });
   const st = ss.getSheetByName('Settings');
-  if (!st.getRange('A2').getValue()) {
-    st.getRange('A2:B5').setValues([['admin_email', ''], ['whatsapp_number', '91XXXXXXXXXX'], ['season_banner', 'Dance Season 2026–27 · November to January'], ['site_url', 'https://divyanjalidance.com']]);
-  }
+  const keys = st.getRange(2, 1, 25, 1).getValues().map((r) => r[0]);
+  SETTINGS_DEFAULTS.forEach((kv) => { if (keys.indexOf(kv[0]) < 0) { const r = keys.indexOf(''); st.getRange(r + 2, 1, 1, 2).setValues([kv]); keys[r] = kv[0]; } });
   Object.keys(LISTS).forEach((k) => {
     const col = TABS.Settings.indexOf(k) + 1;
     st.getRange(2, col, LISTS[k].length, 1).setValues(LISTS[k].map((v) => [v]));
@@ -66,7 +76,7 @@ function setup() {
 
   const ev = ss.getSheetByName('Events');
   const col = (h) => TABS.Events.indexOf(h) + 1;
-  ['Events', 'Responses', 'Enquiries'].forEach((n) => ss.getSheetByName(n).getRange(2, 1, ss.getSheetByName(n).getMaxRows() - 1, ss.getSheetByName(n).getMaxColumns()).clearDataValidations());
+  ['Events', 'Responses', 'Enquiries', 'Slots', 'Applications'].forEach((n) => ss.getSheetByName(n).getRange(2, 1, ss.getSheetByName(n).getMaxRows() - 1, ss.getSheetByName(n).getMaxColumns()).clearDataValidations());
   const rows = 1000;
   const list = (h, k) => ev.getRange(2, col(h), rows, 1).setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(LISTS[k], true).setAllowInvalid(false).build());
   ['status', 'type', 'format', 'mode', 'music'].forEach((h) => list(h, h));
@@ -77,6 +87,16 @@ function setup() {
   rsp.getRange(2, TABS.Responses.indexOf('approved') + 1, rows, 1).setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(LISTS.approved, true).build());
   const enq = ss.getSheetByName('Enquiries');
   enq.getRange(2, TABS.Enquiries.indexOf('status') + 1, rows, 1).setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(LISTS.enquiry_status, true).build());
+  const sl = ss.getSheetByName('Slots'), sc = (h) => TABS.Slots.indexOf(h) + 1;
+  sl.getRange(2, sc('status'), rows, 1).setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(LISTS.slot_status, true).setHelpText('Open: shown on the website. Held and Booked are set by the website and the Applications tab.').build());
+  sl.getRange(2, sc('slot_for'), rows, 1).setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(LISTS.slot_for, true).build());
+  sl.getRange(2, sc('date'), rows, 1).setNumberFormat('dd mmm yyyy');
+  sl.getRange(2, sc('start_time'), rows, 2).setNumberFormat('h:mm am/pm');
+  ss.getSheetByName('Applications').getRange(2, TABS.Applications.indexOf('status') + 1, rows, 1).setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(LISTS.application_status, true).setHelpText('Approved: books the slot and adds a Draft row to Events. Rejected: opens the slot again.').build());
+
+  // Runs on every edit of this sheet, even when the script lives in another file.
+  ScriptApp.getProjectTriggers().filter((t) => t.getHandlerFunction() === 'onSheetEdit').forEach((t) => ScriptApp.deleteTrigger(t));
+  ScriptApp.newTrigger('onSheetEdit').forSpreadsheet(ss.getId()).onEdit().create();
 
   // Red rows: duplicate event codes, and two events at the same date, time and venue.
   const L = (h) => columnLetter(col(h));
@@ -103,10 +123,12 @@ function setup() {
 }
 
 /* ---------- Event codes ---------- */
-function onEdit(e) {
+function onSheetEdit(e) {
   try {
     const sh = e.range.getSheet();
-    if (sh.getName() !== 'Events' || e.range.getRow() < 2) return;
+    if (e.range.getRow() < 2) return;
+    if (sh.getName() === 'Slots' || sh.getName() === 'Applications') { withLock(syncSeason); return; }
+    if (sh.getName() !== 'Events') return;
     CacheService.getScriptCache().remove('events');
     const head = TABS.Events, c0 = e.range.getColumn(), c1 = e.range.getLastColumn();
     const touches = (h) => { const c = head.indexOf(h) + 1; return c >= c0 && c <= c1; };
@@ -157,6 +179,7 @@ function checkPhotos() {
 function doGet(e) {
   const action = (e && e.parameter.action) || 'events';
   if (action === 'wishes') return json({ wishes: publicWishes(String(e.parameter.e || '')) });
+  if (action === 'slots') return json(withLock(() => { syncSeason(); return { open: setting('artist_form') !== 'Closed', slots: openSlots() }; }));
   const cache = CacheService.getScriptCache();
   const hit = cache.get('events');
   if (hit) return ContentService.createTextOutput(hit).setMimeType(ContentService.MimeType.JSON);
@@ -219,6 +242,8 @@ function doPost(e) {
       const title = (publishedEvents().find((x) => x.event_code === d.event_code) || {}).title || '';
       ss.getSheetByName('Responses').appendRow([now, clip(d.event_code, 60), title, clip(d.kind, 20), clip(d.name, 80), clip(d.city, 80), clip(d.rating, 2), clip(d.message, 2000), d.show_public === 'Yes' ? 'Yes' : 'No', '', '']);
       notify('New ' + clip(d.kind, 20) + ' for ' + (title || d.event_code), clip(d.name, 80) + ': ' + clip(d.message, 2000));
+    } else if (d.form === 'application') {
+      return json(apply(d, clip));
     } else if (d.form === 'enquiry') {
       if (!d.name || !d.whatsapp) return json({ ok: false, error: 'Name and WhatsApp are required' });
       ss.getSheetByName('Enquiries').appendRow([now, clip(d.enquiry_type, 60), clip(d.from_event_code, 60), clip(d.name, 80), clip(d.organisation, 120), "'" + clip(d.whatsapp, 20), clip(d.email, 120), clip(d.date_needed, 20), clip(d.message, 2000), 'New', '']);
@@ -237,6 +262,118 @@ function notify(subject, body) {
     const row = st.find((r) => r[0] === 'admin_email');
     if (row && row[1]) MailApp.sendEmail(String(row[1]), subject, body + '\n\nOpen the sheet: ' + book().getUrl());
   } catch (err) { /* email is optional */ }
+}
+
+/* ---------- Season artist slots ----------
+ * Team adds rows to Slots (status Open). Artists pick one on the website.
+ * The first request holds the slot, so two artists can never get the same one.
+ * In Applications set status to Approved (slot Booked, Draft row added to Events)
+ * or Rejected (slot Open again). */
+function rowsOf(name) {
+  const sh = book().getSheetByName(name);
+  const v = sh.getDataRange().getValues(); const h = v.shift().map(String);
+  return { sh, h, rows: v, col: (k) => h.indexOf(k) };
+}
+function slotTime(v) { return v instanceof Date ? Utilities.formatDate(v, TZ, 'HH:mm') : normalTime(String(v || '')); }
+function slotDate(v) { return v instanceof Date ? Utilities.formatDate(v, TZ, 'yyyy-MM-dd') : String(v || '').trim(); }
+function slotWhen(s) { return s.date + ' ' + s.start_time + (s.end_time ? '–' + s.end_time : '') + ' · ' + s.venue_name; }
+function slotObj(S, r) { const o = {}; S.h.forEach((k, i) => { o[k] = r[i]; }); o.date = slotDate(o.date); o.start_time = slotTime(o.start_time); o.end_time = slotTime(o.end_time); return o; }
+
+function openSlots() {
+  const S = rowsOf('Slots'), today = Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd');
+  return S.rows.map((r) => slotObj(S, r)).filter((s) => s.slot_id && s.status === 'Open' && s.date >= today)
+    .map((s) => ({ slot_id: s.slot_id, date: s.date, start_time: s.start_time, end_time: s.end_time, venue_name: String(s.venue_name), venue_address: String(s.venue_address), maps_link: String(s.maps_link), slot_for: String(s.slot_for || 'Solo or group') }))
+    .sort((a, b) => (a.date + a.start_time).localeCompare(b.date + b.start_time));
+}
+
+function apply(d, clip) {
+  if (setting('artist_form') === 'Closed') return { ok: false, error: 'Applications for this season are closed.' };
+  if (!d.artist_name || !d.whatsapp || !d.slot_id) return { ok: false, error: 'Name, WhatsApp and a slot are required' };
+  syncSeason();
+  const S = rowsOf('Slots');
+  const i = S.rows.findIndex((r) => String(r[S.col('slot_id')]) === String(d.slot_id));
+  if (i < 0) return { ok: false, error: 'This slot no longer exists. Please pick another.', taken: true };
+  const s = slotObj(S, S.rows[i]);
+  if (s.status !== 'Open') return { ok: false, error: 'Sorry, someone just took this slot. Please pick another.', taken: true };
+  const A = rowsOf('Applications');
+  const wa = String(d.whatsapp).replace(/\D/g, '').slice(-10);
+  if (wa.length < 10) return { ok: false, error: 'Please add a full WhatsApp number' };
+  const mine = A.rows.filter((r) => String(r[A.col('whatsapp')]).replace(/\D/g, '').slice(-10) === wa && r[A.col('status')] === 'Pending');
+  if (mine.length >= 2) return { ok: false, error: 'You already have two requests waiting. We will reply on WhatsApp soon.' };
+  const id = 'A-' + Utilities.formatDate(new Date(), TZ, 'yyMMdd-HHmmss') + '-' + Math.floor(Math.random() * 90 + 10);
+  const row = { timestamp: new Date(), application_id: id, slot_id: s.slot_id, slot_when: slotWhen(s), artist_name: clip(d.artist_name, 80), format: clip(d.format, 20), dancers: clip(d.dancers, 300), guru: clip(d.guru, 120), programme: clip(d.programme, 1500), music: clip(d.music, 20), whatsapp: "'" + clip(d.whatsapp, 20), email: clip(d.email, 120), city: clip(d.city, 80), video_link: clip(d.video_link, 300), message: clip(d.message, 1500), status: 'Pending' };
+  A.sh.appendRow(TABS.Applications.map((h) => row[h] || ''));
+  S.sh.getRange(i + 2, S.col('status') + 1, 1, 2).setValues([['Held', id]]);
+  notify('Season slot request: ' + row.artist_name, row.slot_when + '\n' + row.artist_name + ' · ' + clip(d.whatsapp, 20) + '\n' + row.programme + '\n\nApprove or reject in the Applications tab.');
+  return { ok: true, application_id: id, slot_when: row.slot_when };
+}
+
+// Keeps Slots, Applications and Events in step. Safe to run any time.
+function syncSeason() {
+  const S = rowsOf('Slots'), A = rowsOf('Applications');
+  // Slot ids for new rows
+  const used = new Set(S.rows.map((r) => String(r[0])).filter(Boolean));
+  S.rows.forEach((r, i) => {
+    if (r[0] || !(r[S.col('date')] instanceof Date) || !r[S.col('start_time')]) return;
+    let id = 'S-' + Utilities.formatDate(r[S.col('date')], TZ, 'yyMMdd') + '-' + slotTime(r[S.col('start_time')]).replace(':', ''), k = 2;
+    while (used.has(id)) id = id.replace(/-\d+$/, '') + '-' + k++;
+    used.add(id); r[0] = id; S.sh.getRange(i + 2, 1).setValue(id);
+    if (!r[S.col('status')]) { r[S.col('status')] = 'Open'; S.sh.getRange(i + 2, S.col('status') + 1).setValue('Open'); }
+  });
+  const slotRow = (id) => S.rows.findIndex((r) => String(r[0]) === String(id));
+  const setSlot = (i, status, app) => {
+    if (S.rows[i][S.col('status')] === status && String(S.rows[i][S.col('application_id')]) === app) return;
+    S.rows[i][S.col('status')] = status; S.rows[i][S.col('application_id')] = app;
+    S.sh.getRange(i + 2, S.col('status') + 1, 1, 2).setValues([[status, app]]);
+  };
+  A.rows.forEach((r, j) => {
+    const id = String(r[A.col('application_id')]), st = String(r[A.col('status')]), i = slotRow(r[A.col('slot_id')]);
+    if (!id || i < 0) return;
+    const holder = String(S.rows[i][S.col('application_id')]);
+    const cell = (k, v) => A.sh.getRange(j + 2, A.col(k) + 1).setValue(v);
+    if (st === 'Rejected') {
+      if (holder === id) setSlot(i, 'Open', '');
+      if (!r[A.col('reply_link')]) cell('reply_link', waReply(r, A, 'Thank you for your interest in the Divyanjali Season. This slot is not available for you this time. We hope to see you on our stage soon.'));
+    } else if (st === 'Approved') {
+      if (holder && holder !== id) { cell('notes', 'Slot is held by ' + holder + '. Reject that one first.'); return; }
+      setSlot(i, 'Booked', id);
+      if (!r[A.col('event_code')]) {
+        const s = slotObj(S, S.rows[i]);
+        const clash = publishedOrDraftClash(s);
+        if (clash) { cell('notes', 'Clash with event ' + clash + ' at the same date, time and venue. Not added to Events.'); return; }
+        cell('event_code', addDraftEvent(s, r, A));
+        cell('reply_link', waReply(r, A, 'Congratulations! Your Divyanjali Season slot is confirmed: ' + s.date + ' ' + s.start_time + ', ' + s.venue_name + '. We will share your event link soon.'));
+      }
+    } else if (st === 'Pending' && !holder) {
+      setSlot(i, 'Held', id);
+    }
+  });
+}
+function publishedOrDraftClash(s) {
+  const E = rowsOf('Events');
+  const r = E.rows.find((x) => x[E.col('status')] !== 'Cancelled' && slotDate(x[E.col('date')]) === s.date && slotTime(x[E.col('start_time')]) === s.start_time && String(x[E.col('venue_name')]).trim().toLowerCase() === String(s.venue_name).trim().toLowerCase());
+  return r ? String(r[0] || r[E.col('title')]) : '';
+}
+function addDraftEvent(s, r, A) {
+  const ev = book().getSheetByName('Events');
+  const g = (k) => String(r[A.col(k)] || '');
+  const row = { status: 'Draft', date: new Date(s.date + 'T00:00:00+05:30'), start_time: s.start_time, duration: '', title: g('artist_name') + ' · Divyanjali Season', type: 'Performance', format: g('format') || 'Solo', mode: 'In person', lead_artist: g('artist_name'), guru: g('guru'), dancers: g('dancers'), music: g('music') || 'Live', venue_name: s.venue_name, venue_address: s.venue_address, maps_link: s.maps_link, entry: 'Free', presented_by: 'Divyanjali', about: g('programme') };
+  ev.appendRow(TABS.Events.map((h) => row[h] || ''));
+  fillCodes();
+  CacheService.getScriptCache().remove('events');
+  return String(ev.getRange(ev.getLastRow(), 1).getValue());
+}
+function waReply(r, A, text) {
+  const n = String(r[A.col('whatsapp')]).replace(/\D/g, '');
+  return n ? 'https://wa.me/' + (n.length === 10 ? '91' + n : n) + '?text=' + encodeURIComponent('Dear ' + r[A.col('artist_name')] + ', ' + text) : '';
+}
+function setting(key) {
+  const row = book().getSheetByName('Settings').getRange('A2:B30').getValues().find((r) => r[0] === key);
+  return row ? String(row[1]).trim() : '';
+}
+function withLock(fn) {
+  const lock = LockService.getScriptLock(); lock.waitLock(20000);
+  try { return fn(); } finally { lock.releaseLock(); }
 }
 
 /* ---------- Utilities ---------- */
@@ -292,6 +429,23 @@ function runTests() {
   doPost({ postData: { contents: JSON.stringify({ form: 'response', event_code: code, name: 'Bot', message: 'spam', website: 'http://spam' }) } });
   ok('Spam trap blocks bots', rs.getLastRow() === before);
 
+  // 6. Season artist slots
+  const sl = ss.getSheetByName('Slots');
+  const sd = new Date(d); sd.setDate(sd.getDate() + 1);
+  sl.appendRow(TABS.Slots.map((h) => ({ date: sd, start_time: '17:00', end_time: '17:45', venue_name: 'Test Sabha', venue_address: 'Chennai', slot_for: 'Solo or group' })[h] || ''));
+  syncSeason();
+  const slot = openSlots().find((x) => x.venue_name === 'Test Sabha');
+  ok('New slot gets an id and shows on the website', !!slot, slot ? slot.slot_id : 'missing');
+  const app = (n) => JSON.parse(doPost({ postData: { contents: JSON.stringify({ form: 'application', slot_id: slot && slot.slot_id, artist_name: TEST_TITLE, format: 'Solo', guru: 'Test Guru', programme: 'Test programme from Run website test', music: 'Live', whatsapp: '+91 9000000' + n }) } }).getContent());
+  const a1 = app('001'), a2 = app('002');
+  ok('Artist request holds the slot', a1.ok === true && !openSlots().some((x) => x.venue_name === 'Test Sabha'), a1.error || '');
+  ok('Second artist cannot take the same slot', a2.ok === false && a2.taken === true);
+  const ap = ss.getSheetByName('Applications');
+  ap.getRange(ap.getLastRow(), TABS.Applications.indexOf('status') + 1).setValue('Approved');
+  syncSeason();
+  const code2 = String(ap.getRange(ap.getLastRow(), TABS.Applications.indexOf('event_code') + 1).getValue());
+  ok('Approved request adds a Draft event', /^DV-/.test(code2), code2 || 'none');
+
   const fails = out.filter((l) => l.indexOf('FAIL') === 0).length;
   Logger.log(out.join('\n'));
   CacheService.getScriptCache().remove('events');
@@ -300,11 +454,11 @@ function runTests() {
 }
 function removeTests() {
   const ss = book();
-  [['Events', TABS.Events.indexOf('title')], ['Responses', TABS.Responses.indexOf('event_title')], ['Enquiries', TABS.Enquiries.indexOf('message')]].forEach(([n, c]) => {
-    const sh = ss.getSheetByName(n); const v = sh.getDataRange().getValues();
+  [['Events', TABS.Events.indexOf('title')], ['Responses', TABS.Responses.indexOf('event_title')], ['Enquiries', TABS.Enquiries.indexOf('message')], ['Slots', TABS.Slots.indexOf('venue_name')], ['Applications', TABS.Applications.indexOf('artist_name')]].forEach(([n, c]) => {
+    const sh = ss.getSheetByName(n); if (!sh) return; const v = sh.getDataRange().getValues();
     for (let r = v.length - 1; r >= 1; r--) {
       const cell = String(v[r][c]);
-      if (cell === TEST_TITLE || cell.indexOf('Run website test') >= 0 || (n === 'Responses' && v[r][4] === 'Test Visitor')) sh.deleteRow(r + 1);
+      if (cell.indexOf(TEST_TITLE) === 0 || cell === 'Test Sabha' || cell.indexOf('Run website test') >= 0 || (n === 'Responses' && v[r][4] === 'Test Visitor')) sh.deleteRow(r + 1);
     }
   });
   CacheService.getScriptCache().remove('events');

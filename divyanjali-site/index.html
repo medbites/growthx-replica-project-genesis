@@ -168,6 +168,15 @@ textarea{min-height:110px;resize:vertical}
 .wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:16px;margin-top:24px}
 .wall blockquote{margin:0;border:1px solid var(--line);border-radius:6px;padding:16px;background:var(--bg);display:flex;flex-direction:column;gap:8px}
 .cta{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px}
+.steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:10px;color:var(--muted)}
+.slots{display:flex;flex-direction:column;gap:14px;margin-top:8px}
+.slots h4{margin:0 0 6px;font-size:.8rem;font-weight:600;color:var(--deep)}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr));gap:8px}
+label.slot{position:relative;display:flex;flex-direction:column;gap:2px;border:1px solid var(--line);border-radius:6px;padding:10px 12px;cursor:pointer;font-size:.85rem;background:var(--bg)}
+label.slot input{position:absolute;opacity:0;width:1px;height:1px;min-height:0}
+label.slot:has(input:checked){border-color:var(--deep);background:var(--tint);box-shadow:inset 0 0 0 1px var(--deep)}
+label.slot:has(input:focus-visible){outline:2px solid var(--deep);outline-offset:2px}
+label.slot small{color:var(--muted)}
 .soon{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:16px}
 .soon div{border:1px solid var(--line);border-radius:6px;padding:20px;background:var(--bg);display:flex;flex-direction:column;gap:8px}
 
@@ -189,6 +198,7 @@ footer .logo b,footer .logo{color:#FFFFFF}
       <a class="hide-s" href="#upcoming">Upcoming</a>
       <a class="hide-s" href="#calendar">Calendar</a>
       <a class="hide-s" href="#past">Past events</a>
+      <a class="hide-s" href="#perform">Perform</a>
       <a class="btn" href="#enquire">Book &amp; enquire</a>
     </nav>
   </div>
@@ -240,7 +250,48 @@ footer .logo b,footer .logo{color:#FFFFFF}
     </div>
   </section>
 
-  <section id="more">
+  <section id="perform">
+    <div class="wrap two">
+      <div class="stack">
+        <p class="eyebrow">For dancers</p>
+        <h2>Perform in the Season</h2>
+        <p class="muted">Solo and group slots on the Divyanjali stage this season.</p>
+        <ol class="steps">
+          <li>Pick an open slot.</li>
+          <li>Tell us about you and your programme. The slot is held for you while we review, so no one else can take it.</li>
+          <li>We confirm on WhatsApp within 3 days. Once confirmed, your performance gets its own event page to share.</li>
+        </ol>
+      </div>
+      <form class="f box" id="appForm" novalidate>
+        <div><p class="l" id="slotLbl">1. Choose a slot</p><div id="slotList" class="slots" role="radiogroup" aria-labelledby="slotLbl"><p class="muted">Loading open slots…</p></div></div>
+        <p class="l" style="margin-top:6px">2. About you</p>
+        <div class="fr">
+          <label class="l" for="a_name">Artist or group name<input id="a_name" name="artist_name" required autocomplete="name"></label>
+          <label class="l" for="a_fmt">Solo or group<select id="a_fmt" name="format"><option>Solo</option><option>Group</option></select></label>
+        </div>
+        <div class="fr">
+          <label class="l" for="a_guru">Guru<input id="a_guru" name="guru"></label>
+          <label class="l" for="a_city">City<input id="a_city" name="city" autocomplete="address-level2"></label>
+        </div>
+        <label class="l" for="a_dancers" id="a_dancersL" hidden>Dancers' names<input id="a_dancers" name="dancers" placeholder="Separate names with commas"></label>
+        <label class="l" for="a_prog">Programme (items you plan to present)<textarea id="a_prog" name="programme" placeholder="Pushpanjali, Varnam, Padam, Thillana"></textarea></label>
+        <div class="fr">
+          <label class="l" for="a_music">Music<select id="a_music" name="music"><option>Live</option><option>Recorded</option></select></label>
+          <label class="l" for="a_video">A video of your dance (link)<input id="a_video" name="video_link" type="url" placeholder="YouTube or Drive link"></label>
+        </div>
+        <div class="fr">
+          <label class="l" for="a_wa">WhatsApp number<input id="a_wa" name="whatsapp" required inputmode="tel" autocomplete="tel" placeholder="+91"></label>
+          <label class="l" for="a_email">Email (optional)<input id="a_email" name="email" type="email" autocomplete="email"></label>
+        </div>
+        <label class="l" for="a_msg">Anything else (optional)<textarea id="a_msg" name="message" style="min-height:80px"></textarea></label>
+        <input class="hp" tabindex="-1" autocomplete="off" name="website" aria-hidden="true">
+        <div class="row"><button class="btn" type="submit">Request this slot</button></div>
+        <div id="a_msgbox" role="status"></div>
+      </form>
+    </div>
+  </section>
+
+  <section class="alt" id="more">
     <div class="wrap">
       <div class="sec-head"><div><p class="eyebrow">The full site</p><h2>Coming soon</h2></div></div>
       <div class="soon">
@@ -252,7 +303,7 @@ footer .logo b,footer .logo{color:#FFFFFF}
     </div>
   </section>
 
-  <section class="alt" id="enquire">
+  <section id="enquire">
     <div class="wrap two">
       <div class="stack">
         <p class="eyebrow">Book &amp; enquire</p>
@@ -331,6 +382,12 @@ const SAMPLE = [
   {event_code:'DV-261129-KALARPANAM',date:'2026-11-29',start_time:'16:00',duration:'90 min',title:'Kalarpanam Showcase',type:'Festival',format:'Group',mode:'In person',lead_artist:'Young artists',dancers:'Student name, Student name, Student name, Student name, Student name, Student name',music:'Recorded',venue_name:'Sabha name',venue_address:'Area, Chennai',maps_link:'https://maps.google.com/?q=Chennai',entry:'Free',presented_by:'Divyanjali',why_attend:'Young artists from the Kalarpanam platform.',invite_message:'Encourage the next generation with your presence.',about:'Sample event.'},
   {event_code:'DV-261129-ANDAL',date:'2026-11-29',start_time:'18:00',duration:'2 hrs',title:'Andal Vaibhavam',type:'Festival',format:'Group',mode:'In person',lead_artist:'Divyanjali ensemble',guru:'Dr. S. Divyasena',dancers:'Dancer name, Dancer name, Dancer name, Dancer name, Dancer name, Dancer name, Dancer name, Dancer name',orchestra:'Nattuvangam: Dr. S. Divyasena; Mridangam: Sri B.P. Haribabu; Vocal: Vocalist name; Violin: Violinist name; Flute: Flautist name',music:'Live',venue_name:'Sabha name, Season 2026–27',venue_address:'Chennai',maps_link:'https://maps.google.com/?q=Chennai',entry:'Ticketed',ticket_link:'#',presented_by:'Divyanjali',sponsor:'Sponsor name',why_attend:'The life of Andal, staged on 13 stages in a single year.',invite_message:'We invite you to an evening with Andal.',about:'Choreography by Dr. S. Divyasena. Music by Sri T.H. Thiyagarajan.'}
 ];
+const SAMPLE_SLOTS = [
+  {slot_id:'S-261114-1700',date:'2026-11-14',start_time:'17:00',end_time:'17:45',venue_name:'Sabha name',slot_for:'Solo'},
+  {slot_id:'S-261114-1800',date:'2026-11-14',start_time:'18:00',end_time:'19:00',venue_name:'Sabha name',slot_for:'Solo or group'},
+  {slot_id:'S-261121-1730',date:'2026-11-21',start_time:'17:30',end_time:'18:15',venue_name:'Divyanjali, CIT Nagar',slot_for:'Solo'},
+  {slot_id:'S-261205-1800',date:'2026-12-05',start_time:'18:00',end_time:'19:00',venue_name:'Sabha name',slot_for:'Group'}
+];
 const SAMPLE_WISHES = [{kind:'Wish',name:'Rasika',city:'Chennai',message:'Wishing the dancer a wonderful evening.'},{kind:'Feedback',name:'Parent',city:'Bengaluru',message:'Beautifully organised, the live orchestra was a joy.'}];
 
 /* ===== Helpers ===== */
@@ -338,7 +395,7 @@ const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-const state = { events: [], demo: false, month: null, filter: 'All', prefill: null, arc: { year: 'All years', type: 'All types', q: '' } };
+const state = { events: [], demo: false, month: null, filter: 'All', prefill: null, arc: { year: 'All years', type: 'All types', q: '' }, slotsDemo: false, takenDemo: [] };
 
 function store(key, val) { try { if (val === undefined) return JSON.parse(localStorage.getItem(key) || 'null'); localStorage.setItem(key, JSON.stringify(val)); } catch (e) { return null; } }
 function durMin(s) { s = String(s || '').toLowerCase(); const h = s.match(/(\d+(?:\.\d+)?)\s*h/); const m = s.match(/(\d+)\s*m/); const t = (h ? parseFloat(h[1]) * 60 : 0) + (m ? parseInt(m[1], 10) : 0); return t || 120; }
@@ -612,6 +669,60 @@ function applyPrefill() {
   $('#q_note').textContent = 'From event ' + state.prefill.from;
   state.prefill = null;
 }
+/* ===== Season artist slots ===== */
+async function loadSlots() {
+  const box = $('#slotList');
+  let res = null;
+  if (CONFIG.SCRIPT_URL) {
+    try {
+      const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), 10000);
+      const r = await fetch(CONFIG.SCRIPT_URL + '?action=slots', { signal: ctrl.signal });
+      clearTimeout(t); res = await r.json();
+    } catch (err) { res = null; }
+  }
+  state.slotsDemo = !res || !Array.isArray(res.slots);
+  if (state.slotsDemo) res = { open: true, slots: SAMPLE_SLOTS.filter((s) => !state.takenDemo.includes(s.slot_id)) };
+  if (!res.open) { box.innerHTML = '<p class="muted">Applications for this season are closed. Ask us about the next one on WhatsApp.</p>'; return; }
+  if (!res.slots.length) { box.innerHTML = '<p class="muted">All slots are taken for now. Send us an enquiry below to join the waiting list.</p>'; return; }
+  const days = {};
+  res.slots.forEach((s) => { (days[s.date] = days[s.date] || []).push(s); });
+  box.innerHTML = Object.keys(days).map((d) => '<div><h4>' + fmtLong(new Date(d + 'T12:00:00+05:30')) + '</h4><div class="sgrid">' + days[d].map((s) => {
+    const at = (t) => fmtTime(new Date(s.date + 'T' + t + ':00+05:30'));
+    return '<label class="slot"><input type="radio" name="slot_id" value="' + esc(s.slot_id) + '"><b>' + at(s.start_time) + (s.end_time ? ' – ' + at(s.end_time) : '') + '</b><small>' + esc(s.venue_name) + '</small><small>' + esc(s.slot_for || 'Solo or group') + '</small></label>';
+  }).join('') + '</div></div>').join('');
+}
+function watchSlots() {
+  const el = $('#perform');
+  if (!('IntersectionObserver' in window)) { loadSlots(); return; }
+  const io = new IntersectionObserver((en) => { if (en.some((x) => x.isIntersecting)) { io.disconnect(); loadSlots(); } }, { rootMargin: '400px' });
+  io.observe(el);
+}
+$('#a_fmt').addEventListener('change', (ev) => { $('#a_dancersL').hidden = ev.target.value !== 'Group'; });
+$('#appForm').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const f = ev.target; const box = $('#a_msgbox');
+  const slot = f.querySelector('input[name="slot_id"]:checked');
+  const err = (t) => { box.className = 'msg err'; box.textContent = t; };
+  if (!slot) return err('Please choose a slot first.');
+  if (!f.elements['artist_name'].value.trim() || f.elements['whatsapp'].value.replace(/\D/g, '').length < 10) return err('Please add your name and a full WhatsApp number.');
+  const btn = f.querySelector('button[type="submit"]'); btn.disabled = true;
+  box.className = 'msg'; box.textContent = 'Sending…';
+  const data = { form: 'application' }; new FormData(f).forEach((v, k) => { data[k] = String(v).trim(); });
+  const when = slot.closest('.slot').querySelector('b').textContent + ', ' + slot.closest('.sgrid').previousElementSibling.textContent;
+  try {
+    const res = state.slotsDemo ? { ok: true, demo: true } : await post(data);
+    if (!res.ok) {
+      if (res.taken) loadSlots();
+      return err(res.error || 'Could not send. Please try again.');
+    }
+    if (state.slotsDemo) state.takenDemo.push(data.slot_id);
+    f.reset(); $('#a_dancersL').hidden = true; box.className = 'msg ok';
+    box.textContent = (res.demo ? 'Demo: on the live site this saves to the Applications tab. ' : '') + 'Thank you. ' + when + ' is held for you. We will confirm on WhatsApp within 3 days.';
+    loadSlots();
+  } catch (e) { err('Could not send. Please try again, or message us on WhatsApp.'); }
+  finally { btn.disabled = false; }
+});
+
 $('#enqForm').addEventListener('submit', async (ev) => {
   ev.preventDefault();
   const f = ev.target; const box = $('#q_msgbox');
@@ -683,6 +794,7 @@ $('#dlg').addEventListener('click', (ev) => { if (ev.target === $('#dlg')) $('#d
   state.events = raw.filter((e) => e && e.event_code && e.date).map(normalize).sort((a, b) => a.start - b.start);
   $('#demo').hidden = !state.demo;
   route();
+  watchSlots();
 })();
 </script>
 </body>
