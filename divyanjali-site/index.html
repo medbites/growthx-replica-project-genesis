@@ -580,7 +580,7 @@ function shareLinks(e) {
 }
 async function quickShare(btn) {
   const e = state.events.find((x) => x.event_code === btn.dataset.share); if (!e) return;
-  if (navigator.share) { try { await navigator.share({ title: e.title, text: shareText(e), url: shareUrl(e.event_code) }); return; } catch (err) { if (err && err.name === 'AbortError') return; } }
+  if (navigator.share) { try { await navigator.share({ title: e.title, text: shareText(e).split('\n')[0], url: shareUrl(e.event_code) }); return; } catch (err) { if (err && err.name === 'AbortError') return; } }
   const p = $('#qShare'); p.hidden = !p.hidden; btn.setAttribute('aria-expanded', String(!p.hidden));
 }
 async function copyLink(btn) {
@@ -659,7 +659,7 @@ function renderEvent(code) {
   const ics = $('#icsBtn'); if (ics) ics.addEventListener('click', () => downloadIcs(e));
   $('#wishJump').addEventListener('click', (ev) => { ev.preventDefault(); $('#wish').scrollIntoView(); $('#w_name').focus({ preventScroll: true }); });
   $('#shareBtn').addEventListener('click', async () => {
-    if (navigator.share) { try { await navigator.share({ title: e.title, text: shareText, url }); return; } catch (err) { if (err && err.name === 'AbortError') return; } }
+    if (navigator.share) { try { await navigator.share({ title: e.title, text: shareText.split('\n')[0], url }); return; } catch (err) { if (err && err.name === 'AbortError') return; } }
     const p = $('#sharePanel'); p.hidden = !p.hidden; $('#shareBtn').setAttribute('aria-expanded', String(!p.hidden));
   });
   $('#copyBtn').addEventListener('click', async () => {
