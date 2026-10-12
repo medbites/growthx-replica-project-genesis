@@ -6,7 +6,7 @@ export default async function handler(req) {
   const url = new URL(req.url);
   const code = url.searchParams.get('code');
   const origin = 'https://' + (req.headers.get('x-forwarded-host') || url.host);
-  const [page, events] = await Promise.all([fetch(new URL('/index.html', url.origin)).then((r) => r.text()), code ? getEvents() : []]);
+  const [page, events] = await Promise.all([fetch(new URL('/app.html', url.origin)).then((r) => r.text()), code ? getEvents() : []]);
   const headers = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, s-maxage=120, max-age=60' };
   const e = code && findEvent(events, code);
   const card = e

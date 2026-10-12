@@ -1,6 +1,6 @@
 # Divyanjali Events · Phase 0
 
-One fast page (`index.html`, about 55 KB, no framework) with:
+One fast page (`app.html`, about 55 KB, no framework) with:
 
 - Home: next event, upcoming events, month calendar with quick view, past events (with a full archive), season artist slot requests, "coming soon" cards, enquiry form
 - A shareable page for every event: `divyanjalidance.com/e/EVENT-CODE`
@@ -27,7 +27,7 @@ Until the Google Sheet is connected, the page shows demo events with a yellow "D
 
 4. In **Settings**, put the admin email in `admin_email` to get an email for every new wish or enquiry.
 5. **Deploy > New deployment > Web app**. Execute as **Me**, access **Anyone**. Copy the URL ending in `/exec`.
-6. Open `index.html`, find `CONFIG` near the bottom, and paste that URL into `SCRIPT_URL`. Also set `WHATSAPP`, `ADDRESS` and the social links.
+6. Open `app.html`, find `CONFIG` near the bottom, and paste that URL into `SCRIPT_URL`. Also set `WHATSAPP`, `ADDRESS` and the social links.
 
 Changing the script later: **Deploy > Manage deployments > Edit > New version**. Do not create a new deployment, or the URL changes and the site stops saving forms.
 
@@ -78,6 +78,6 @@ Dancers request a performance slot from the **Perform in the Season** section of
 
 ## Files
 
-- `index.html`: the whole site (HTML, CSS, JS in one file)
+- `app.html`: the whole site (HTML, CSS, JS in one file)
 - `apps-script/Code.gs`: the Google Sheet backend
 - `_redirects`: pretty event links on Cloudflare Pages

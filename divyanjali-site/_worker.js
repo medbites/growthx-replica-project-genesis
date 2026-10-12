@@ -86,7 +86,7 @@ export default {
     // Event links: serve the page with event-specific preview tags.
     const ev = url.pathname.match(/^\/e\/([\w-]+)\/?$/);
     if (ev) {
-      const page = await env.ASSETS.fetch(new URL('/index.html', url.origin));
+      const page = await env.ASSETS.fetch(new URL('/app.html', url.origin));
       const e = (await getEvents()).find((x) => x.event_code.toUpperCase() === ev[1].toUpperCase());
       if (!e) return page;
       const title = e.title + ' · ' + SITE_NAME;
@@ -107,6 +107,7 @@ export default {
         .transform(new Response(page.body, { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=120' } }));
     }
 
+    if (url.pathname === '/') return env.ASSETS.fetch(new URL('/app.html', url.origin));
     return env.ASSETS.fetch(request);
   }
 };
