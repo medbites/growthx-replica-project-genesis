@@ -1,5 +1,5 @@
 // Shared by the Vercel functions. Same logic as _worker.js (Cloudflare).
-export const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1jf4-uZtCLtY4Im3zvBlnm5gMTmncxx-pIG14BjkDIAmzH8_J1lWOu5ThyC-vf4yt/exec';
+export const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwlZ0KujTvaUagVM4TVpEUeVyp2XH2svG3bRkh-k7ipESLJchbw4Bj6afAUSl-JWfWE/exec';
 export const SITE_NAME = 'Divyanjali';
 
 export async function getEvents() {

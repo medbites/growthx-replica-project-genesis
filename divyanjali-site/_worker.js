@@ -2,7 +2,7 @@
 // (WhatsApp, Instagram, Facebook, LinkedIn) with the event's poster, title and date.
 // Everything else is served as the normal static site.
 
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1jf4-uZtCLtY4Im3zvBlnm5gMTmncxx-pIG14BjkDIAmzH8_J1lWOu5ThyC-vf4yt/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwlZ0KujTvaUagVM4TVpEUeVyp2XH2svG3bRkh-k7ipESLJchbw4Bj6afAUSl-JWfWE/exec';
 const SITE_NAME = 'Divyanjali';
 
 async function getEvents() {
