@@ -43,6 +43,7 @@ function setup() {
   Object.keys(TABS).forEach((name) => {
     const sh = ss.getSheetByName(name) || ss.insertSheet(name);
     const head = TABS[name];
+    ensureSize(sh, name === 'Settings' ? 30 : 1001, head.length);
     sh.getRange(1, 1, 1, head.length).setValues([head]).setFontWeight('bold').setBackground('#FFF3EA');
     sh.setFrozenRows(1);
     const p = sh.getRange(1, 1, 1, head.length).protect().setDescription('Headings: do not edit');
@@ -227,5 +228,10 @@ function notify(subject, body) {
 }
 
 /* ---------- Utilities ---------- */
+// Sheets uploaded from Excel can be small; grow them so validation ranges fit.
+function ensureSize(sh, rows, cols) {
+  if (sh.getMaxRows() < rows) sh.insertRowsAfter(sh.getMaxRows(), rows - sh.getMaxRows());
+  if (sh.getMaxColumns() < cols) sh.insertColumnsAfter(sh.getMaxColumns(), cols - sh.getMaxColumns());
+}
 function json(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
 function columnLetter(n) { let s = ''; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; }
