@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/e/:code", "destination": "/api/event?code=:code" },
+    { "source": "/img/:code", "destination": "/api/img?code=:code" },
+    { "source": "/calendar.ics", "destination": "/api/calendar" }
+  ]
+}

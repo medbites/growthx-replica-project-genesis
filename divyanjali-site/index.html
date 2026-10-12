@@ -362,7 +362,7 @@ footer .logo b,footer .logo{color:#FFFFFF}
 /* ===== Settings: change these four lines when going live ===== */
 const CONFIG = {
   SCRIPT_URL: 'https://script.google.com/macros/s/AKfycby1jf4-uZtCLtY4Im3zvBlnm5gMTmncxx-pIG14BjkDIAmzH8_J1lWOu5ThyC-vf4yt/exec',                                  // Apps Script web app URL (ends with /exec). Empty = demo data.
-  SITE_URL: 'https://divyanjalidance.com',         // used in share links
+  SITE_URL: /^https?:/.test(location.protocol) ? location.origin : 'https://divyanjalidance.com', // share links use the address the site is open on
   PRETTY_LINKS: true,                              // true: /e/CODE (Cloudflare Pages). false: /?e=CODE (GitHub Pages)
   WHATSAPP: '919000000000',                        // country code + number, digits only
   SEASON: 'Dance Season 2026–27 · November to January',
