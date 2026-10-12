@@ -223,6 +223,11 @@ footer .logo b,footer .logo{color:#FFFFFF}
       </div>
       <div class="grid" id="grid"></div>
       <div class="agenda" id="agenda"></div>
+      <div class="box" style="margin-top:20px">
+        <div class="cta"><div class="stack" style="gap:4px"><h3>Follow the Season on your phone</h3><p class="muted">Every Divyanjali event in your own calendar. New events appear by themselves.</p></div>
+        <div class="row"><a class="btn" id="subGoogle" href="#" target="_blank" rel="noopener">Google Calendar</a><a class="btn-o" id="subApple" href="#">iPhone / Outlook</a><button class="btn-o" type="button" id="subCopy">Copy calendar link</button></div></div>
+        <p class="muted">Calendar link: <span id="subUrl" style="user-select:all"></span></p>
+      </div>
     </div>
   </section>
 
@@ -622,6 +627,11 @@ $('#dlg').addEventListener('click', (ev) => { if (ev.target === $('#dlg')) $('#d
   $('#fAddr').textContent = CONFIG.ADDRESS;
   $('#fWa').textContent = 'WhatsApp +' + CONFIG.WHATSAPP;
   $('#waFloat').href = waLink('Hello Divyanjali');
+  const feed = CONFIG.SITE_URL + '/calendar.ics', webcal = feed.replace(/^https?:/, 'webcal:');
+  $('#subUrl').textContent = feed;
+  $('#subGoogle').href = 'https://calendar.google.com/calendar/r?cid=' + encodeURIComponent(webcal);
+  $('#subApple').href = webcal;
+  $('#subCopy').addEventListener('click', async () => { try { await navigator.clipboard.writeText(feed); $('#subCopy').textContent = 'Copied'; } catch (err) { $('#subCopy').textContent = 'Select the link below'; } });
   $('#fIg').href = CONFIG.INSTAGRAM; $('#fYt').href = CONFIG.YOUTUBE; $('#fFb').href = CONFIG.FACEBOOK;
   const raw = await loadEvents();
   state.events = raw.filter((e) => e && e.event_code && e.date).map(normalize).sort((a, b) => a.start - b.start);

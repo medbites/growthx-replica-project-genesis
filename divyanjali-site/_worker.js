@@ -42,9 +42,35 @@ class AddToHead {
 }
 const esc = (s) => String(s || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
+// Calendar feed: every published event, for "subscribe" in Google, Apple and Outlook calendars.
+function durMin(s) { s = String(s || '').toLowerCase(); const h = s.match(/(\d+(?:\.\d+)?)\s*h/); const m = s.match(/(\d+)\s*m/); const t = (h ? parseFloat(h[1]) * 60 : 0) + (m ? parseInt(m[1], 10) : 0); return t || 120; }
+function stamp(d) { return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''); }
+function icsText(s) { return String(s || '').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/([,;])/g, '\\$1'); }
+function fold(line) { const out = []; while (line.length > 74) { out.push(line.slice(0, 74)); line = ' ' + line.slice(74); } out.push(line); return out.join('\r\n'); }
+function icsFeed(events, origin) {
+  const now = stamp(new Date());
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Divyanjali//Events//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:Divyanjali Events', 'X-WR-TIMEZONE:Asia/Kolkata', 'REFRESH-INTERVAL;VALUE=DURATION:PT6H', 'X-PUBLISHED-TTL:PT6H'];
+  events.forEach((e) => {
+    const start = new Date(e.date + 'T' + (e.start_time || '00:00') + ':00+05:30');
+    if (isNaN(start)) return;
+    const end = new Date(start.getTime() + durMin(e.duration) * 60000);
+    const where = e.mode === 'Online' ? 'Online' : [e.venue_name, e.venue_address].filter(Boolean).join(', ');
+    const link = origin + '/e/' + e.event_code;
+    lines.push('BEGIN:VEVENT', 'UID:' + e.event_code + '@divyanjalidance.com', 'DTSTAMP:' + now, 'DTSTART:' + stamp(start), 'DTEND:' + stamp(end),
+      fold('SUMMARY:' + icsText(e.title + ' · Divyanjali')), fold('LOCATION:' + icsText(where)),
+      fold('DESCRIPTION:' + icsText([e.type, e.mode, e.entry].filter(Boolean).join(' · ') + '\n' + (e.why_attend || '') + '\n' + link)), fold('URL:' + link), 'END:VEVENT');
+  });
+  lines.push('END:VCALENDAR');
+  return lines.join('\r\n') + '\r\n';
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    if (url.pathname === '/calendar.ics') {
+      return new Response(icsFeed(await getEvents(), url.origin), { headers: { 'content-type': 'text/calendar; charset=utf-8', 'cache-control': 'public, max-age=900' } });
+    }
 
     // Poster image proxy, so preview cards get a direct, cacheable image.
     const img = url.pathname.match(/^\/img\/([\w-]+)$/);
