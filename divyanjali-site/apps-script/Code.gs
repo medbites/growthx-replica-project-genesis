@@ -5,6 +5,9 @@
  * Later changes: Deploy > Manage deployments > Edit > New version (keeps the same URL).
  */
 
+// The sheet the website uses. Leave empty to use the sheet this script is attached to.
+const SHEET_ID = '1kV0M-v6YTZ9LCVMgpGiGH-56VGsoIMVxKuWFqiZKLHU';
+function book() { return SHEET_ID ? SpreadsheetApp.openById(SHEET_ID) : SpreadsheetApp.getActive(); }
 const TZ = 'Asia/Kolkata';
 const TABS = {
   Events: ['event_code', 'status', 'date', 'start_time', 'duration', 'title', 'type', 'format', 'mode', 'lead_artist', 'guru', 'dancers', 'orchestra', 'music', 'venue_name', 'venue_address', 'maps_link', 'entry', 'ticket_link', 'presented_by', 'sponsor', 'why_attend', 'invite_message', 'about', 'poster_link', 'photos_link', 'video_link', 'photo_check'],
@@ -40,7 +43,7 @@ function onOpen() {
 
 /* ---------- One-time setup ---------- */
 function setup() {
-  const ss = SpreadsheetApp.getActive();
+  const ss = book();
   ss.setSpreadsheetTimeZone(TZ);
   ss.setSpreadsheetLocale('en_IN');
   Object.keys(TABS).forEach((name) => {
@@ -96,7 +99,7 @@ function setup() {
     ev.getRange(2, 1, 1, TABS.Events.length).setValues([TABS.Events.map((h) => sample[h] || '')]);
     fillCodes();
   }
-  SpreadsheetApp.getActive().toast('Sheet is ready. Next: Deploy > New deployment > Web app.', 'Divyanjali', 8);
+  book().toast('Sheet is ready. Next: Deploy > New deployment > Web app.', 'Divyanjali', 8);
 }
 
 /* ---------- Event codes ---------- */
@@ -111,7 +114,7 @@ function onEdit(e) {
   } catch (err) { /* never block typing */ }
 }
 function fillCodes() {
-  const sh = SpreadsheetApp.getActive().getSheetByName('Events');
+  const sh = book().getSheetByName('Events');
   const n = sh.getLastRow() - 1; if (n < 1) return;
   const head = TABS.Events;
   const data = sh.getRange(2, 1, n, head.length).getValues();
@@ -129,7 +132,7 @@ function fillCodes() {
 
 /* ---------- Photo check ---------- */
 function checkPhotos() {
-  const sh = SpreadsheetApp.getActive().getSheetByName('Events');
+  const sh = book().getSheetByName('Events');
   const n = sh.getLastRow() - 1; if (n < 1) return;
   const pCol = TABS.Events.indexOf('poster_link') + 1, cCol = TABS.Events.indexOf('photo_check') + 1;
   const links = sh.getRange(2, pCol, n, 1).getValues();
@@ -147,7 +150,7 @@ function checkPhotos() {
     } catch (err) { return ['Not found'] }
   });
   sh.getRange(2, cCol, n, 1).setValues(out);
-  SpreadsheetApp.getActive().toast('Photo check done.', 'Divyanjali', 5);
+  book().toast('Photo check done.', 'Divyanjali', 5);
 }
 
 /* ---------- Website reads ---------- */
@@ -157,13 +160,14 @@ function doGet(e) {
   const cache = CacheService.getScriptCache();
   const hit = cache.get('events');
   if (hit) return ContentService.createTextOutput(hit).setMimeType(ContentService.MimeType.JSON);
+  try { fillCodes(); } catch (err) { /* codes are optional at read time */ }
   const body = JSON.stringify({ events: publishedEvents(), updated: new Date().toISOString() });
   try { cache.put('events', body, 60); } catch (err) { /* too large to cache */ }
   return ContentService.createTextOutput(body).setMimeType(ContentService.MimeType.JSON);
 }
 
 function publishedEvents() {
-  const sh = SpreadsheetApp.getActive().getSheetByName('Events');
+  const sh = book().getSheetByName('Events');
   const values = sh.getDataRange().getValues();
   const head = values.shift().map((h) => String(h).trim().toLowerCase());
   return values.map((r) => {
@@ -192,7 +196,7 @@ function normalTime(s) {
 }
 function publicWishes(code) {
   if (!code) return [];
-  const sh = SpreadsheetApp.getActive().getSheetByName('Responses');
+  const sh = book().getSheetByName('Responses');
   const v = sh.getDataRange().getValues(); const h = v.shift();
   const i = (k) => h.indexOf(k);
   return v.filter((r) => r[i('event_code')] === code && r[i('approved')] === 'Yes' && r[i('show_public')] === 'Yes')
@@ -208,7 +212,7 @@ function doPost(e) {
   const lock = LockService.getScriptLock();
   lock.waitLock(20000);
   try {
-    const ss = SpreadsheetApp.getActive();
+    const ss = book();
     const now = new Date();
     if (d.form === 'response') {
       if (!d.name || !d.message) return json({ ok: false, error: 'Name and message are required' });
@@ -229,9 +233,9 @@ function doPost(e) {
 }
 function notify(subject, body) {
   try {
-    const st = SpreadsheetApp.getActive().getSheetByName('Settings').getRange('A2:B20').getValues();
+    const st = book().getSheetByName('Settings').getRange('A2:B20').getValues();
     const row = st.find((r) => r[0] === 'admin_email');
-    if (row && row[1]) MailApp.sendEmail(String(row[1]), subject, body + '\n\nOpen the sheet: ' + SpreadsheetApp.getActive().getUrl());
+    if (row && row[1]) MailApp.sendEmail(String(row[1]), subject, body + '\n\nOpen the sheet: ' + book().getUrl());
   } catch (err) { /* email is optional */ }
 }
 
@@ -247,7 +251,7 @@ function columnLetter(n) { let s = ''; while (n > 0) { const m = (n - 1) % 26; s
 /* ---------- Self test: adds a test event, wish and enquiry, then checks them ---------- */
 const TEST_TITLE = 'TEST Website Check';
 function runTests() {
-  const ss = SpreadsheetApp.getActive();
+  const ss = book();
   const out = [];
   const ok = (name, pass, detail) => out.push((pass ? 'PASS  ' : 'FAIL  ') + name + (detail ? '  (' + detail + ')' : ''));
   CacheService.getScriptCache().remove('events');
@@ -295,7 +299,7 @@ function runTests() {
   try { SpreadsheetApp.getUi().alert('Website test', msg, SpreadsheetApp.getUi().ButtonSet.OK); } catch (e) { /* run from editor: see Execution log */ }
 }
 function removeTests() {
-  const ss = SpreadsheetApp.getActive();
+  const ss = book();
   [['Events', TABS.Events.indexOf('title')], ['Responses', TABS.Responses.indexOf('event_title')], ['Enquiries', TABS.Enquiries.indexOf('message')]].forEach(([n, c]) => {
     const sh = ss.getSheetByName(n); const v = sh.getDataRange().getValues();
     for (let r = v.length - 1; r >= 1; r--) {
