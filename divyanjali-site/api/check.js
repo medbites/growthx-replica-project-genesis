@@ -7,7 +7,7 @@ export default async function handler() {
     const text = await r.text();
     let events = null;
     try { events = JSON.parse(text).events.length; } catch (err) { /* not JSON */ }
-    return Response.json({ status: r.status, final_url: r.url.split('?')[0], published_events: events, sample: events === null ? text.slice(0, 400) : undefined }, { headers: { 'cache-control': 'no-store' } });
+    return Response.json({ status: r.status, final_url: r.url.split('?')[0], published_events: events, message: events === null ? text.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, ' ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 600) : undefined }, { headers: { 'cache-control': 'no-store' } });
   } catch (err) {
     return Response.json({ error: String(err) });
   }
