@@ -41,7 +41,11 @@ Changing the script later: **Deploy > Manage deployments > Edit > New version**.
 
 **Quick alternative: GitHub Pages.** It works the same, but set `PRETTY_LINKS: false` in `CONFIG`, so links look like `divyanjalidance.com/?e=EVENT-CODE`.
 
-Phase 1 adds a small Cloudflare function so each event link shows its own poster, title and date as the WhatsApp preview card.
+**WhatsApp preview cards (Phase 1, included):** on Cloudflare Pages, `_worker.js` gives every `/e/EVENT-CODE` link its own preview card with the event's poster, title, date and venue. Nothing to set up. If you change the Apps Script link, update `SCRIPT_URL` at the top of `_worker.js` too.
+
+Test a card: paste an event link into WhatsApp (to yourself). If an old preview shows, add `?v=2` to the end of the link once, because WhatsApp remembers previews.
+
+**Connect divyanjalidance.com:** Cloudflare Pages > your project > Custom domains > Set up a domain > `divyanjalidance.com`. Cloudflare shows the DNS records or nameservers to set at GoDaddy. Add `www.divyanjalidance.com` the same way.
 
 ## 3. Rules for the team (keep this page)
 
