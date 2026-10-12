@@ -101,6 +101,8 @@ section.alt{background:var(--cream)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{font:inherit;font-size:.78rem;min-height:36px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--ink);cursor:pointer}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.arc-q{font:inherit;width:100%;max-width:480px;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+.arc-yr{margin:28px 0 14px;font-size:1.6rem}
 .grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line);background:var(--bg)}
 .grid .dh{font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:8px 10px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
 .cell{min-height:104px;padding:8px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:4px;min-width:0}
@@ -233,7 +235,7 @@ footer .logo b,footer .logo{color:#FFFFFF}
 
   <section class="alt" id="past">
     <div class="wrap">
-      <div class="sec-head"><div><p class="eyebrow">From our stage</p><h2>Past events</h2></div></div>
+      <div class="sec-head"><div><p class="eyebrow">From our stage</p><h2>Past events</h2></div><a class="btn-o" href="#archive">See all past events</a></div>
       <div class="cards" id="pastList"></div>
     </div>
   </section>
@@ -282,6 +284,19 @@ footer .logo b,footer .logo{color:#FFFFFF}
 
 <div id="eventView" hidden></div>
 
+<main id="archiveView" hidden>
+  <section>
+    <div class="wrap">
+      <div class="sec-head"><div><p class="eyebrow">Archive</p><h2>All past events</h2></div><a class="btn-o" href="#calendar">Upcoming events</a></div>
+      <input class="arc-q" id="arcQ" type="search" placeholder="Search by title, artist or venue" aria-label="Search past events">
+      <div class="chips" id="arcYears" style="margin-top:12px"></div>
+      <div class="chips" id="arcTypes" style="margin-top:8px"></div>
+      <p class="muted" id="arcCount" style="margin:16px 0"></p>
+      <div id="arcList"></div>
+    </div>
+  </section>
+</main>
+
 <footer>
   <div class="wrap">
     <div class="stack" style="gap:8px"><a class="logo" href="#top"><span class="ring" style="border-color:#FFB37A;color:#FFFFFF">D</span><b>Divyanjali</b></a><p class="muted">Bharatanatyam since 1994 · CIT Nagar, Chennai</p></div>
@@ -323,7 +338,7 @@ const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-const state = { events: [], demo: false, month: null, filter: 'All', prefill: null };
+const state = { events: [], demo: false, month: null, filter: 'All', prefill: null, arc: { year: 'All years', type: 'All types', q: '' } };
 
 function store(key, val) { try { if (val === undefined) return JSON.parse(localStorage.getItem(key) || 'null'); localStorage.setItem(key, JSON.stringify(val)); } catch (e) { return null; } }
 function durMin(s) { s = String(s || '').toLowerCase(); const h = s.match(/(\d+(?:\.\d+)?)\s*h/); const m = s.match(/(\d+)\s*m/); const t = (h ? parseFloat(h[1]) * 60 : 0) + (m ? parseInt(m[1], 10) : 0); return t || 120; }
@@ -388,7 +403,7 @@ function card(e) {
   const where = e.mode === 'Online' ? 'Live online' : esc(e.venue_name || '');
   const map = e.mode !== 'Online' && e.maps_link ? ' · <a href="' + esc(e.maps_link) + '" target="_blank" rel="noopener">Google Maps</a>' : '';
   const acts = e.past
-    ? '<a class="btn-o" href="#e-' + esc(e.event_code) + '">Photos and details</a>'
+    ? '<a class="btn-o" href="#e-' + esc(e.event_code) + '">Details</a>' + (e.photos_link && e.photos_link !== '#' ? '<a class="btn-o" href="' + esc(e.photos_link) + '" target="_blank" rel="noopener">Photos</a>' : '') + (e.video_link ? '<a class="btn-o" href="' + esc(e.video_link) + '" target="_blank" rel="noopener">Video</a>' : '')
     : '<a class="btn" href="#e-' + esc(e.event_code) + '">Details</a><a class="btn-o" href="' + gcalLink(e) + '" target="_blank" rel="noopener">Add to calendar</a>';
   return '<article class="card">' + poster(e) + '<div class="body"><div class="when"><span>' + fmtDate(e.start) + ' · ' + fmtTime(e.start) + '</span><span class="badge ' + modeCls(e.mode) + '">' + esc(e.mode) + '</span></div><h3><a href="#e-' + esc(e.event_code) + '">' + esc(e.title) + '</a></h3><p class="muted">' + esc(e.type) + ' · ' + esc(e.format || '') + (e.music ? ' · ' + esc(e.music) + ' music' : '') + ' · ' + esc(e.entry || '') + '</p><p class="muted">' + where + map + '</p><div class="acts">' + acts + '</div></div></article>';
 }
@@ -405,6 +420,28 @@ function renderHome() {
   $('#pastList').innerHTML = past.slice(0, 6).map(card).join('') || '<div class="empty">Past events will be archived here with photos and videos.</div>';
   if (!state.month) { const d = next ? next.date : new Date().toISOString().slice(0, 10); state.month = { y: +d.slice(0, 4), m: +d.slice(5, 7) - 1 }; }
   renderFilters(); renderCal(); applyPrefill();
+}
+
+/* ===== Past events archive ===== */
+function renderArchive() {
+  const all = state.events.filter((e) => e.past).reverse();
+  const years = [...new Set(all.map((e) => e.date.slice(0, 4)))];
+  const types = [...new Set(all.map((e) => e.type).filter(Boolean))];
+  const a = state.arc;
+  const chip = (attr, v, on) => '<button class="chip" type="button" ' + attr + '="' + esc(v) + '" aria-pressed="' + on + '">' + esc(v) + '</button>';
+  $('#arcYears').innerHTML = ['All years'].concat(years).map((y) => chip('data-ay', y, a.year === y)).join('');
+  $('#arcTypes').innerHTML = types.length > 1 ? ['All types'].concat(types).map((t) => chip('data-at', t, a.type === t)).join('') : '';
+  const q = a.q.trim().toLowerCase();
+  const list = all.filter((e) => (a.year === 'All years' || e.date.startsWith(a.year)) && (a.type === 'All types' || e.type === a.type) &&
+    (!q || [e.title, e.venue_name, e.lead_artist, e.guru, e.dancers, e.orchestra, e.type, e.event_code].join(' ').toLowerCase().includes(q)));
+  $('#arcCount').textContent = list.length + (list.length === 1 ? ' event' : ' events');
+  let h = '', yr = '';
+  list.forEach((e) => {
+    const y = e.date.slice(0, 4);
+    if (y !== yr) { h += (yr ? '</div>' : '') + '<h3 class="arc-yr">' + y + '</h3><div class="cards">'; yr = y; }
+    h += card(e);
+  });
+  $('#arcList').innerHTML = h ? h + '</div>' : '<div class="empty">No past events match. Try another year or search.</div>';
 }
 
 function renderFilters() {
@@ -481,7 +518,7 @@ const CTA = {
 function renderEvent(code) {
   const e = state.events.find((x) => x.event_code.toUpperCase() === code.toUpperCase());
   const view = $('#eventView');
-  $('#home').hidden = true; view.hidden = false; window.scrollTo(0, 0);
+  $('#home').hidden = true; $('#archiveView').hidden = true; view.hidden = false; window.scrollTo(0, 0);
   if (!e) { view.innerHTML = '<section><div class="wrap stack"><h1>Event not found</h1><p class="muted">The link may be old or the event code has changed.</p><a class="btn" href="#upcoming" style="align-self:flex-start">See all events</a></div></section>'; return; }
   document.title = e.title + ' · Divyanjali';
   const url = shareUrl(e.event_code);
@@ -599,8 +636,14 @@ function codeFromUrl() {
 function route() {
   const code = codeFromUrl();
   if (code) { renderEvent(code); return; }
+  $('#eventView').hidden = true;
+  if (location.hash === '#archive') {
+    document.title = 'Past events · Divyanjali';
+    $('#home').hidden = true; $('#archiveView').hidden = false;
+    renderArchive(); window.scrollTo(0, 0); return;
+  }
   document.title = 'Divyanjali Events';
-  $('#eventView').hidden = true; $('#home').hidden = false;
+  $('#archiveView').hidden = true; $('#home').hidden = false;
   renderHome();
   const id = location.hash.slice(1);
   if (id) { const t = document.getElementById(id); if (t) t.scrollIntoView(); }
@@ -617,9 +660,12 @@ document.addEventListener('click', (ev) => {
   if (t.dataset.copy) { copyLink(t); return; }
   if (t.dataset.code) { openQuick(t.dataset.code); return; }
   if (t.dataset.day) { openDay(t.dataset.day); return; }
+  if (t.dataset.ay) { state.arc.year = t.dataset.ay; renderArchive(); return; }
+  if (t.dataset.at) { state.arc.type = t.dataset.at; renderArchive(); return; }
   if (t.dataset.f) { state.filter = t.dataset.f; renderFilters(); renderCal(); return; }
   if (t.id === 'prevM' || t.id === 'nextM') { const d = t.id === 'prevM' ? -1 : 1; let { y, m } = state.month; m += d; if (m < 0) { m = 11; y--; } if (m > 11) { m = 0; y++; } state.month = { y, m }; renderCal(); }
 });
+$('#arcQ').addEventListener('input', (ev) => { state.arc.q = ev.target.value; renderArchive(); });
 $('#dlg').addEventListener('click', (ev) => { if (ev.target === $('#dlg')) $('#dlg').close(); });
 
 (async function init() {

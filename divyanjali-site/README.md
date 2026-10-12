@@ -61,7 +61,7 @@ Test a card: paste an event link into WhatsApp (to yourself). If an old preview 
 
 - Families copy the event link into their WhatsApp invitation and Instagram story (link sticker).
 - The event page has Add to Google Calendar, Apple or Outlook calendar, Share (phone share sheet, WhatsApp, Facebook, X, LinkedIn, Telegram, Email, Copy link), Send a wish, Book us and Reach us on WhatsApp.
-- Past events stay online with photos and video links, so every event builds the record.
+- Past events stay online with photos and video links, so every event builds the record. The full archive is at `divyanjalidance.com/#archive`, grouped by year, with a search box and type filters.
 
 ## Files
 
