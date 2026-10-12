@@ -157,7 +157,12 @@ function checkPhotos() {
   const sh = book().getSheetByName('Events');
   const n = sh.getLastRow() - 1; if (n < 1) return;
   const pCol = TABS.Events.indexOf('poster_link') + 1, cCol = TABS.Events.indexOf('photo_check') + 1;
-  const links = sh.getRange(2, pCol, n, 1).getValues();
+  // A photo link pasted into photo_check by mistake is moved to poster_link first.
+  const checks = sh.getRange(2, cCol, n, 1).getValues();
+  const links = sh.getRange(2, pCol, n, 1).getValues().map(([u], i) => {
+    if (!u && isLink(checks[i][0])) { sh.getRange(i + 2, pCol).setValue(checks[i][0]); return [checks[i][0]]; }
+    return [u];
+  });
   const out = links.map(([u]) => {
     if (!u) return ['No poster'];
     const m = String(u).match(/\/d\/([\w-]{20,})/) || String(u).match(/[?&]id=([\w-]{20,})/);
@@ -198,6 +203,7 @@ function publishedEvents() {
     head.forEach((h, i) => { o[h] = r[i]; });
     return o;
   }).filter((o) => String(o.status).trim() === 'Published' && o.event_code && o.date).map((o) => {
+    if (!o.poster_link && isLink(o.photo_check)) o.poster_link = o.photo_check; // photo pasted one column too far
     const ev = {};
     PUBLIC_FIELDS.forEach((h) => {
       let v = o[h];
@@ -392,6 +398,7 @@ function ensureSize(sh, rows, cols) {
   if (sh.getMaxRows() < rows) sh.insertRowsAfter(sh.getMaxRows(), rows - sh.getMaxRows());
   if (sh.getMaxColumns() < cols) sh.insertColumnsAfter(sh.getMaxColumns(), cols - sh.getMaxColumns());
 }
+function isLink(v) { return /^https?:\/\//i.test(String(v || '').trim()); }
 function json(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
 function columnLetter(n) { let s = ''; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; }
 
