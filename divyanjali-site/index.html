@@ -123,6 +123,10 @@ section.alt{background:var(--cream)}
 dialog{border:0;border-radius:8px;padding:0;width:min(560px,calc(100% - 32px));max-height:88vh;color:var(--ink);background:var(--bg)}
 dialog::backdrop{background:rgba(30,22,18,.5)}
 .dlg{padding:24px;display:flex;flex-direction:column;gap:14px}
+.qnav{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding-top:14px;margin-top:4px}
+.qnav span{display:flex;flex-direction:column;align-items:center;font-size:.85rem;font-variant-numeric:tabular-nums}
+.qnav small{font-size:.72rem;color:var(--muted)}
+.qnav .ib:disabled{opacity:.3;cursor:default}
 .x{font:inherit;font-size:1.6rem;line-height:1;align-self:flex-end;width:44px;height:44px;margin:-14px -14px -10px 0;border:0;background:none;color:var(--ink);cursor:pointer}
 
 /* event page */
@@ -441,8 +445,14 @@ function downloadIcs(e) {
   a.download = e.event_code + '.ics'; document.body.appendChild(a); a.click(); a.remove();
 }
 
+// On the live site, Drive photos come through our own /img/ link: browsers often block Drive images.
+function posterSrc(e) {
+  const m = String(e.poster_link || '').match(/\/d\/([\w-]{20,})/) || String(e.poster_link || '').match(/[?&]id=([\w-]{20,})/);
+  if (m && CONFIG.PRETTY_LINKS && /^https?:/.test(location.protocol)) return '/img/' + encodeURIComponent(e.event_code) + '?p=' + m[1].slice(0, 8);
+  return driveImg(e.poster_link);
+}
 function poster(e, label) {
-  const src = driveImg(e.poster_link);
+  const src = posterSrc(e);
   const fb = '<div class="pfb"><span>' + esc(e.title) + '</span><small>' + esc(label || e.type) + '</small></div>';
   return '<div class="poster">' + fb + (src ? '<img src="' + esc(src) + '" alt="Poster: ' + esc(e.title) + '" loading="lazy" onerror="this.remove()">' : '') + '</div>';
 }
@@ -526,9 +536,24 @@ function openQuick(code) {
     (e.why_attend ? '<div class="why"><b>Why attend:</b> ' + esc(e.why_attend) + '</div>' : '') +
     '<dl class="dl"><dt>When</dt><dd>' + fmtLong(e.start) + ' · ' + fmtTime(e.start) + '</dd><dt>Where</dt><dd>' + where + (e.mode !== 'Online' && e.maps_link ? '<br><a href="' + esc(e.maps_link) + '" target="_blank" rel="noopener">Open in Google Maps</a>' : '') + '</dd><dt>Entry</dt><dd>' + esc(e.entry || '') + '</dd></dl>' +
     '<div class="row"><a class="btn" href="#e-' + esc(e.event_code) + '" data-close>Open event page</a>' + (e.past ? '' : '<a class="btn-o" href="' + gcalLink(e) + '" target="_blank" rel="noopener">Add to calendar</a>') + '<button class="btn-o" type="button" data-share="' + esc(e.event_code) + '" aria-expanded="false" aria-controls="qShare">Share</button></div>' +
-    '<div id="qShare" class="stack" style="gap:10px" hidden><div class="sg">' + shareLinks(e) + '</div><p class="muted">Event link: <span style="user-select:all">' + esc(shareUrl(e.event_code)) + '</span></p></div>';
-  $('#dlg').showModal();
+    '<div id="qShare" class="stack" style="gap:10px" hidden><div class="sg">' + shareLinks(e) + '</div><p class="muted">Event link: <span style="user-select:all">' + esc(shareUrl(e.event_code)) + '</span></p></div>' +
+    quickNav(e);
+  $('#dlg').scrollTop = 0;
+  if (!$('#dlg').open) $('#dlg').showModal();
 }
+// Previous / next through the events in the calendar (same filter), in date order.
+function quickList() { return state.events.filter((x) => state.filter === 'All' || x.type === state.filter); }
+function quickNav(e) {
+  const list = quickList(), i = list.findIndex((x) => x.event_code === e.event_code);
+  if (i < 0 || list.length < 2) return '';
+  const prev = list[i - 1], next = list[i + 1];
+  const btn = (x, label, cls) => x ? '<button class="ib qn ' + cls + '" type="button" data-code="' + esc(x.event_code) + '" aria-label="' + label + ': ' + esc(x.title) + '">' + (cls === 'p' ? '‹' : '›') + '</button>' : '<button class="ib qn" type="button" disabled aria-hidden="true">' + (cls === 'p' ? '‹' : '›') + '</button>';
+  return '<div class="qnav">' + btn(prev, 'Previous event', 'p') + '<span><span><b>' + (i + 1) + '</b> of ' + list.length + '</span><small>' + (next ? 'Next: ' + fmtDate(next.start) : 'Last event') + '</small></span>' + btn(next, 'Next event', 'n') + '</div>';
+}
+document.addEventListener('keydown', (ev) => {
+  if (!$('#dlg').open || (ev.key !== 'ArrowLeft' && ev.key !== 'ArrowRight')) return;
+  const b = $('#dlgBody .qn.' + (ev.key === 'ArrowLeft' ? 'p' : 'n')); if (b) b.click();
+});
 function shareText(e) { return e.title + ' · ' + fmtDate(e.start) + ', ' + fmtTime(e.start) + (e.mode === 'Online' ? ' · Online' : ' · ' + (e.venue_name || '')) + '\n' + shareUrl(e.event_code); }
 function shareLinks(e) {
   const url = shareUrl(e.event_code), t = shareText(e);
