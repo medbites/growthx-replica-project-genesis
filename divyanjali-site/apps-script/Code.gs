@@ -60,11 +60,12 @@ function setup() {
 
   const ev = ss.getSheetByName('Events');
   const col = (h) => TABS.Events.indexOf(h) + 1;
+  ['Events', 'Responses', 'Enquiries'].forEach((n) => ss.getSheetByName(n).getRange(2, 1, ss.getSheetByName(n).getMaxRows() - 1, ss.getSheetByName(n).getMaxColumns()).clearDataValidations());
   const rows = 1000;
   const list = (h, k) => ev.getRange(2, col(h), rows, 1).setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(LISTS[k], true).setAllowInvalid(false).build());
   ['status', 'type', 'format', 'mode', 'music'].forEach((h) => list(h, h));
   ev.getRange(2, col('entry'), rows, 1).setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(LISTS.entry, true).setAllowInvalid(true).build());
-  ev.getRange(2, col('date'), rows, 1).setDataValidation(SpreadsheetApp.newDataValidation().requireDate().setAllowInvalid(false).build()).setNumberFormat('dd mmm yyyy');
+  ev.getRange(2, col('date'), rows, 1).setDataValidation(SpreadsheetApp.newDataValidation().requireDate().setAllowInvalid(true).setHelpText('Use a date, for example 8 Nov 2026').build()).setNumberFormat('dd mmm yyyy');
   ev.getRange(2, col('start_time'), rows, 1).setNumberFormat('h:mm am/pm');
   const rsp = ss.getSheetByName('Responses');
   rsp.getRange(2, TABS.Responses.indexOf('approved') + 1, rows, 1).setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(LISTS.approved, true).build());
@@ -73,11 +74,13 @@ function setup() {
 
   // Red rows: duplicate event codes, and two events at the same date, time and venue.
   const L = (h) => columnLetter(col(h));
-  const all = ev.getRange(2, 1, rows, TABS.Events.length);
-  const dup = SpreadsheetApp.newConditionalFormatRule().whenFormulaSatisfied('=AND($A2<>"",COUNTIF($A:$A,$A2)>1)').setBackground('#FDEBEC').setRanges([all]).build();
+  const cfRows = 500;
+  const codeCells = ev.getRange(2, col('event_code'), cfRows, 1);
+  const titleCells = ev.getRange(2, col('title'), cfRows, 1);
+  const dup = SpreadsheetApp.newConditionalFormatRule().whenFormulaSatisfied('=AND($A2<>"",COUNTIF($A$2:$A$' + (cfRows + 1) + ',$A2)>1)').setBackground('#FDEBEC').setRanges([codeCells]).build();
   const clash = SpreadsheetApp.newConditionalFormatRule()
-    .whenFormulaSatisfied('=AND($' + L('date') + '2<>"",$' + L('mode') + '2<>"Online",COUNTIFS($' + L('date') + ':$' + L('date') + ',$' + L('date') + '2,$' + L('start_time') + ':$' + L('start_time') + ',$' + L('start_time') + '2,$' + L('venue_name') + ':$' + L('venue_name') + ',$' + L('venue_name') + '2)>1)')
-    .setBackground('#FBE3D0').setRanges([all]).build();
+    .whenFormulaSatisfied('=AND($' + L('date') + '2<>"",$' + L('mode') + '2<>"Online",COUNTIFS($' + L('date') + '$2:$' + L('date') + '$' + (cfRows + 1) + ',$' + L('date') + '2,$' + L('start_time') + '$2:$' + L('start_time') + '$' + (cfRows + 1) + ',$' + L('start_time') + '2,$' + L('venue_name') + '$2:$' + L('venue_name') + '$' + (cfRows + 1) + ',$' + L('venue_name') + '2)>1)')
+    .setBackground('#FBE3D0').setRanges([titleCells]).build();
   ev.setConditionalFormatRules([dup, clash]);
 
   if (ev.getLastRow() < 2) {
@@ -96,10 +99,12 @@ function setup() {
 /* ---------- Event codes ---------- */
 function onEdit(e) {
   try {
-    CacheService.getScriptCache().remove('events');
     const sh = e.range.getSheet();
     if (sh.getName() !== 'Events' || e.range.getRow() < 2) return;
-    fillCodes();
+    CacheService.getScriptCache().remove('events');
+    const head = TABS.Events, c0 = e.range.getColumn(), c1 = e.range.getLastColumn();
+    const touches = (h) => { const c = head.indexOf(h) + 1; return c >= c0 && c <= c1; };
+    if (touches('date') || touches('title')) fillCodes();
   } catch (err) { /* never block typing */ }
 }
 function fillCodes() {
