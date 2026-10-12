@@ -123,6 +123,13 @@ section.alt{background:var(--cream)}
 dialog{border:0;border-radius:8px;padding:0;width:min(560px,calc(100% - 32px));max-height:88vh;color:var(--ink);background:var(--bg)}
 dialog::backdrop{background:rgba(30,22,18,.5)}
 .dlg{padding:24px;display:flex;flex-direction:column;gap:14px}
+/* full-screen photo viewer */
+.poster img{cursor:zoom-in}
+#viewer{position:fixed;inset:0;width:100vw;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;border-radius:0;background:rgba(15,10,8,.95);overflow:hidden}
+#viewer::backdrop{background:rgba(15,10,8,.95)}
+#viewer img{display:block;width:100%;height:100%;object-fit:contain;padding:calc(56px + env(safe-area-inset-top,0px)) 8px calc(16px + env(safe-area-inset-bottom,0px));cursor:zoom-out}
+#viewer .vx{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));right:8px;width:48px;height:48px;border:0;border-radius:50%;background:rgba(255,255,255,.14);color:#FFFFFF;font:inherit;font-size:1.8rem;line-height:1;cursor:pointer}
+#viewer p{position:fixed;left:16px;right:72px;top:calc(18px + env(safe-area-inset-top,0px));margin:0;color:#F6EDE6;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .qnav{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding-top:14px;margin-top:4px}
 .qnav span{display:flex;flex-direction:column;align-items:center;font-size:.85rem;font-variant-numeric:tabular-nums}
 .qnav small{font-size:.72rem;color:var(--muted)}
@@ -350,6 +357,7 @@ footer .logo b,footer .logo{color:#FFFFFF}
 </footer>
 <a class="wa" id="waFloat" href="#" aria-label="Chat with Divyanjali on WhatsApp"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20l1.5-4A8 8 0 1 1 8 18.5z"/></svg></a>
 <dialog id="dlg" aria-labelledby="dlgTitle"><div class="dlg" id="dlgBody"></div></dialog>
+<dialog id="viewer" aria-label="Poster, full size"><p id="viewerTitle"></p><button class="vx" type="button" aria-label="Close">×</button><img id="viewerImg" alt=""></dialog>
 
 <script>
 /* ===== Settings: change these four lines when going live ===== */
@@ -551,7 +559,7 @@ function quickNav(e) {
   return '<div class="qnav">' + btn(prev, 'Previous event', 'p') + '<span><span><b>' + (i + 1) + '</b> of ' + list.length + '</span><small>' + (next ? 'Next: ' + fmtDate(next.start) : 'Last event') + '</small></span>' + btn(next, 'Next event', 'n') + '</div>';
 }
 document.addEventListener('keydown', (ev) => {
-  if (!$('#dlg').open || (ev.key !== 'ArrowLeft' && ev.key !== 'ArrowRight')) return;
+  if ($('#viewer').open || !$('#dlg').open || (ev.key !== 'ArrowLeft' && ev.key !== 'ArrowRight')) return;
   const b = $('#dlgBody .qn.' + (ev.key === 'ArrowLeft' ? 'p' : 'n')); if (b) b.click();
 });
 function shareText(e) { return e.title + ' · ' + fmtDate(e.start) + ', ' + fmtTime(e.start) + (e.mode === 'Online' ? ' · Online' : ' · ' + (e.venue_name || '')) + '\n' + shareUrl(e.event_code); }
@@ -780,7 +788,16 @@ window.addEventListener('hashchange', () => {
   route();
 });
 
+function openViewer(img) {
+  const v = $('#viewer');
+  $('#viewerImg').src = img.currentSrc || img.src;
+  $('#viewerImg').alt = img.alt;
+  $('#viewerTitle').textContent = img.alt.replace(/^Poster: /, '');
+  if (!v.open) v.showModal();
+}
+$('#viewer').addEventListener('click', () => $('#viewer').close());
 document.addEventListener('click', (ev) => {
+  const pic = ev.target.closest('.poster img'); if (pic) { openViewer(pic); return; }
   const t = ev.target.closest('button, a'); if (!t) return;
   if (t.matches('[data-close]')) { $('#dlg').close(); return; }
   if (t.dataset.share) { quickShare(t); return; }
