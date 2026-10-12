@@ -32,6 +32,9 @@ function onOpen() {
     .addItem('Set up the sheet (run once)', 'setup')
     .addItem('Check photo links', 'checkPhotos')
     .addItem('Fill missing event codes', 'fillCodes')
+    .addSeparator()
+    .addItem('Run website test', 'runTests')
+    .addItem('Remove test rows', 'removeTests')
     .addToUi();
 }
 
@@ -240,3 +243,66 @@ function ensureSize(sh, rows, cols) {
 }
 function json(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
 function columnLetter(n) { let s = ''; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; }
+
+/* ---------- Self test: adds a test event, wish and enquiry, then checks them ---------- */
+const TEST_TITLE = 'TEST Website Check';
+function runTests() {
+  const ss = SpreadsheetApp.getActive();
+  const out = [];
+  const ok = (name, pass, detail) => out.push((pass ? 'PASS  ' : 'FAIL  ') + name + (detail ? '  (' + detail + ')' : ''));
+  CacheService.getScriptCache().remove('events');
+
+  // 1. Test event row
+  const ev = ss.getSheetByName('Events');
+  const head = TABS.Events;
+  const d = new Date(); d.setDate(d.getDate() + 7); d.setHours(0, 0, 0, 0);
+  const row = { status: 'Published', date: d, start_time: '18:00', duration: '2 hrs', title: TEST_TITLE, type: 'Performance', format: 'Solo', mode: 'In person', lead_artist: 'Test Dancer', guru: 'Dr. S. Divyasena', orchestra: 'Mridangam: Sri B.P. Haribabu', music: 'Live', venue_name: 'Test Sabha', venue_address: 'Chennai', maps_link: 'https://maps.google.com/?q=Chennai', entry: 'Free', presented_by: 'Divyanjali', why_attend: 'Test row. Safe to delete.', invite_message: 'Test invite.', about: 'Created by Run website test.' };
+  ev.appendRow(head.map((h) => row[h] || ''));
+  fillCodes();
+  const code = String(ev.getRange(ev.getLastRow(), 1).getValue());
+  ok('Event code filled in automatically', /^DV-\d{6}-TEST/.test(code), code);
+
+  // 2. Website read
+  const res = JSON.parse(doGet({ parameter: { action: 'events' } }).getContent());
+  const mine = (res.events || []).find((x) => x.event_code === code);
+  ok('Website can read published events', !!mine, (res.events || []).length + ' published');
+  ok('Date and time come out in website format', !!mine && /^\d{4}-\d{2}-\d{2}$/.test(mine.date) && /^\d{2}:\d{2}$/.test(mine.start_time), mine ? mine.date + ' ' + mine.start_time : 'missing');
+  ok('Private columns are hidden', !!mine && !('status' in mine) && !('photo_check' in mine));
+
+  // 3. Wish / feedback form
+  const w = JSON.parse(doPost({ postData: { contents: JSON.stringify({ form: 'response', event_code: code, kind: 'Wish', name: 'Test Visitor', city: 'Chennai', message: 'Test wish from Run website test', show_public: 'Yes' }) } }).getContent());
+  ok('Wish form saves to Responses', w.ok === true, w.error || '');
+  const rs = ss.getSheetByName('Responses');
+  const last = rs.getRange(rs.getLastRow(), 1, 1, TABS.Responses.length).getValues()[0];
+  ok('Wish is linked to the event', last[1] === code && last[2] === TEST_TITLE, last[2]);
+  ok('Unapproved wish is not shown publicly', publicWishes(code).length === 0);
+  rs.getRange(rs.getLastRow(), TABS.Responses.indexOf('approved') + 1).setValue('Yes');
+  ok('Approved wish is shown on the event page', publicWishes(code).length === 1);
+
+  // 4. Enquiry form
+  const q = JSON.parse(doPost({ postData: { contents: JSON.stringify({ form: 'enquiry', enquiry_type: 'Performance booking', from_event_code: code, name: 'Test Visitor', whatsapp: '+91 90000 00000', message: 'Test enquiry from Run website test' }) } }).getContent());
+  ok('Enquiry form saves to Enquiries', q.ok === true, q.error || '');
+
+  // 5. Spam trap
+  const before = rs.getLastRow();
+  doPost({ postData: { contents: JSON.stringify({ form: 'response', event_code: code, name: 'Bot', message: 'spam', website: 'http://spam' }) } });
+  ok('Spam trap blocks bots', rs.getLastRow() === before);
+
+  const fails = out.filter((l) => l.indexOf('FAIL') === 0).length;
+  Logger.log(out.join('\n'));
+  CacheService.getScriptCache().remove('events');
+  const msg = (fails ? fails + ' check(s) failed.\n\n' : 'All checks passed.\n\n') + out.join('\n') + '\n\nThe test event is live on the website now. Use Divyanjali > Remove test rows when done.';
+  try { SpreadsheetApp.getUi().alert('Website test', msg, SpreadsheetApp.getUi().ButtonSet.OK); } catch (e) { /* run from editor: see Execution log */ }
+}
+function removeTests() {
+  const ss = SpreadsheetApp.getActive();
+  [['Events', TABS.Events.indexOf('title')], ['Responses', TABS.Responses.indexOf('event_title')], ['Enquiries', TABS.Enquiries.indexOf('message')]].forEach(([n, c]) => {
+    const sh = ss.getSheetByName(n); const v = sh.getDataRange().getValues();
+    for (let r = v.length - 1; r >= 1; r--) {
+      const cell = String(v[r][c]);
+      if (cell === TEST_TITLE || cell.indexOf('Run website test') >= 0 || (n === 'Responses' && v[r][4] === 'Test Visitor')) sh.deleteRow(r + 1);
+    }
+  });
+  CacheService.getScriptCache().remove('events');
+  ss.toast('Test rows removed.', 'Divyanjali', 5);
+}
