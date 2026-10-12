@@ -191,7 +191,7 @@ function doGet(e) {
 
 function publishedEvents() {
   const sh = book().getSheetByName('Events');
-  const values = sh.getDataRange().getValues();
+  const values = withShownTimes(sh.getDataRange());
   const head = values.shift().map((h) => String(h).trim().toLowerCase());
   return values.map((r) => {
     const o = {};
@@ -202,7 +202,6 @@ function publishedEvents() {
     PUBLIC_FIELDS.forEach((h) => {
       let v = o[h];
       if (h === 'date' && v instanceof Date) v = Utilities.formatDate(v, TZ, 'yyyy-MM-dd');
-      else if (h === 'start_time' && v instanceof Date) v = Utilities.formatDate(v, TZ, 'HH:mm');
       else if (h === 'start_time' && v) v = normalTime(String(v));
       ev[h] = v === undefined || v === null ? '' : String(v).trim();
     });
@@ -210,11 +209,11 @@ function publishedEvents() {
   });
 }
 function normalTime(s) {
-  const m = s.trim().match(/^(\d{1,2})[:.](\d{2})\s*(am|pm)?$/i);
+  const m = s.trim().match(/^(\d{1,2})[:.](\d{2})(?:[:.]\d{2})?\s*([ap]\.?m\.?)?$/i);
   if (!m) return s;
   let h = parseInt(m[1], 10);
-  if (m[3] && /pm/i.test(m[3]) && h < 12) h += 12;
-  if (m[3] && /am/i.test(m[3]) && h === 12) h = 0;
+  if (m[3] && /p/i.test(m[3]) && h < 12) h += 12;
+  if (m[3] && /a/i.test(m[3]) && h === 12) h = 0;
   return ('0' + h).slice(-2) + ':' + m[2];
 }
 function publicWishes(code) {
@@ -269,9 +268,20 @@ function notify(subject, body) {
  * The first request holds the slot, so two artists can never get the same one.
  * In Applications set status to Approved (slot Booked, Draft row added to Events)
  * or Rejected (slot Open again). */
+// Time-only cells come back as dates in 1899, and time zone maths on those dates is
+// wrong by minutes or hours. Use the time exactly as the cell shows it instead.
+function withShownTimes(range) {
+  const v = range.getValues(), shown = range.getDisplayValues();
+  const head = v[0].map((h) => String(h).trim().toLowerCase());
+  ['start_time', 'end_time'].forEach((k) => {
+    const c = head.indexOf(k); if (c < 0) return;
+    for (let r = 1; r < v.length; r++) if (v[r][c] instanceof Date) v[r][c] = shown[r][c];
+  });
+  return v;
+}
 function rowsOf(name) {
   const sh = book().getSheetByName(name);
-  const v = sh.getDataRange().getValues(); const h = v.shift().map(String);
+  const v = withShownTimes(sh.getDataRange()); const h = v.shift().map(String);
   return { sh, h, rows: v, col: (k) => h.indexOf(k) };
 }
 function slotTime(v) { return v instanceof Date ? Utilities.formatDate(v, TZ, 'HH:mm') : normalTime(String(v || '')); }
