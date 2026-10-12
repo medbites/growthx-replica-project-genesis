@@ -1,0 +1,789 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Divyanjali Events</title>
+<meta name="description" content="Divyanjali, Bharatanatyam since 1994, CIT Nagar, Chennai. Upcoming performances, arangetrams, workshops and the Dance Season calendar.">
+<meta property="og:title" content="Divyanjali Events">
+<meta property="og:description" content="Performances, arangetrams and workshops by Divyanjali, Chennai.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&amp;family=Montserrat:wght@400;500;600&amp;display=swap">
+<style>
+/* Layout: one calm column, cream bands between sections, saffron used only as a thin marker and for actions */
+:root{
+  --bg:#FFFFFF; --cream:#FAF6EF; --tint:#FFF3EA; --ink:#3D3532; --muted:#6B625D; --line:#EAE4DA;
+  --saffron:#FF6600; --deep:#B23C00; --deep-h:#8F3000; --gold:#9A6B1F; --maroon:#6E1E1E; --on-deep:#FFFFFF;
+  --ip-bg:#EDF3EC; --ip-fg:#346538; --ol-bg:#E1F3FE; --ol-fg:#1F6C9F; --hy-bg:#FBF3DB; --hy-fg:#7A5200;
+  --serif:'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
+  --sans:'Montserrat', 'Segoe UI', system-ui, sans-serif;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6}
+img{max-width:100%;display:block}
+a{color:var(--deep)}
+a:hover{color:var(--deep-h)}
+:focus-visible{outline:2px solid var(--deep);outline-offset:2px}
+.wrap{max-width:1120px;margin-inline:auto;padding-inline:clamp(16px,4vw,40px)}
+h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.15;margin:0;text-wrap:balance;color:var(--ink)}
+h1{font-size:clamp(2.4rem,6vw,3.6rem)}
+h2{font-size:clamp(1.8rem,4vw,2.4rem)}
+h3{font-size:1.35rem}
+p{margin:0}
+.muted{color:var(--muted);font-size:.875rem}
+.eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:28px;height:1.5px;background:var(--saffron)}
+.btn,.btn-o{font:inherit;font-size:.82rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:4px;text-decoration:none;cursor:pointer;transition:background .2s,color .2s}
+.btn{background:var(--deep);color:var(--on-deep);border:1px solid var(--deep)}
+.btn:hover{background:var(--deep-h);color:var(--on-deep)}
+.btn-o{background:var(--bg);color:var(--ink);border:1px solid var(--ink)}
+.btn-o:hover{background:var(--ink);color:var(--bg)}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.badge{font-size:.66rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:999px;white-space:nowrap;display:inline-block}
+.m-ip{background:var(--ip-bg);color:var(--ip-fg)}.m-ol{background:var(--ol-bg);color:var(--ol-fg)}.m-hy{background:var(--hy-bg);color:var(--hy-fg)}
+.tag{background:var(--cream);color:var(--ink);border:1px solid var(--line)}
+section{padding-block:clamp(48px,8vw,88px)}
+section.alt{background:var(--cream)}
+.sec-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:16px;margin-bottom:28px}
+.sec-head>div{display:flex;flex-direction:column;gap:10px}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.logo .ring{width:38px;height:38px;border:1.5px solid var(--saffron);border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-size:1.3rem;font-weight:600;color:var(--deep)}
+.logo b{font-family:var(--serif);font-size:1.45rem;font-weight:600}
+.nav{display:flex;align-items:center;gap:22px;font-size:.82rem;font-weight:500}
+.nav a{color:var(--ink);text-decoration:none}
+.nav a:hover{color:var(--deep)}
+@media (max-width:760px){.nav .hide-s{display:none}}
+.season{background:var(--tint);border-bottom:1px solid var(--line);font-size:.8rem;text-align:center;padding:8px 16px;color:var(--ink)}
+.demo{background:var(--hy-bg);color:var(--hy-fg);font-size:.78rem;text-align:center;padding:6px 16px}
+
+/* hero */
+.hero{padding-block:clamp(40px,7vw,80px)}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(28px,5vw,64px);align-items:center}
+@media (max-width:860px){.hero .wrap{grid-template-columns:minmax(0,1fr)}}
+.hero-copy{display:flex;flex-direction:column;gap:18px}
+.hero-copy p.lead{font-size:1.1rem;max-width:34em;color:var(--muted)}
+
+/* poster */
+.poster{position:relative;aspect-ratio:5/3;max-width:100%;border-radius:6px;overflow:hidden;background:var(--cream);border:1px solid var(--line)}
+.poster img{width:100%;height:100%;object-fit:cover}
+.pfb{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:18px;background:radial-gradient(circle at 78% 28%,transparent 0 46px,var(--saffron) 47px 48px,transparent 49px 66px,var(--gold) 67px 67.6px,transparent 68.6px),var(--tint)}
+.pfb span{font-family:var(--serif);font-size:1.5rem;font-weight:600;line-height:1.1;color:var(--ink);max-width:70%}
+.pfb small{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+
+/* spotlight + cards */
+.spot{display:flex;flex-direction:column;gap:14px}
+.spot .meta{display:flex;flex-direction:column;gap:4px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:20px}
+.card{border:1px solid var(--line);border-radius:6px;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+.card .poster{border:0;border-radius:0;border-bottom:1px solid var(--line)}
+.card .body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.card .when{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:.8rem;font-weight:600;color:var(--deep);font-variant-numeric:tabular-nums}
+.card h3 a{color:var(--ink);text-decoration:none}
+.card h3 a:hover{color:var(--deep)}
+.card .acts{margin-top:auto;padding-top:8px;display:flex;flex-wrap:wrap;gap:8px}
+.card .acts .btn,.card .acts .btn-o{min-height:38px;padding:0 14px;font-size:.72rem}
+.empty{border:1px dashed var(--line);border-radius:6px;padding:28px;text-align:center;color:var(--muted)}
+
+/* calendar */
+.cal-bar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px}
+.mnav{display:flex;align-items:center;gap:8px}
+.mnav h3{min-width:190px;text-align:center}
+.ib{font:inherit;font-size:1.2rem;width:44px;height:44px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);cursor:pointer}
+.ib:hover{border-color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-size:.78rem;min-height:36px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.arc-q{font:inherit;width:100%;max-width:480px;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+.arc-yr{margin:28px 0 14px;font-size:1.6rem}
+.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line);background:var(--bg)}
+.grid .dh{font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:8px 10px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.cell{min-height:104px;padding:8px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:4px;min-width:0}
+.cell.off{background:var(--cream)}
+.cell .d{font-size:.8rem;font-variant-numeric:tabular-nums;color:var(--muted)}
+.cell.today .d{color:var(--on-deep);background:var(--deep);border-radius:999px;width:24px;height:24px;display:grid;place-items:center}
+.ev{font:inherit;font-size:.74rem;font-weight:500;text-align:left;border:0;border-left:2px solid var(--saffron);background:var(--tint);color:var(--ink);padding:4px 6px;border-radius:2px;cursor:pointer;line-height:1.3;overflow:hidden;text-overflow:ellipsis}
+.ev small{display:block;font-size:.66rem;color:var(--muted)}
+.ev:hover{background:var(--cream)}
+.more{font:inherit;font-size:.72rem;font-weight:600;color:var(--deep);background:none;border:0;text-align:left;padding:2px 0;cursor:pointer}
+.agenda{display:none;flex-direction:column;border-top:1px solid var(--line)}
+.agenda button{font:inherit;display:flex;justify-content:space-between;gap:12px;align-items:center;text-align:left;width:100%;padding:14px 0;border:0;border-bottom:1px solid var(--line);background:none;color:var(--ink);cursor:pointer;min-height:44px}
+.agenda b{font-variant-numeric:tabular-nums}
+@media (max-width:720px){.grid{display:none}.agenda{display:flex}}
+
+/* dialog */
+dialog{border:0;border-radius:8px;padding:0;width:min(560px,calc(100% - 32px));max-height:88vh;color:var(--ink);background:var(--bg)}
+dialog::backdrop{background:rgba(30,22,18,.5)}
+.dlg{padding:24px;display:flex;flex-direction:column;gap:14px}
+.x{font:inherit;font-size:1.6rem;line-height:1;align-self:flex-end;width:44px;height:44px;margin:-14px -14px -10px 0;border:0;background:none;color:var(--ink);cursor:pointer}
+
+/* event page */
+.ev-hero .poster{aspect-ratio:21/9;border-radius:0;border:0}
+@media (max-width:720px){.ev-hero .poster{aspect-ratio:4/3}}
+.band{background:var(--deep);color:var(--on-deep)}
+.band .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:18px;padding-block:24px}
+.band h1{color:var(--on-deep);font-size:clamp(2rem,5vw,3rem)}
+.band p{font-size:.95rem}
+.band .badge.tag{background:transparent;color:var(--on-deep);border:1px solid rgba(255,255,255,.6)}
+.band .btn{background:var(--bg);color:var(--deep);border-color:var(--bg)}
+.band .btn:hover{background:var(--cream);color:var(--deep-h)}
+.band .btn-o{background:transparent;color:var(--on-deep);border-color:var(--on-deep)}
+.band .btn-o:hover{background:var(--on-deep);color:var(--deep)}
+.share{border-bottom:1px solid var(--line);background:var(--cream)}
+.share .wrap{padding-block:18px;display:flex;flex-direction:column;gap:12px}
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.sg a,.sg button{font:inherit;font-size:.8rem;font-weight:500;display:flex;align-items:center;justify-content:center;min-height:44px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);text-decoration:none;cursor:pointer;text-align:center;padding:0 8px}
+.sg a:hover,.sg button:hover{border-color:var(--ink)}
+.two{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:clamp(24px,4vw,48px);align-items:start}
+@media (max-width:860px){.two{grid-template-columns:minmax(0,1fr)}}
+.stack{display:flex;flex-direction:column;gap:16px;min-width:0}
+.why{background:var(--tint);border-left:2px solid var(--saffron);padding:14px 16px;border-radius:2px}
+.box{border:1px solid var(--line);border-radius:6px;padding:20px;display:flex;flex-direction:column;gap:12px;background:var(--bg)}
+dl.dl{margin:0;display:grid;grid-template-columns:88px minmax(0,1fr);gap:10px 12px;font-size:.92rem}
+dl.dl dt{color:var(--muted)}dl.dl dd{margin:0}
+.perf{border:1.5px solid var(--saffron);background:var(--tint);border-radius:8px;padding:22px;display:flex;flex-direction:column;gap:6px}
+.perf .k{font-size:.7rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--deep)}
+.perf .n{font-family:var(--serif);font-size:2rem;font-weight:600;line-height:1.1}
+.ppl{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:8px 18px}
+.ppl span{color:var(--muted)}
+blockquote.inv{margin:0;font-family:var(--serif);font-size:clamp(1.4rem,3vw,1.8rem);line-height:1.35}
+.past-note{background:var(--cream);border:1px solid var(--line);border-radius:6px;padding:16px 18px}
+form.f{display:flex;flex-direction:column;gap:14px;max-width:720px}
+.fr{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:14px}
+label.l{display:flex;flex-direction:column;gap:6px;font-size:.82rem;font-weight:600;min-width:0}
+input,select,textarea{font:inherit;font-weight:400;font-size:1rem;border:1px solid #D9D1C5;border-radius:4px;padding:10px 12px;min-height:44px;background:var(--bg);color:var(--ink);width:100%}
+textarea{min-height:110px;resize:vertical}
+.ck{display:flex;gap:10px;align-items:center;font-size:.85rem}
+.ck input{width:auto;min-height:auto}
+.hp{position:absolute;left:-5000px;width:1px;height:1px;overflow:hidden}
+.msg{font-size:.9rem;padding:12px 14px;border-radius:4px}
+.msg.ok{background:var(--ip-bg);color:var(--ip-fg)}.msg.err{background:#FDEBEC;color:#9F2F2D}
+.wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:16px;margin-top:24px}
+.wall blockquote{margin:0;border:1px solid var(--line);border-radius:6px;padding:16px;background:var(--bg);display:flex;flex-direction:column;gap:8px}
+.cta{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px}
+.steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:10px;color:var(--muted)}
+.slots{display:flex;flex-direction:column;gap:14px;margin-top:8px}
+.slots h4{margin:0 0 6px;font-size:.8rem;font-weight:600;color:var(--deep)}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr));gap:8px}
+label.slot{position:relative;display:flex;flex-direction:column;gap:2px;border:1px solid var(--line);border-radius:6px;padding:10px 12px;cursor:pointer;font-size:.85rem;background:var(--bg)}
+label.slot input{position:absolute;opacity:0;width:1px;height:1px;min-height:0}
+label.slot:has(input:checked){border-color:var(--deep);background:var(--tint);box-shadow:inset 0 0 0 1px var(--deep)}
+label.slot:has(input:focus-visible){outline:2px solid var(--deep);outline-offset:2px}
+label.slot small{color:var(--muted)}
+.soon{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:16px}
+.soon div{border:1px solid var(--line);border-radius:6px;padding:20px;background:var(--bg);display:flex;flex-direction:column;gap:8px}
+
+/* footer */
+footer{background:var(--maroon);color:#F6EDE6}
+footer .wrap{padding-block:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:28px}
+footer a{color:#FFFFFF}
+footer .muted{color:#E3CFC4}
+footer .logo b,footer .logo{color:#FFFFFF}
+.wa{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));width:56px;height:56px;border-radius:50%;background:var(--deep);color:var(--on-deep);display:grid;place-items:center;box-shadow:0 2px 10px rgba(0,0,0,.15);z-index:30}
+.wa:hover{background:var(--deep-h);color:var(--on-deep)}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Divyanjali home"><span class="ring">D</span><b>Divyanjali</b></a>
+    <nav class="nav" aria-label="Main">
+      <a class="hide-s" href="#upcoming">Upcoming</a>
+      <a class="hide-s" href="#calendar">Calendar</a>
+      <a class="hide-s" href="#past">Past events</a>
+      <a class="hide-s" href="#perform">Perform</a>
+      <a class="btn" href="#enquire">Book &amp; enquire</a>
+    </nav>
+  </div>
+</header>
+<div class="season" id="season"></div>
+<div class="demo" id="demo" hidden>Demo data. Connect the Google Sheet to show real events.</div>
+
+<div id="home">
+  <div class="hero" id="top">
+    <div class="wrap">
+      <div class="hero-copy">
+        <p class="eyebrow">Bharatanatyam since 1994 · CIT Nagar, Chennai</p>
+        <h1>The dancer is the dance.</h1>
+        <p class="lead">Performances, arangetrams and workshops by Divyanjali, the school of Dr. S. Divyasena and Sri B.P. Haribabu. Every event has its own page with the details, the artists and a link to share.</p>
+        <div class="row"><a class="btn" href="#upcoming">See upcoming events</a><a class="btn-o" href="#calendar">Open the calendar</a></div>
+      </div>
+      <div class="spot" id="spot"></div>
+    </div>
+  </div>
+
+  <section class="alt" id="upcoming">
+    <div class="wrap">
+      <div class="sec-head"><div><p class="eyebrow">Coming up</p><h2>Upcoming events</h2></div><a class="btn-o" href="#calendar">Full calendar</a></div>
+      <div class="cards" id="upList"></div>
+    </div>
+  </section>
+
+  <section id="calendar">
+    <div class="wrap">
+      <div class="sec-head"><div><p class="eyebrow">Calendar</p><h2>Tap an event for details</h2></div></div>
+      <div class="cal-bar">
+        <div class="mnav"><button class="ib" type="button" id="prevM" aria-label="Previous month">‹</button><h3 id="mTitle"></h3><button class="ib" type="button" id="nextM" aria-label="Next month">›</button></div>
+        <div class="chips" id="filters" role="group" aria-label="Filter by type"></div>
+      </div>
+      <div class="grid" id="grid"></div>
+      <div class="agenda" id="agenda"></div>
+      <div class="box" style="margin-top:20px">
+        <div class="cta"><div class="stack" style="gap:4px"><h3>Follow the Season on your phone</h3><p class="muted">Every Divyanjali event in your own calendar. New events appear by themselves.</p></div>
+        <div class="row"><a class="btn" id="subGoogle" href="#" target="_blank" rel="noopener">Google Calendar</a><a class="btn-o" id="subApple" href="#">iPhone / Outlook</a><button class="btn-o" type="button" id="subCopy">Copy calendar link</button></div></div>
+        <p class="muted">Calendar link: <span id="subUrl" style="user-select:all"></span></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt" id="past">
+    <div class="wrap">
+      <div class="sec-head"><div><p class="eyebrow">From our stage</p><h2>Past events</h2></div><a class="btn-o" href="#archive">See all past events</a></div>
+      <div class="cards" id="pastList"></div>
+    </div>
+  </section>
+
+  <section id="perform">
+    <div class="wrap two">
+      <div class="stack">
+        <p class="eyebrow">For dancers</p>
+        <h2>Perform in the Season</h2>
+        <p class="muted">Solo and group slots on the Divyanjali stage this season.</p>
+        <ol class="steps">
+          <li>Pick an open slot.</li>
+          <li>Tell us about you and your programme. The slot is held for you while we review, so no one else can take it.</li>
+          <li>We confirm on WhatsApp within 3 days. Once confirmed, your performance gets its own event page to share.</li>
+        </ol>
+      </div>
+      <form class="f box" id="appForm" novalidate>
+        <div><p class="l" id="slotLbl">1. Choose a slot</p><div id="slotList" class="slots" role="radiogroup" aria-labelledby="slotLbl"><p class="muted">Loading open slots…</p></div></div>
+        <p class="l" style="margin-top:6px">2. About you</p>
+        <div class="fr">
+          <label class="l" for="a_name">Artist or group name<input id="a_name" name="artist_name" required autocomplete="name"></label>
+          <label class="l" for="a_fmt">Solo or group<select id="a_fmt" name="format"><option>Solo</option><option>Group</option></select></label>
+        </div>
+        <div class="fr">
+          <label class="l" for="a_guru">Guru<input id="a_guru" name="guru"></label>
+          <label class="l" for="a_city">City<input id="a_city" name="city" autocomplete="address-level2"></label>
+        </div>
+        <label class="l" for="a_dancers" id="a_dancersL" hidden>Dancers' names<input id="a_dancers" name="dancers" placeholder="Separate names with commas"></label>
+        <label class="l" for="a_prog">Programme (items you plan to present)<textarea id="a_prog" name="programme" placeholder="Pushpanjali, Varnam, Padam, Thillana"></textarea></label>
+        <div class="fr">
+          <label class="l" for="a_music">Music<select id="a_music" name="music"><option>Live</option><option>Recorded</option></select></label>
+          <label class="l" for="a_video">A video of your dance (link)<input id="a_video" name="video_link" type="url" placeholder="YouTube or Drive link"></label>
+        </div>
+        <div class="fr">
+          <label class="l" for="a_wa">WhatsApp number<input id="a_wa" name="whatsapp" required inputmode="tel" autocomplete="tel" placeholder="+91"></label>
+          <label class="l" for="a_email">Email (optional)<input id="a_email" name="email" type="email" autocomplete="email"></label>
+        </div>
+        <label class="l" for="a_msg">Anything else (optional)<textarea id="a_msg" name="message" style="min-height:80px"></textarea></label>
+        <input class="hp" tabindex="-1" autocomplete="off" name="website" aria-hidden="true">
+        <div class="row"><button class="btn" type="submit">Request this slot</button></div>
+        <div id="a_msgbox" role="status"></div>
+      </form>
+    </div>
+  </section>
+
+  <section class="alt" id="enquire">
+    <div class="wrap two">
+      <div class="stack">
+        <p class="eyebrow">Book &amp; enquire</p>
+        <h2>Book a performance or ask about classes</h2>
+        <p class="muted">We reply on WhatsApp within 24 hours.</p>
+      </div>
+      <form class="f box" id="enqForm" novalidate>
+        <div class="fr">
+          <label class="l" for="q_type">I'm asking about<select id="q_type" name="enquiry_type"><option>Performance booking</option><option>Workshop or lecture demonstration</option><option>Classes for a student</option><option>Collaboration</option><option>Something else</option></select></label>
+          <label class="l" for="q_name">Your name<input id="q_name" name="name" required autocomplete="name"></label>
+        </div>
+        <div class="fr">
+          <label class="l" for="q_wa">WhatsApp number<input id="q_wa" name="whatsapp" required inputmode="tel" autocomplete="tel" placeholder="+91"></label>
+          <label class="l" for="q_email">Email (optional)<input id="q_email" name="email" type="email" autocomplete="email"></label>
+        </div>
+        <div class="fr">
+          <label class="l" for="q_org">Organisation or sabha (optional)<input id="q_org" name="organisation"></label>
+          <label class="l" for="q_date">Date needed (optional)<input id="q_date" name="date_needed" type="date"></label>
+        </div>
+        <label class="l" for="q_msg">Message<textarea id="q_msg" name="message"></textarea></label>
+        <input class="hp" tabindex="-1" autocomplete="off" name="website" aria-hidden="true">
+        <input type="hidden" name="from_event_code" id="q_from">
+        <div class="row"><button class="btn" type="submit">Send enquiry</button><span class="muted" id="q_note"></span></div>
+        <div id="q_msgbox" role="status"></div>
+      </form>
+    </div>
+  </section>
+</div>
+
+<div id="eventView" hidden></div>
+
+<main id="archiveView" hidden>
+  <section>
+    <div class="wrap">
+      <div class="sec-head"><div><p class="eyebrow">Archive</p><h2>All past events</h2></div><a class="btn-o" href="#calendar">Upcoming events</a></div>
+      <input class="arc-q" id="arcQ" type="search" placeholder="Search by title, artist or venue" aria-label="Search past events">
+      <div class="chips" id="arcYears" style="margin-top:12px"></div>
+      <div class="chips" id="arcTypes" style="margin-top:8px"></div>
+      <p class="muted" id="arcCount" style="margin:16px 0"></p>
+      <div id="arcList"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="stack" style="gap:8px"><a class="logo" href="#top"><span class="ring" style="border-color:#FFB37A;color:#FFFFFF">D</span><b>Divyanjali</b></a><p class="muted">Bharatanatyam since 1994 · CIT Nagar, Chennai</p></div>
+    <div class="stack" style="gap:4px"><p class="muted">Visit</p><p id="fAddr"></p><p id="fWa"></p></div>
+    <div class="stack" style="gap:4px"><p class="muted">Follow</p><a id="fIg" href="#">Instagram</a><a id="fYt" href="#">YouTube</a><a id="fFb" href="#">Facebook</a></div>
+  </div>
+</footer>
+<a class="wa" id="waFloat" href="#" aria-label="Chat with Divyanjali on WhatsApp"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20l1.5-4A8 8 0 1 1 8 18.5z"/></svg></a>
+<dialog id="dlg" aria-labelledby="dlgTitle"><div class="dlg" id="dlgBody"></div></dialog>
+
+<script>
+/* ===== Settings: change these four lines when going live ===== */
+const CONFIG = {
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycby1jf4-uZtCLtY4Im3zvBlnm5gMTmncxx-pIG14BjkDIAmzH8_J1lWOu5ThyC-vf4yt/exec',                                  // Apps Script web app URL (ends with /exec). Empty = demo data.
+  SITE_URL: /^https?:/.test(location.protocol) ? location.origin : 'https://divyanjalidance.com', // share links use the address the site is open on
+  PRETTY_LINKS: true,                              // true: /e/CODE (Cloudflare Pages). false: /?e=CODE (GitHub Pages)
+  WHATSAPP: '919000000000',                        // country code + number, digits only
+  SEASON: 'Dance Season 2026–27 · November to January',
+  ADDRESS: '[Address], CIT Nagar, Chennai',
+  INSTAGRAM: '#', FACEBOOK: '#',
+  YOUTUBE: 'https://www.youtube.com/channel/UCLPvhdH5qXt0R4IyDt1eSHg'
+};
+
+/* ===== Demo events, used only until the Google Sheet is connected ===== */
+const SAMPLE = [
+  {event_code:'DV-260924-NAVARATRI',date:'2026-09-24',start_time:'18:00',duration:'2 hrs',title:'Navaratri Utsavam',type:'Performance',format:'Group',mode:'In person',lead_artist:'Students of Divyanjali',guru:'Dr. S. Divyasena',dancers:'Student name, Student name, Student name, Student name',orchestra:'Nattuvangam: Dr. S. Divyasena; Mridangam: Sri B.P. Haribabu; Vocal: Vocalist name',music:'Live',venue_name:'Sabha name',venue_address:'Area, Chennai',maps_link:'https://maps.google.com/?q=CIT+Nagar+Chennai',entry:'Free',presented_by:'Divyanjali',why_attend:'An evening of devotional items for Navaratri.',invite_message:'Thank you for being with us.',about:'Sample past event. Photos and video from the evening appear here.',photos_link:'#',video_link:'https://www.youtube.com/channel/UCLPvhdH5qXt0R4IyDt1eSHg'},
+  {event_code:'DV-261025-LAYA',date:'2026-10-25',start_time:'11:00',duration:'90 min',title:'Laya in Bharatanatyam',poster_link:'https://drive.google.com/file/d/1oZLN2K1AskNjilXYaUWHEm2cP8sHBleh/view?usp=drive_link',type:'Workshop',format:'Solo',mode:'Hybrid',lead_artist:'Sri B.P. Haribabu',guru:'',orchestra:'',music:'Live',venue_name:'Divyanjali',venue_address:'CIT Nagar, Chennai',maps_link:'https://maps.google.com/?q=CIT+Nagar+Chennai',entry:'Free, register',presented_by:'Divyanjali',why_attend:'Understand the rhythm behind every adavu, with live mridangam.',invite_message:'Bring your questions about tala.',about:'A lecture demonstration for students, parents and rasikas.'},
+  {event_code:'DV-261108-RECITAL',date:'2026-11-08',start_time:'18:30',duration:'2 hrs',title:'Margam Recital',type:'Performance',format:'Solo',mode:'In person',lead_artist:'Student name',guru:'Dr. S. Divyasena',orchestra:'Nattuvangam: Dr. S. Divyasena; Vocal: Vocalist name; Mridangam: Sri B.P. Haribabu; Violin: Violinist name; Flute: Flautist name',music:'Live',venue_name:'Sabha name',venue_address:'Area, Chennai',maps_link:'https://maps.google.com/?q=Chennai',entry:'Free',presented_by:'Divyanjali',sponsor:'Sponsor name',why_attend:'A full margam by a senior Divyanjali dancer, with a live orchestra.',invite_message:'I would be honoured to have you in the audience.',about:'Sample event. Replace with the programme from the Google Sheet.'},
+  {event_code:'DV-261115-ABHINAYA',date:'2026-11-15',start_time:'10:00',duration:'2 hrs',title:'Abhinaya Workshop',type:'Workshop',format:'Solo',mode:'Online',lead_artist:'Dr. S. Divyasena',music:'Recorded',venue_name:'Live online',entry:'Free, register',presented_by:'Divyanjali',why_attend:'Learn how expression is built, line by line, from the guru herself.',invite_message:'Join from anywhere in the world.',about:'Open to students of all levels.'},
+  {event_code:'DV-261115-ARANGETRAM',date:'2026-11-15',start_time:'17:30',duration:'3 hrs',title:'Arangetram',type:'Arangetram',format:'Solo',mode:'In person',lead_artist:'Student name',guru:'Dr. S. Divyasena',orchestra:'Nattuvangam: Dr. S. Divyasena; Mridangam: Sri B.P. Haribabu; Vocal: Vocalist name; Violin: Violinist name',music:'Live',venue_name:'Sabha name',venue_address:'Area, Chennai',maps_link:'https://maps.google.com/?q=Chennai',entry:'By invitation',presented_by:'The family of the dancer',why_attend:'The first full solo stage performance of a young dancer, years in the making.',invite_message:'Please bless me with your presence on my arangetram.',about:'Sample event.'},
+  {event_code:'DV-261129-TALK',date:'2026-11-29',start_time:'11:00',duration:'1 hr',title:'Behind the Production',type:'Workshop',format:'Solo',mode:'Hybrid',lead_artist:'Dr. S. Divyasena',music:'Recorded',venue_name:'Divyanjali',venue_address:'CIT Nagar, Chennai',maps_link:'https://maps.google.com/?q=CIT+Nagar+Chennai',entry:'Free, register',presented_by:'Divyanjali',why_attend:'See how Andal Vaibhavam was made, before the evening show.',invite_message:'Come early and meet the team.',about:'A short talk with demonstration.'},
+  {event_code:'DV-261129-KALARPANAM',date:'2026-11-29',start_time:'16:00',duration:'90 min',title:'Kalarpanam Showcase',type:'Festival',format:'Group',mode:'In person',lead_artist:'Young artists',dancers:'Student name, Student name, Student name, Student name, Student name, Student name',music:'Recorded',venue_name:'Sabha name',venue_address:'Area, Chennai',maps_link:'https://maps.google.com/?q=Chennai',entry:'Free',presented_by:'Divyanjali',why_attend:'Young artists from the Kalarpanam platform.',invite_message:'Encourage the next generation with your presence.',about:'Sample event.'},
+  {event_code:'DV-261129-ANDAL',date:'2026-11-29',start_time:'18:00',duration:'2 hrs',title:'Andal Vaibhavam',type:'Festival',format:'Group',mode:'In person',lead_artist:'Divyanjali ensemble',guru:'Dr. S. Divyasena',dancers:'Dancer name, Dancer name, Dancer name, Dancer name, Dancer name, Dancer name, Dancer name, Dancer name',orchestra:'Nattuvangam: Dr. S. Divyasena; Mridangam: Sri B.P. Haribabu; Vocal: Vocalist name; Violin: Violinist name; Flute: Flautist name',music:'Live',venue_name:'Sabha name, Season 2026–27',venue_address:'Chennai',maps_link:'https://maps.google.com/?q=Chennai',entry:'Ticketed',ticket_link:'#',presented_by:'Divyanjali',sponsor:'Sponsor name',why_attend:'The life of Andal, staged on 13 stages in a single year.',invite_message:'We invite you to an evening with Andal.',about:'Choreography by Dr. S. Divyasena. Music by Sri T.H. Thiyagarajan.'}
+];
+const SAMPLE_SLOTS = [
+  {slot_id:'S-261114-1700',date:'2026-11-14',start_time:'17:00',end_time:'17:45',venue_name:'Sabha name',slot_for:'Solo'},
+  {slot_id:'S-261114-1800',date:'2026-11-14',start_time:'18:00',end_time:'19:00',venue_name:'Sabha name',slot_for:'Solo or group'},
+  {slot_id:'S-261121-1730',date:'2026-11-21',start_time:'17:30',end_time:'18:15',venue_name:'Divyanjali, CIT Nagar',slot_for:'Solo'},
+  {slot_id:'S-261205-1800',date:'2026-12-05',start_time:'18:00',end_time:'19:00',venue_name:'Sabha name',slot_for:'Group'}
+];
+const SAMPLE_WISHES = [{kind:'Wish',name:'Rasika',city:'Chennai',message:'Wishing the dancer a wonderful evening.'},{kind:'Feedback',name:'Parent',city:'Bengaluru',message:'Beautifully organised, the live orchestra was a joy.'}];
+
+/* ===== Helpers ===== */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const state = { events: [], demo: false, month: null, filter: 'All', prefill: null, arc: { year: 'All years', type: 'All types', q: '' }, slotsDemo: false, takenDemo: [] };
+
+function store(key, val) { try { if (val === undefined) return JSON.parse(localStorage.getItem(key) || 'null'); localStorage.setItem(key, JSON.stringify(val)); } catch (e) { return null; } }
+function durMin(s) { s = String(s || '').toLowerCase(); const h = s.match(/(\d+(?:\.\d+)?)\s*h/); const m = s.match(/(\d+)\s*m/); const t = (h ? parseFloat(h[1]) * 60 : 0) + (m ? parseInt(m[1], 10) : 0); return t || 120; }
+function driveImg(u) { if (!u || u === '#') return ''; const m = String(u).match(/\/d\/([\w-]{20,})/) || String(u).match(/[?&]id=([\w-]{20,})/); return m ? 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1600' : u; }
+function modeCls(m) { return m === 'Online' ? 'm-ol' : m === 'Hybrid' ? 'm-hy' : 'm-ip'; }
+function fmtDate(d) { return new Intl.DateTimeFormat('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' }).format(d); }
+function fmtLong(d) { return new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' }).format(d); }
+function fmtTime(d) { return new Intl.DateTimeFormat('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' }).format(d).toUpperCase(); }
+function shareUrl(code) { return CONFIG.SITE_URL + (CONFIG.PRETTY_LINKS ? '/e/' + code : '/?e=' + code); }
+function waLink(text) { return 'https://wa.me/' + CONFIG.WHATSAPP + '?text=' + encodeURIComponent(text); }
+
+function normalize(e) {
+  const time = (e.start_time || '00:00').slice(0, 5);
+  const start = new Date(e.date + 'T' + time + ':00+05:30');
+  const end = new Date(start.getTime() + durMin(e.duration) * 60000);
+  return Object.assign({}, e, { start, end, past: end < new Date(), mode: e.mode || 'In person', type: e.type || 'Performance' });
+}
+
+async function loadEvents() {
+  if (CONFIG.SCRIPT_URL) {
+    try {
+      const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), 8000);
+      const r = await fetch(CONFIG.SCRIPT_URL + '?action=events', { signal: ctrl.signal });
+      clearTimeout(t);
+      const j = await r.json();
+      if (j && Array.isArray(j.events)) { store('dv_events', j.events); return j.events; }
+    } catch (err) {
+      const cached = store('dv_events');
+      if (cached) return cached;
+    }
+  }
+  state.demo = true;
+  return SAMPLE;
+}
+
+async function post(payload) {
+  if (!CONFIG.SCRIPT_URL) return { ok: true, demo: true };
+  const r = await fetch(CONFIG.SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
+  return r.json();
+}
+
+function utcStamp(d) { return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''); }
+function gcalLink(e) {
+  const where = e.mode === 'Online' ? 'Online' : [e.venue_name, e.venue_address].filter(Boolean).join(', ');
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(e.title + ' · Divyanjali') + '&dates=' + utcStamp(e.start) + '/' + utcStamp(e.end) + '&details=' + encodeURIComponent((e.why_attend || '') + '\n\n' + shareUrl(e.event_code)) + '&location=' + encodeURIComponent(where);
+}
+function downloadIcs(e) {
+  const where = e.mode === 'Online' ? 'Online' : [e.venue_name, e.venue_address].filter(Boolean).join(', ');
+  const ics = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Divyanjali//Events//EN','BEGIN:VEVENT','UID:' + e.event_code + '@divyanjalidance.com','DTSTAMP:' + utcStamp(new Date()),'DTSTART:' + utcStamp(e.start),'DTEND:' + utcStamp(e.end),'SUMMARY:' + (e.title + ' · Divyanjali').replace(/[,;]/g, ' '),'LOCATION:' + where.replace(/[,;]/g, ' '),'URL:' + shareUrl(e.event_code),'END:VEVENT','END:VCALENDAR'].join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
+  a.download = e.event_code + '.ics'; document.body.appendChild(a); a.click(); a.remove();
+}
+
+function poster(e, label) {
+  const src = driveImg(e.poster_link);
+  const fb = '<div class="pfb"><span>' + esc(e.title) + '</span><small>' + esc(label || e.type) + '</small></div>';
+  return '<div class="poster">' + fb + (src ? '<img src="' + esc(src) + '" alt="Poster: ' + esc(e.title) + '" loading="lazy" onerror="this.remove()">' : '') + '</div>';
+}
+
+function card(e) {
+  const where = e.mode === 'Online' ? 'Live online' : esc(e.venue_name || '');
+  const map = e.mode !== 'Online' && e.maps_link ? ' · <a href="' + esc(e.maps_link) + '" target="_blank" rel="noopener">Google Maps</a>' : '';
+  const acts = e.past
+    ? '<a class="btn-o" href="#e-' + esc(e.event_code) + '">Details</a>' + (e.photos_link && e.photos_link !== '#' ? '<a class="btn-o" href="' + esc(e.photos_link) + '" target="_blank" rel="noopener">Photos</a>' : '') + (e.video_link ? '<a class="btn-o" href="' + esc(e.video_link) + '" target="_blank" rel="noopener">Video</a>' : '')
+    : '<a class="btn" href="#e-' + esc(e.event_code) + '">Details</a><a class="btn-o" href="' + gcalLink(e) + '" target="_blank" rel="noopener">Add to calendar</a>';
+  return '<article class="card">' + poster(e) + '<div class="body"><div class="when"><span>' + fmtDate(e.start) + ' · ' + fmtTime(e.start) + '</span><span class="badge ' + modeCls(e.mode) + '">' + esc(e.mode) + '</span></div><h3><a href="#e-' + esc(e.event_code) + '">' + esc(e.title) + '</a></h3><p class="muted">' + esc(e.type) + ' · ' + esc(e.format || '') + (e.music ? ' · ' + esc(e.music) + ' music' : '') + ' · ' + esc(e.entry || '') + '</p><p class="muted">' + where + map + '</p><div class="acts">' + acts + '</div></div></article>';
+}
+
+/* ===== Home ===== */
+function renderHome() {
+  const up = state.events.filter((e) => !e.past);
+  const past = state.events.filter((e) => e.past).reverse();
+  const next = up[0];
+  $('#spot').innerHTML = next
+    ? '<p class="eyebrow">Next on stage</p>' + poster(next, 'Next on stage') + '<div class="meta"><div class="row" style="gap:8px"><span class="badge ' + modeCls(next.mode) + '">' + esc(next.mode) + '</span><span class="badge tag">' + esc(next.type) + '</span></div><h3><a href="#e-' + esc(next.event_code) + '" style="color:inherit;text-decoration:none">' + esc(next.title) + '</a></h3><p class="muted">' + fmtLong(next.start) + ' · ' + fmtTime(next.start) + '</p></div><div class="row"><a class="btn" href="#e-' + esc(next.event_code) + '">View event</a><a class="btn-o" href="' + gcalLink(next) + '" target="_blank" rel="noopener">Add to calendar</a></div>'
+    : '<div class="empty">New events will appear here soon.</div>';
+  $('#upList').innerHTML = up.slice(0, 6).map(card).join('') || '<div class="empty">No upcoming events right now. Follow us on Instagram for news.</div>';
+  $('#pastList').innerHTML = past.slice(0, 6).map(card).join('') || '<div class="empty">Past events will be archived here with photos and videos.</div>';
+  if (!state.month) { const d = next ? next.date : new Date().toISOString().slice(0, 10); state.month = { y: +d.slice(0, 4), m: +d.slice(5, 7) - 1 }; }
+  renderFilters(); renderCal(); applyPrefill();
+}
+
+/* ===== Past events archive ===== */
+function renderArchive() {
+  const all = state.events.filter((e) => e.past).reverse();
+  const years = [...new Set(all.map((e) => e.date.slice(0, 4)))];
+  const types = [...new Set(all.map((e) => e.type).filter(Boolean))];
+  const a = state.arc;
+  const chip = (attr, v, on) => '<button class="chip" type="button" ' + attr + '="' + esc(v) + '" aria-pressed="' + on + '">' + esc(v) + '</button>';
+  $('#arcYears').innerHTML = ['All years'].concat(years).map((y) => chip('data-ay', y, a.year === y)).join('');
+  $('#arcTypes').innerHTML = types.length > 1 ? ['All types'].concat(types).map((t) => chip('data-at', t, a.type === t)).join('') : '';
+  const q = a.q.trim().toLowerCase();
+  const list = all.filter((e) => (a.year === 'All years' || e.date.startsWith(a.year)) && (a.type === 'All types' || e.type === a.type) &&
+    (!q || [e.title, e.venue_name, e.lead_artist, e.guru, e.dancers, e.orchestra, e.type, e.event_code].join(' ').toLowerCase().includes(q)));
+  $('#arcCount').textContent = list.length + (list.length === 1 ? ' event' : ' events');
+  let h = '', yr = '';
+  list.forEach((e) => {
+    const y = e.date.slice(0, 4);
+    if (y !== yr) { h += (yr ? '</div>' : '') + '<h3 class="arc-yr">' + y + '</h3><div class="cards">'; yr = y; }
+    h += card(e);
+  });
+  $('#arcList').innerHTML = h ? h + '</div>' : '<div class="empty">No past events match. Try another year or search.</div>';
+}
+
+function renderFilters() {
+  $('#filters').innerHTML = ['All', 'Performance', 'Arangetram', 'Workshop', 'Festival'].map((f) => '<button class="chip" type="button" data-f="' + f + '" aria-pressed="' + (state.filter === f) + '">' + f + '</button>').join('');
+}
+
+function renderCal() {
+  const { y, m } = state.month;
+  $('#mTitle').textContent = MONTHS[m] + ' ' + y;
+  const first = new Date(Date.UTC(y, m, 1)).getUTCDay();
+  const days = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+  const key = (d) => y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+  const list = state.events.filter((e) => state.filter === 'All' || e.type === state.filter);
+  const todayKey = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date());
+  let h = DAYS.map((d) => '<div class="dh">' + d + '</div>').join('');
+  const cells = Math.ceil((first + days) / 7) * 7;
+  for (let i = 0; i < cells; i++) {
+    const d = i - first + 1;
+    if (d < 1 || d > days) { h += '<div class="cell off" aria-hidden="true"></div>'; continue; }
+    const es = list.filter((e) => e.date === key(d));
+    h += '<div class="cell' + (key(d) === todayKey ? ' today' : '') + '"><span class="d">' + d + '</span>' +
+      es.slice(0, 2).map((e) => '<button class="ev" type="button" data-code="' + esc(e.event_code) + '"><small>' + fmtTime(e.start) + ' · ' + esc(e.mode) + '</small>' + esc(e.title) + '</button>').join('') +
+      (es.length > 2 ? '<button class="more" type="button" data-day="' + key(d) + '">+ ' + (es.length - 2) + ' more</button>' : '') + '</div>';
+  }
+  $('#grid').innerHTML = h;
+  const month = list.filter((e) => e.date.slice(0, 7) === key(1).slice(0, 7));
+  $('#agenda').innerHTML = month.map((e) => '<button type="button" data-code="' + esc(e.event_code) + '"><span><b>' + Number(e.date.slice(8, 10)) + ' ' + MONTHS[m].slice(0, 3) + '</b> · ' + fmtTime(e.start) + ' · ' + esc(e.title) + '</span><span class="badge ' + modeCls(e.mode) + '">' + esc(e.mode) + '</span></button>').join('') || '<p class="muted" style="padding:14px 0">No events this month.</p>';
+}
+
+function openQuick(code) {
+  const e = state.events.find((x) => x.event_code === code); if (!e) return;
+  const where = e.mode === 'Online' ? 'Live online · join link after you register' : esc([e.venue_name, e.venue_address].filter(Boolean).join(', '));
+  $('#dlgBody').innerHTML = '<button class="x" type="button" data-close aria-label="Close">×</button><div class="row" style="justify-content:space-between"><div class="row" style="gap:6px"><span class="badge tag">' + esc(e.type) + '</span><span class="badge tag">' + esc(e.format || '') + '</span></div><span class="badge ' + modeCls(e.mode) + '">' + esc(e.mode) + '</span></div><h3 id="dlgTitle" style="font-size:1.8rem">' + esc(e.title) + '</h3>' + poster(e) +
+    (e.why_attend ? '<div class="why"><b>Why attend:</b> ' + esc(e.why_attend) + '</div>' : '') +
+    '<dl class="dl"><dt>When</dt><dd>' + fmtLong(e.start) + ' · ' + fmtTime(e.start) + '</dd><dt>Where</dt><dd>' + where + (e.mode !== 'Online' && e.maps_link ? '<br><a href="' + esc(e.maps_link) + '" target="_blank" rel="noopener">Open in Google Maps</a>' : '') + '</dd><dt>Entry</dt><dd>' + esc(e.entry || '') + '</dd></dl>' +
+    '<div class="row"><a class="btn" href="#e-' + esc(e.event_code) + '" data-close>Open event page</a>' + (e.past ? '' : '<a class="btn-o" href="' + gcalLink(e) + '" target="_blank" rel="noopener">Add to calendar</a>') + '<button class="btn-o" type="button" data-share="' + esc(e.event_code) + '" aria-expanded="false" aria-controls="qShare">Share</button></div>' +
+    '<div id="qShare" class="stack" style="gap:10px" hidden><div class="sg">' + shareLinks(e) + '</div><p class="muted">Event link: <span style="user-select:all">' + esc(shareUrl(e.event_code)) + '</span></p></div>';
+  $('#dlg').showModal();
+}
+function shareText(e) { return e.title + ' · ' + fmtDate(e.start) + ', ' + fmtTime(e.start) + (e.mode === 'Online' ? ' · Online' : ' · ' + (e.venue_name || '')) + '\n' + shareUrl(e.event_code); }
+function shareLinks(e) {
+  const url = shareUrl(e.event_code), t = shareText(e);
+  const a = (href, label) => '<a href="' + href + '" target="_blank" rel="noopener">' + label + '</a>';
+  return a('https://wa.me/?text=' + encodeURIComponent(t), 'WhatsApp') +
+    a('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url), 'Facebook') +
+    a('https://twitter.com/intent/tweet?text=' + encodeURIComponent(e.title + ' · Divyanjali') + '&url=' + encodeURIComponent(url), 'X') +
+    a('https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(e.title), 'Telegram') +
+    '<a href="mailto:?subject=' + encodeURIComponent(e.title + ' · Divyanjali') + '&body=' + encodeURIComponent(t) + '">Email</a>' +
+    '<button type="button" data-copy="' + esc(url) + '">Copy link</button>';
+}
+async function quickShare(btn) {
+  const e = state.events.find((x) => x.event_code === btn.dataset.share); if (!e) return;
+  if (navigator.share) { try { await navigator.share({ title: e.title, text: shareText(e), url: shareUrl(e.event_code) }); return; } catch (err) { if (err && err.name === 'AbortError') return; } }
+  const p = $('#qShare'); p.hidden = !p.hidden; btn.setAttribute('aria-expanded', String(!p.hidden));
+}
+async function copyLink(btn) {
+  try { await navigator.clipboard.writeText(btn.dataset.copy); btn.textContent = 'Copied'; }
+  catch (err) { btn.textContent = 'Select the link below'; }
+}
+function openDay(day) {
+  const es = state.events.filter((e) => e.date === day && (state.filter === 'All' || e.type === state.filter));
+  $('#dlgBody').innerHTML = '<button class="x" type="button" data-close aria-label="Close">×</button><h3 id="dlgTitle" style="font-size:1.8rem">' + fmtLong(es[0].start) + '</h3><div class="agenda" style="display:flex">' + es.map((e) => '<button type="button" data-code="' + esc(e.event_code) + '"><span><b>' + fmtTime(e.start) + '</b> · ' + esc(e.title) + '</span><span class="badge ' + modeCls(e.mode) + '">' + esc(e.mode) + '</span></button>').join('') + '</div>';
+  if (!$('#dlg').open) $('#dlg').showModal();
+}
+
+/* ===== Event page ===== */
+const CTA = {
+  Performance: ['Book us', 'Want a performance like this at your sabha, temple or event?', 'Book a performance', 'Performance booking'],
+  Festival: ['Book us', 'Bring a Divyanjali production to your festival or season.', 'Invite a production', 'Performance booking'],
+  Workshop: ['Host a workshop', 'Run a workshop or lecture demonstration at your school or institution.', 'Ask about workshops', 'Workshop or lecture demonstration'],
+  Arangetram: ['Learn with us', 'Begin the journey to your own or your child’s arangetram.', 'Ask about classes', 'Classes for a student']
+};
+
+function renderEvent(code) {
+  const e = state.events.find((x) => x.event_code.toUpperCase() === code.toUpperCase());
+  const view = $('#eventView');
+  $('#home').hidden = true; $('#archiveView').hidden = true; view.hidden = false; window.scrollTo(0, 0);
+  if (!e) { view.innerHTML = '<section><div class="wrap stack"><h1>Event not found</h1><p class="muted">The link may be old or the event code has changed.</p><a class="btn" href="#upcoming" style="align-self:flex-start">See all events</a></div></section>'; return; }
+  document.title = e.title + ' · Divyanjali';
+  const url = shareUrl(e.event_code);
+  const shareText = e.title + ' · ' + fmtDate(e.start) + ', ' + fmtTime(e.start) + (e.mode === 'Online' ? ' · Online' : ' · ' + (e.venue_name || '')) + '\n' + url;
+  const orch = String(e.orchestra || '').split(/;|\n/).map((s) => s.trim()).filter(Boolean).map((s) => { const p = s.split(':'); return p.length > 1 ? '<li>' + esc(p.slice(1).join(':').trim()) + ' <span>· ' + esc(p[0].trim()) + '</span></li>' : '<li>' + esc(s) + '</li>'; }).join('');
+  const dancers = String(e.dancers || '').split(',').map((s) => s.trim()).filter(Boolean);
+  const perf = e.format === 'Group'
+    ? '<div class="perf"><span class="k">Group performance' + (dancers.length ? ' · ' + dancers.length + ' dancers' : '') + '</span><span class="n">' + esc(e.lead_artist || '') + '</span>' + (dancers.length ? '<ul class="ppl" style="margin-top:8px">' + dancers.map((d) => '<li>' + esc(d) + '</li>').join('') + '</ul>' : '') + '</div>'
+    : '<div class="perf"><span class="k">' + (e.type === 'Workshop' ? 'Led by' : 'Solo performance') + '</span><span class="n">' + esc(e.lead_artist || '') + '</span>' + (e.guru ? '<p class="muted">Disciple of ' + esc(e.guru) + '</p>' : '') + '</div>';
+  const whereHtml = e.mode === 'Online'
+    ? 'Live online<br><span class="muted">Join link sent on WhatsApp after you register</span>'
+    : esc([e.venue_name, e.venue_address].filter(Boolean).join(', ')) + (e.maps_link ? '<br><a href="' + esc(e.maps_link) + '" target="_blank" rel="noopener">Open in Google Maps</a>' : '') + (e.mode === 'Hybrid' ? '<br><span class="muted">Also live online · join link after you register</span>' : '');
+  const cta = CTA[e.type] || CTA.Performance;
+  const more = state.events.filter((x) => !x.past && x.event_code !== e.event_code).slice(0, 3);
+
+  view.innerHTML =
+    '<div class="ev-hero">' + poster(e) + '</div>' +
+    '<div class="band"><div class="wrap"><div class="stack" style="gap:8px"><div class="row" style="gap:6px"><span class="badge ' + modeCls(e.mode) + '">' + esc(e.mode) + '</span><span class="badge tag">' + esc(e.type) + '</span><span class="badge tag">' + esc(e.format || '') + '</span>' + (e.music ? '<span class="badge tag">' + esc(e.music) + ' music</span>' : '') + '</div><h1>' + esc(e.title) + '</h1><p>' + fmtLong(e.start) + ' · ' + fmtTime(e.start) + ' · ' + (e.mode === 'Online' ? 'Online' : esc(e.venue_name || '')) + ' · ' + esc(e.entry || '') + '</p></div>' +
+    '<div class="row">' + (e.past ? '' : '<a class="btn" href="' + gcalLink(e) + '" target="_blank" rel="noopener">Add to Google Calendar</a><button class="btn-o" type="button" id="icsBtn">Apple / Outlook</button>') + '<button class="btn-o" type="button" id="shareBtn" aria-expanded="false" aria-controls="sharePanel">Share</button><a class="btn-o" href="#e-' + esc(e.event_code) + '" id="wishJump">Send a wish</a></div></div></div>' +
+    '<div class="share" id="sharePanel" hidden><div class="wrap"><p class="eyebrow">Share this event</p><div class="sg">' +
+      '<a href="https://wa.me/?text=' + encodeURIComponent(shareText) + '" target="_blank" rel="noopener">WhatsApp</a>' +
+      '<a href="https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url) + '" target="_blank" rel="noopener">Facebook</a>' +
+      '<a href="https://twitter.com/intent/tweet?text=' + encodeURIComponent(e.title + ' · Divyanjali') + '&url=' + encodeURIComponent(url) + '" target="_blank" rel="noopener">X</a>' +
+      '<a href="https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(url) + '" target="_blank" rel="noopener">LinkedIn</a>' +
+      '<a href="https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(e.title) + '" target="_blank" rel="noopener">Telegram</a>' +
+      '<a href="mailto:?subject=' + encodeURIComponent(e.title + ' · Divyanjali') + '&body=' + encodeURIComponent(shareText) + '">Email</a>' +
+      '<button type="button" id="copyBtn">Copy link</button>' +
+      (driveImg(e.poster_link) ? '<a href="' + esc(driveImg(e.poster_link)) + '" target="_blank" rel="noopener">Poster for stories</a>' : '') +
+    '</div><p class="muted">For Instagram stories: copy the link, add a link sticker, and paste it. <span id="copyUrl" style="user-select:all">' + esc(url) + '</span></p></div></div>' +
+    '<section><div class="wrap two"><div class="stack">' +
+      (e.past ? '<div class="past-note"><b>This event took place on ' + fmtLong(e.start) + '.</b> ' + (e.photos_link && e.photos_link !== '#' ? '<a href="' + esc(e.photos_link) + '" target="_blank" rel="noopener">See photos</a>' : 'Photos coming soon') + (e.video_link ? ' · <a href="' + esc(e.video_link) + '" target="_blank" rel="noopener">Watch video</a>' : '') + '</div>' : '') +
+      '<p class="muted">Presented by ' + esc(e.presented_by || 'Divyanjali') + (e.sponsor ? ' · Supported by ' + esc(e.sponsor) : '') + '</p>' +
+      (e.why_attend ? '<div class="why"><b>Why attend:</b> ' + esc(e.why_attend) + '</div>' : '') +
+      (e.about ? '<p>' + esc(e.about) + '</p>' : '') +
+    '</div><aside class="box"><div class="row" style="justify-content:space-between"><p class="eyebrow">Details</p><span class="badge ' + modeCls(e.mode) + '">' + esc(e.mode) + '</span></div><dl class="dl"><dt>Date</dt><dd>' + fmtLong(e.start) + '</dd><dt>Time</dt><dd>' + fmtTime(e.start) + (e.duration ? ' · ' + esc(e.duration) : '') + '</dd><dt>Where</dt><dd>' + whereHtml + '</dd><dt>Entry</dt><dd>' + esc(e.entry || '') + (e.ticket_link && e.ticket_link !== '#' ? '<br><a href="' + esc(e.ticket_link) + '" target="_blank" rel="noopener">Get tickets</a>' : '') + '</dd></dl>' +
+      (e.mode !== 'In person' && !e.past ? '<a class="btn" href="' + waLink('Please register me for ' + e.title + ' (' + e.event_code + ')') + '" target="_blank" rel="noopener">Register on WhatsApp</a>' : '') +
+    '</aside></div></section>' +
+    '<section class="alt"><div class="wrap two"><div class="stack"><p class="eyebrow">The artist</p>' + perf + '</div>' +
+      (e.invite_message ? '<div class="stack"><p class="eyebrow">An invitation</p><blockquote class="inv">“' + esc(e.invite_message) + '”</blockquote><p class="muted">— ' + esc(e.lead_artist || '') + '</p></div>' : '') +
+    '</div></section>' +
+    (orch ? '<section><div class="wrap stack"><p class="eyebrow">Orchestra · ' + esc(e.music || 'Live') + ' music</p><ul class="ppl">' + orch + '</ul></div></section>' : '') +
+    '<section class="alt" id="wish"><div class="wrap"><div class="sec-head"><div><p class="eyebrow">Wishes and feedback</p><h2>Say something to the artist</h2></div></div>' +
+      '<form class="f box" id="wishForm" novalidate><div class="chips" role="radiogroup" aria-label="Message type"><button class="chip" type="button" data-kind="Wish" aria-pressed="true">Wish to the artist</button><button class="chip" type="button" data-kind="Feedback" aria-pressed="false">Feedback on the experience</button><button class="chip" type="button" data-kind="Other" aria-pressed="false">Something else</button></div>' +
+      '<div class="fr"><label class="l" for="w_name">Your name<input id="w_name" required autocomplete="name"></label><label class="l" for="w_city">City<input id="w_city" autocomplete="address-level2"></label></div>' +
+      (e.past ? '<label class="l" for="w_rating">Rating (optional)<select id="w_rating"><option value="">Choose</option><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></label>' : '') +
+      '<label class="l" for="w_msg">Your message<textarea id="w_msg" required></textarea></label><label class="ck" for="w_pub"><input type="checkbox" id="w_pub"> Show my message on this page after review</label><input class="hp" tabindex="-1" autocomplete="off" id="w_hp" aria-hidden="true"><div class="row"><button class="btn" type="submit">Send</button></div><div id="w_box" role="status"></div></form>' +
+      '<div class="wall" id="wall"></div></div></section>' +
+    '<section><div class="wrap cta"><div class="stack" style="gap:6px"><p class="eyebrow">' + cta[0] + '</p><h3>' + cta[1] + '</h3></div><div class="row"><a class="btn" href="#enquire" id="ctaBtn">' + cta[2] + '</a><a class="btn-o" href="' + waLink('Hello Divyanjali, I saw ' + e.title + ' (' + e.event_code + ') and would like to know more.') + '" target="_blank" rel="noopener">Reach us on WhatsApp</a></div></div></section>' +
+    (more.length ? '<section class="alt"><div class="wrap"><div class="sec-head"><div><p class="eyebrow">More events</p><h2>Coming up</h2></div><a class="btn-o" href="#calendar">Full calendar</a></div><div class="cards">' + more.map(card).join('') + '</div></div></section>' : '');
+
+  $('#ctaBtn').addEventListener('click', () => { state.prefill = { type: cta[3], from: e.event_code, msg: 'About: ' + e.title }; });
+  const ics = $('#icsBtn'); if (ics) ics.addEventListener('click', () => downloadIcs(e));
+  $('#wishJump').addEventListener('click', (ev) => { ev.preventDefault(); $('#wish').scrollIntoView(); $('#w_name').focus({ preventScroll: true }); });
+  $('#shareBtn').addEventListener('click', async () => {
+    if (navigator.share) { try { await navigator.share({ title: e.title, text: shareText, url }); return; } catch (err) { if (err && err.name === 'AbortError') return; } }
+    const p = $('#sharePanel'); p.hidden = !p.hidden; $('#shareBtn').setAttribute('aria-expanded', String(!p.hidden));
+  });
+  $('#copyBtn').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(url); $('#copyBtn').textContent = 'Copied'; }
+    catch (err) { const r = document.createRange(); r.selectNodeContents($('#copyUrl')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); $('#copyBtn').textContent = 'Link selected, press copy'; }
+  });
+  let kind = 'Wish';
+  view.querySelectorAll('[data-kind]').forEach((b) => b.addEventListener('click', () => { kind = b.dataset.kind; view.querySelectorAll('[data-kind]').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); }));
+  $('#wishForm').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const box = $('#w_box'); const name = $('#w_name').value.trim(); const msg = $('#w_msg').value.trim();
+    if (!name || !msg) { box.className = 'msg err'; box.textContent = 'Please add your name and a message.'; return; }
+    box.className = 'msg'; box.textContent = 'Sending…';
+    try {
+      const res = await post({ form: 'response', event_code: e.event_code, kind, name, city: $('#w_city').value.trim(), rating: $('#w_rating') ? $('#w_rating').value : '', message: msg, show_public: $('#w_pub').checked ? 'Yes' : 'No', website: $('#w_hp').value });
+      if (!res.ok) throw new Error(res.error || 'failed');
+      $('#wishForm').reset(); box.className = 'msg ok'; box.textContent = res.demo ? 'Demo: in the live site this goes to the Google Sheet and the artist.' : 'Thank you. Your message has reached the artist and the Divyanjali team.';
+    } catch (err) { box.className = 'msg err'; box.textContent = 'Could not send. Please check your connection and try again, or message us on WhatsApp.'; }
+  });
+  loadWishes(e.event_code);
+}
+
+async function loadWishes(code) {
+  let list = [];
+  if (state.demo) list = SAMPLE_WISHES;
+  else if (CONFIG.SCRIPT_URL) { try { const r = await fetch(CONFIG.SCRIPT_URL + '?action=wishes&e=' + encodeURIComponent(code)); const j = await r.json(); list = j.wishes || []; } catch (err) { list = []; } }
+  const wall = $('#wall'); if (!wall) return;
+  wall.innerHTML = list.map((w) => '<blockquote><span class="badge tag" style="align-self:flex-start">' + esc(w.kind) + '</span><p>“' + esc(w.message) + '”</p><p class="muted">' + esc(w.name) + (w.city ? ', ' + esc(w.city) : '') + '</p></blockquote>').join('');
+}
+
+/* ===== Enquiry form ===== */
+function applyPrefill() {
+  if (!state.prefill) return;
+  $('#q_type').value = state.prefill.type; $('#q_from').value = state.prefill.from;
+  if (!$('#q_msg').value) $('#q_msg').value = state.prefill.msg;
+  $('#q_note').textContent = 'From event ' + state.prefill.from;
+  state.prefill = null;
+}
+/* ===== Season artist slots ===== */
+async function loadSlots() {
+  const box = $('#slotList');
+  let res = null;
+  if (CONFIG.SCRIPT_URL) {
+    try {
+      const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), 10000);
+      const r = await fetch(CONFIG.SCRIPT_URL + '?action=slots', { signal: ctrl.signal });
+      clearTimeout(t); res = await r.json();
+    } catch (err) { res = null; }
+  }
+  state.slotsDemo = !res || !Array.isArray(res.slots);
+  if (state.slotsDemo) res = { open: true, slots: SAMPLE_SLOTS.filter((s) => !state.takenDemo.includes(s.slot_id)) };
+  if (!res.open) { box.innerHTML = '<p class="muted">Applications for this season are closed. Ask us about the next one on WhatsApp.</p>'; return; }
+  if (!res.slots.length) { box.innerHTML = '<p class="muted">All slots are taken for now. Send us an enquiry below to join the waiting list.</p>'; return; }
+  const days = {};
+  res.slots.forEach((s) => { (days[s.date] = days[s.date] || []).push(s); });
+  box.innerHTML = Object.keys(days).map((d) => '<div><h4>' + fmtLong(new Date(d + 'T12:00:00+05:30')) + '</h4><div class="sgrid">' + days[d].map((s) => {
+    const at = (t) => fmtTime(new Date(s.date + 'T' + t + ':00+05:30'));
+    return '<label class="slot"><input type="radio" name="slot_id" value="' + esc(s.slot_id) + '"><b>' + at(s.start_time) + (s.end_time ? ' – ' + at(s.end_time) : '') + '</b><small>' + esc(s.venue_name) + '</small><small>' + esc(s.slot_for || 'Solo or group') + '</small></label>';
+  }).join('') + '</div></div>').join('');
+}
+function watchSlots() {
+  const el = $('#perform');
+  if (!('IntersectionObserver' in window)) { loadSlots(); return; }
+  const io = new IntersectionObserver((en) => { if (en.some((x) => x.isIntersecting)) { io.disconnect(); loadSlots(); } }, { rootMargin: '400px' });
+  io.observe(el);
+}
+$('#a_fmt').addEventListener('change', (ev) => { $('#a_dancersL').hidden = ev.target.value !== 'Group'; });
+$('#appForm').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const f = ev.target; const box = $('#a_msgbox');
+  const slot = f.querySelector('input[name="slot_id"]:checked');
+  const err = (t) => { box.className = 'msg err'; box.textContent = t; };
+  if (!slot) return err('Please choose a slot first.');
+  if (!f.elements['artist_name'].value.trim() || f.elements['whatsapp'].value.replace(/\D/g, '').length < 10) return err('Please add your name and a full WhatsApp number.');
+  const btn = f.querySelector('button[type="submit"]'); btn.disabled = true;
+  box.className = 'msg'; box.textContent = 'Sending…';
+  const data = { form: 'application' }; new FormData(f).forEach((v, k) => { data[k] = String(v).trim(); });
+  const when = slot.closest('.slot').querySelector('b').textContent + ', ' + slot.closest('.sgrid').previousElementSibling.textContent;
+  try {
+    const res = state.slotsDemo ? { ok: true, demo: true } : await post(data);
+    if (!res.ok) {
+      if (res.taken) loadSlots();
+      return err(res.error || 'Could not send. Please try again.');
+    }
+    if (state.slotsDemo) state.takenDemo.push(data.slot_id);
+    f.reset(); $('#a_dancersL').hidden = true; box.className = 'msg ok';
+    box.textContent = (res.demo ? 'Demo: on the live site this saves to the Applications tab. ' : '') + 'Thank you. ' + when + ' is held for you. We will confirm on WhatsApp within 3 days.';
+    loadSlots();
+  } catch (e) { err('Could not send. Please try again, or message us on WhatsApp.'); }
+  finally { btn.disabled = false; }
+});
+
+$('#enqForm').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const f = ev.target; const box = $('#q_msgbox');
+  if (!f.elements['name'].value.trim() || !f.elements['whatsapp'].value.trim()) { box.className = 'msg err'; box.textContent = 'Please add your name and WhatsApp number.'; return; }
+  box.className = 'msg'; box.textContent = 'Sending…';
+  const data = { form: 'enquiry' }; new FormData(f).forEach((v, k) => { data[k] = String(v).trim(); });
+  try {
+    const res = await post(data);
+    if (!res.ok) throw new Error(res.error || 'failed');
+    f.reset(); $('#q_note').textContent = ''; box.className = 'msg ok';
+    box.textContent = res.demo ? 'Demo: in the live site this saves to the Enquiries sheet.' : 'Thank you. We will reply on WhatsApp within 24 hours.';
+  } catch (err) { box.className = 'msg err'; box.textContent = 'Could not send. Please try again, or message us on WhatsApp.'; }
+});
+
+/* ===== Routing and events ===== */
+function codeFromUrl() {
+  const h = location.hash.match(/^#e-([\w-]+)/); if (h) return h[1];
+  if (location.hash) return null;
+  const p = location.pathname.match(/\/e\/([\w-]+)/); if (p) return p[1];
+  return new URLSearchParams(location.search).get('e');
+}
+function route() {
+  const code = codeFromUrl();
+  if (code) { renderEvent(code); return; }
+  $('#eventView').hidden = true;
+  if (location.hash === '#archive') {
+    document.title = 'Past events · Divyanjali';
+    $('#home').hidden = true; $('#archiveView').hidden = false;
+    renderArchive(); window.scrollTo(0, 0); return;
+  }
+  document.title = 'Divyanjali Events';
+  $('#archiveView').hidden = true; $('#home').hidden = false;
+  renderHome();
+  const id = location.hash.slice(1);
+  if (id) { const t = document.getElementById(id); if (t) t.scrollIntoView(); }
+}
+window.addEventListener('hashchange', () => {
+  if (/\/e\//.test(location.pathname) && !location.hash.startsWith('#e-')) { history.replaceState(null, '', '/' + location.hash); }
+  route();
+});
+
+document.addEventListener('click', (ev) => {
+  const t = ev.target.closest('button, a'); if (!t) return;
+  if (t.matches('[data-close]')) { $('#dlg').close(); return; }
+  if (t.dataset.share) { quickShare(t); return; }
+  if (t.dataset.copy) { copyLink(t); return; }
+  if (t.dataset.code) { openQuick(t.dataset.code); return; }
+  if (t.dataset.day) { openDay(t.dataset.day); return; }
+  if (t.dataset.ay) { state.arc.year = t.dataset.ay; renderArchive(); return; }
+  if (t.dataset.at) { state.arc.type = t.dataset.at; renderArchive(); return; }
+  if (t.dataset.f) { state.filter = t.dataset.f; renderFilters(); renderCal(); return; }
+  if (t.id === 'prevM' || t.id === 'nextM') { const d = t.id === 'prevM' ? -1 : 1; let { y, m } = state.month; m += d; if (m < 0) { m = 11; y--; } if (m > 11) { m = 0; y++; } state.month = { y, m }; renderCal(); }
+});
+$('#arcQ').addEventListener('input', (ev) => { state.arc.q = ev.target.value; renderArchive(); });
+$('#dlg').addEventListener('click', (ev) => { if (ev.target === $('#dlg')) $('#dlg').close(); });
+
+(async function init() {
+  $('#season').textContent = CONFIG.SEASON;
+  $('#fAddr').textContent = CONFIG.ADDRESS;
+  $('#fWa').textContent = 'WhatsApp +' + CONFIG.WHATSAPP;
+  $('#waFloat').href = waLink('Hello Divyanjali');
+  const feed = CONFIG.SITE_URL + '/calendar.ics', webcal = feed.replace(/^https?:/, 'webcal:');
+  $('#subUrl').textContent = feed;
+  $('#subGoogle').href = 'https://calendar.google.com/calendar/r?cid=' + encodeURIComponent(webcal);
+  $('#subApple').href = webcal;
+  $('#subCopy').addEventListener('click', async () => { try { await navigator.clipboard.writeText(feed); $('#subCopy').textContent = 'Copied'; } catch (err) { $('#subCopy').textContent = 'Select the link below'; } });
+  $('#fIg').href = CONFIG.INSTAGRAM; $('#fYt').href = CONFIG.YOUTUBE; $('#fFb').href = CONFIG.FACEBOOK;
+  const raw = await loadEvents();
+  state.events = raw.filter((e) => e && e.event_code && e.date).map(normalize).sort((a, b) => a.start - b.start);
+  $('#demo').hidden = !state.demo;
+  route();
+  watchSlots();
+})();
+</script>
+</body>
+</html>
