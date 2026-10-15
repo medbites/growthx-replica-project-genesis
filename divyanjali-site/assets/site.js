@@ -755,3 +755,54 @@ $$('form[data-enquiry]').forEach((f) => {
   document.addEventListener('visibilitychange', () => { if (document.hidden && timer) stop(); });
   draw();
 })();
+
+/* ----- Learn: find your class in three taps, then book a trial on WhatsApp or fill the form ----- */
+(function classFinder() {
+  const box = $('[data-finder]'); if (!box) return;
+  const qs = $$('.fd-q', box), dots = $$('.fd-dots li', box), res = $('.fd-res', box), ans = {};
+  const TITLES = { Child: "Children's batch", Teen: 'Teens and adults batch', Adult: 'Teens and adults batch' };
+  function step(n) {
+    qs.forEach((q, i) => { q.hidden = i > n; });
+    dots.forEach((d, i) => d.classList.toggle('on', i <= n));
+  }
+  function result() {
+    const online = ans.where === 'Online';
+    let t = online ? 'Online class, live from Chennai' : TITLES[ans.who] + ', CIT Nagar';
+    let d;
+    if (ans.level === 'Arangetram preparation') { t = 'Arangetram guidance'; d = 'Dr. S. Divyasena will meet you, see where you are, and plan the road to the arangetram with you' + (online ? ', online or in Chennai.' : '.'); }
+    else if (ans.level === 'Some training') d = 'Come for a trial class. We will see what you have learnt and place you in the batch that continues from there.';
+    else d = 'Start with the adavus, the first steps, in a ' + (online ? 'live online batch at a time that suits your time zone.' : 'batch for your age. Laya, abhinaya and theory are part of every class.');
+    $('.fd-t', box).textContent = t; $('.fd-d', box).textContent = d;
+    const msg = 'Hello Divyanjali, I would like a trial Bharatanatyam class. Student: ' + ans.who.toLowerCase() + '. Where: ' + ans.where + '. Training so far: ' + ans.level + '.';
+    $('.fd-wa', box).href = waLink(msg); $('.fd-wa', box).target = '_blank'; $('.fd-wa', box).rel = 'noopener';
+    res.hidden = false; dots.forEach((dd) => dd.classList.add('on'));
+    res.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' });
+  }
+  qs.forEach((q, i) => $$('button', q).forEach((b) => b.addEventListener('click', () => {
+    $$('button', q).forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    ans[q.dataset.q] = b.dataset.v;
+    if (i < qs.length - 1) { step(Math.max(i + 1, qs.findIndex((qq) => !ans[qq.dataset.q]))); if (!qs.every((qq) => ans[qq.dataset.q])) { res.hidden = true; return; } }
+    if (qs.every((qq) => ans[qq.dataset.q])) result();
+  })));
+  $('.fd-form', box).addEventListener('click', () => {
+    const f = $('form[data-enquiry]'); if (!f) return;
+    if (f.where) f.where.value = ans.where;
+    if (f.level) f.level.value = ans.level;
+    if (f.message && !f.message.value) f.message.value = 'Student: ' + ans.who.toLowerCase() + '. Found through the class finder.';
+  });
+  $('.fd-again', box).addEventListener('click', () => {
+    Object.keys(ans).forEach((k) => delete ans[k]);
+    $$('button[aria-pressed]', box).forEach((b) => b.setAttribute('aria-pressed', 'false'));
+    res.hidden = true; step(0);
+  });
+  step(0);
+})();
+
+/* ----- Learn: the path from adavus to arangetram, one step open at a time ----- */
+(function pathSteps() {
+  const box = $('[data-steps]'); if (!box) return;
+  const btns = $$('.lp-rail button', box);
+  btns.forEach((b) => b.addEventListener('click', () => {
+    btns.forEach((x) => { const on = x === b; x.setAttribute('aria-expanded', String(on)); $('#' + x.getAttribute('aria-controls')).hidden = !on; });
+  }));
+})();

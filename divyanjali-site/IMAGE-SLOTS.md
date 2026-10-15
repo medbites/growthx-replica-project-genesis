@@ -94,14 +94,6 @@ Videos and Instagram posts for the Gallery: edit `divyanjali-site/assets/media.j
 | `prod-puratchi-mandhaar-2.jpg` | Puratchi Mandhaar still 2 | 1200×900 | /productions/puratchi-mandhaar |
 | `prod-puratchi-mandhaar-3.jpg` | Puratchi Mandhaar still 3 | 1200×900 | /productions/puratchi-mandhaar |
 | `prod-puratchi-mandhaar-4.jpg` | Puratchi Mandhaar still 4 | 1200×900 | /productions/puratchi-mandhaar |
-| `learn-hero.jpg` | a class in progress | 1600×1200 | /learn |
-| `learn-children.jpg` | children's batch | 1200×900 | /learn |
-| `learn-adults.jpg` | teens and adults batch | 1200×900 | /learn |
-| `learn-online.jpg` | online class on a laptop | 1200×900 | /learn |
-| `founder-divyasena.jpg` | Dr. S. Divyasena | 800×1000 | /learn |
-| `founder-haribabu.jpg` | Sri B.P. Haribabu | 800×1000 | /learn |
-| `faculty-aiswarya.jpg` | Aiswarya Ramanan | 800×1000 | /learn |
-| `faculty-mahati.jpg` | S. Mahati | 800×1000 | /learn |
 | `book-festival.jpg` | festival stage | 1200×900 | /book |
 | `book-temple.jpg` | temple performance | 1200×900 | /book |
 | `book-cultural.jpg` | cultural body event | 1200×900 | /book |

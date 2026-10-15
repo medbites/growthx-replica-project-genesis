@@ -1013,36 +1013,82 @@ def production(p):
 {cta(f"Stage {e(p['title'])} at your festival", 'Tell us the date, venue and audience. We reply on WhatsApp within 24 hours.', 'Plan this production', f"/book?type=Performance+booking&amp;production={e(p['title'])}")}
 ''')
 
+PATH_STEPS = [
+    ('Adavus', 'The basic steps and postures', 'Every dancer starts here: the adavus, the building blocks of Bharatanatyam, with the right posture, hands and footwork. The Nrithyaharam CD helps with practice at home.'),
+    ('First items', 'Alarippu, jathiswaram', 'The first short dances. Students learn to join adavus into a piece, keep the tala and perform for an audience.'),
+    ('Margam', 'Varnam, padams, thillana', 'The full concert repertoire, item by item, with the varnam at its heart.'),
+    ('Abhinaya and laya', 'Expression and rhythm in depth', 'Storytelling through expression, and rhythm taught as its own subject by Sri B.P. Haribabu.'),
+    ('Arangetram', 'The first full solo recital', 'When Dr. Divyasena decides a student is ready, the first full solo recital on stage. Divyanjali has conducted 71 arangetrams.'),
+]
+
 def learn():
-    return page('/learn', 'Learn Bharatanatyam in Chennai and online · Divyanjali', 'Bharatanatyam classes for children, teens and adults in CIT Nagar, Chennai, and live online classes from Chennai for students abroad.', f'''
+    by = {p['slug']: p for p in STUDENTS}
+    fac = [by[s] for s in FACULTY_SLUGS if s in by]
+    teachers = ('<a class="fc reveal" href="/divyasena"><span class="face"><img src="/assets/img/divyasena-portrait.webp" alt="Dr. S. Divyasena" loading="lazy" width="360" height="360" style="object-position:32% 40%"></span><b>Dr. S. Divyasena</b><span>Founder and guru</span></a>'
+                '<a class="fc reveal" href="/haribabu" style="--i:1"><span class="face"><img src="/assets/img/haribabu-portrait.webp" alt="Sri B.P. Haribabu" loading="lazy" width="360" height="360" style="object-position:50% 18%"></span><b>Sri B.P. Haribabu</b><span>Laya, rhythm</span></a>'
+                + ''.join(f'<a class="fc reveal" href="/students/{p["slug"]}" style="--i:{i + 2}">{st_face(p)}<b>{e(p["display"])}</b><span>Faculty</span></a>' for i, p in enumerate(fac)))
+    q = lambda name, label, opts: (f'<fieldset class="fd-q" data-q="{name}"><legend>{label}</legend><div class="fd-o">'
+        + ''.join(f'<button type="button" data-v="{e(v)}" aria-pressed="false">{icon(ic)}<b>{e(t)}</b><small>{e(s)}</small></button>' for v, ic, t, s in opts) + '</div></fieldset>')
+    return page('/learn', 'Learn Bharatanatyam in Chennai and online · Divyanjali',
+        'Bharatanatyam classes for children, teens and adults in CIT Nagar, Chennai, and live online classes from Chennai for students abroad. Find your class in three taps.', f'''
 {crumbs(('Learn', None))}
-<section style="padding-top:28px"><div class="wrap hero2">
-  <div class="stack"><p class="eyebrow">Classes</p><h1>Learn Bharatanatyam in Chennai and online</h1><p class="lead">Classes for children, teens and adults in CIT Nagar, and live online classes from Chennai for students abroad.</p><div class="row"><a class="btn" href="#enquire">Ask about classes</a><a class="btn-o" data-wa="Hello Divyanjali, I would like to know about Bharatanatyam classes." href="#">WhatsApp us</a></div></div>
-  {ph('learn-hero.jpg', 'a class in progress', '1600×1200')}
+<section class="ln-hero"><div class="wrap ln-hero-in">
+  <div class="ln-copy">
+    <p class="eyebrow">Classes · Chennai and online</p>
+    <h1>Learn Bharatanatyam</h1>
+    <p class="lead">Classes for children, teens and adults in CIT Nagar, Chennai, and live online classes from Chennai for students abroad. Laya, abhinaya and theory come with every class.</p>
+    <div class="row"><a class="btn" href="#finder">Find your class</a><a class="btn-o" data-wa="Hello Divyanjali, I would like to know about Bharatanatyam classes." href="#">WhatsApp us</a></div>
+  </div>
+  <figure class="ln-photo"><img src="/assets/img/dancers-group.webp" alt="Divyanjali students on stage" width="1161" height="541" fetchpriority="high"></figure>
 </div></section>
-<section class="alt" id="paths"><div class="wrap">{head('Choose your path', 'Classes for every age')}
-  <div class="tiles">
-    <div class="tile">{ph('learn-children.jpg', "children's batch", '1200×900')}<h3>Children</h3><p class="muted">From {todo('youngest age')} · CIT Nagar</p></div>
-    <div class="tile">{ph('learn-adults.jpg', 'teens and adults batch', '1200×900')}<h3>Teens and adults</h3><p class="muted">Beginners and returning dancers</p></div>
-    <div class="tile">{ph('learn-online.jpg', 'online class on a laptop', '1200×900')}<h3>Online, from abroad</h3><p class="muted">Live from Chennai, in your time zone</p></div>
-  </div></div></section>
-<section><div class="wrap">{head('The path', 'From first steps to arangetram')}
-  <ol class="steps5"><li><b>Adavus</b><span class="muted">The basic steps and postures</span></li><li><b>First items</b><span class="muted">Alarippu, jathiswaram</span></li><li><b>Margam</b><span class="muted">Varnam, padams, thillana</span></li><li><b>Abhinaya and laya</b><span class="muted">Expression and rhythm in depth</span></li><li><b>Arangetram</b><span class="muted">The first full solo recital</span></li></ol>
-  <p class="muted" style="margin-top:12px">Names and durations of the levels: {todo('confirm with Dr. Divyasena')}</p></div></section>
-<section class="alt"><div class="wrap">{head('Beyond steps', 'What makes a complete dancer')}
-  <div class="tiles">
-    <a class="tile" href="/haribabu"><h3>Laya with Sri B.P. Haribabu</h3><p class="muted">Rhythm as its own subject</p></a>
-    <div class="tile"><h3>Theory</h3><p class="muted">Natya Shastra, mudras and rasas, from our published syllabus</p></div>
-    <a class="tile" href="/natya-iq"><h3>Practice at home</h3><p class="muted">Natya IQ games and the Nrithyaharam adavu CD</p></a>
-  </div></div></section>
+
+<section class="alt" id="finder"><div class="wrap">
+  {head('Find your class', 'Three taps to the right batch')}
+  <div class="fd" data-finder>
+    <ol class="fd-dots" aria-hidden="true"><li class="on"></li><li></li><li></li></ol>
+    {q('who', '1. Who is learning?', [('Child', 'person-simple-tai-chi', 'A child', 'School age'), ('Teen', 'person-arms-spread', 'A teen', '13 to 19'), ('Adult', 'users-three', 'An adult', 'Beginners welcome')])}
+    {q('where', '2. Where?', [('Chennai', 'hand-heart', 'In Chennai', 'At CIT Nagar'), ('Online', 'monitor-play', 'Online', 'Live from Chennai, abroad too')])}
+    {q('level', '3. Any training so far?', [('Beginner', 'book-open-text', 'New to dance', 'Start with adavus'), ('Some training', 'metronome', 'Some training', 'Continue where you left off'), ('Arangetram preparation', 'certificate', 'Preparing for arangetram', 'With Dr. Divyasena')])}
+    <div class="fd-res" hidden aria-live="polite">
+      <p class="eyebrow">Your class</p>
+      <h3 class="fd-t"></h3>
+      <p class="fd-d"></p>
+      <div class="row"><a class="btn fd-wa" href="#">Book a trial on WhatsApp</a><a class="btn-o fd-form" href="#enquire">Fill the form instead</a><button type="button" class="fd-again">Start again</button></div>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  {head('The path', 'From first steps to arangetram')}
+  <p class="muted bio-sub">Tap a step.</p>
+  <div class="lp" data-steps>
+    <ol class="lp-rail">{''.join(f'<li><button type="button" aria-expanded="{str(i == 0).lower()}" aria-controls="lp-{i}"><span class="lp-n">{i + 1}</span><b>{e(t)}</b><small>{e(s)}</small></button></li>' for i, (t, s, d) in enumerate(PATH_STEPS))}</ol>
+    {''.join(f'<p class="lp-d" id="lp-{i}"{"" if i == 0 else " hidden"}>{e(d)}</p>' for i, (t, s, d) in enumerate(PATH_STEPS))}
+  </div>
+  <p class="muted" style="margin-top:12px">Names and durations of the levels: {todo('confirm with Dr. Divyasena')}</p>
+</div></section>
+
+<section class="alt"><div class="wrap">
+  {head('Beyond steps', 'What makes a complete dancer')}
+  <div class="teach">
+    <a class="tc reveal" href="/haribabu#tala">{icon('metronome')}<h3>Laya</h3><p>Rhythm as its own subject, with Sri B.P. Haribabu. Try a tala on his page.</p></a>
+    <div class="tc reveal" style="--i:1">{icon('book-open-text')}<h3>Theory</h3><p>From the school's own syllabus, <i>Essence and Essentials of Dance</i>.</p></div>
+    <div class="tc reveal" style="--i:2">{icon('hand-heart')}<h3>Poorna Vidhya</h3><p>Thalam, ithihasam, puranas and moral values, alongside the dance.</p></div>
+    <a class="tc reveal" href="/natya-iq" style="--i:3">{icon('monitor-play')}<h3>Practice at home</h3><p>Natya IQ games, and the Nrithyaharam adavu CD.</p></a>
+  </div>
+</div></section>
+
 <section><div class="wrap">{head('Batches', 'Days and timings')}
   <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Batch</th><th>Days</th><th>Time</th><th>Where</th></tr></thead><tbody>
     <tr><td>Children</td><td>{todo('Days')}</td><td>{todo('Time')}</td><td>CIT Nagar</td></tr>
     <tr><td>Teens and adults</td><td>{todo('Days')}</td><td>{todo('Time')}</td><td>CIT Nagar</td></tr>
     <tr><td>Online</td><td>{todo('Days')}</td><td>{todo('Time, IST and local')}</td><td>Online</td></tr>
   </tbody></table></div></div></section>
-<section class="alt"><div class="wrap">{head('Teachers', 'Faculty')}
-  <div class="people">{''.join(f'<div>{ph(f, n, "800×1000", "tall")}<b>{n}</b></div>' for f, n in [('founder-divyasena.jpg', 'Dr. S. Divyasena'), ('founder-haribabu.jpg', 'Sri B.P. Haribabu'), ('faculty-aiswarya.jpg', 'Aiswarya Ramanan'), ('faculty-mahati.jpg', 'S. Mahati')])}</div></div></section>
+
+<section class="alt"><div class="wrap">{head('Teachers', 'Who teaches you')}
+  <div class="fac">{teachers}</div>
+</div></section>
+
 <section id="enquire"><div class="wrap two">
   <div class="stack"><p class="eyebrow">Enquiry</p><h2>Ask about a class</h2><p class="muted">We reply on WhatsApp within 24 hours.</p></div>
   <form class="f box" data-enquiry="Classes for a student" novalidate>
@@ -1062,7 +1108,7 @@ def learn():
     ('How do online classes work across time zones?', 'Live classes from Chennai, with batches set at times that suit students abroad.'),
     ('What do I need to buy?', 'Comfortable practice clothes to start. Dance sarees, salangai (ankle bells) and other items come later; we will guide you.'),
 ], alt=True)}
-''')
+''', extra_head='<link rel="canonical" href="/learn">\n')
 
 def book():
     return page('/book', 'Book and Enquire · Divyanjali', 'Book a Divyanjali performance or production, ask about classes, or collaborate. We reply on WhatsApp within 24 hours.', f'''
