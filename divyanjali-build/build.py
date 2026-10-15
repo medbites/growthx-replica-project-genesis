@@ -58,6 +58,12 @@ def stats(items):
             out += f'<div class="stat reveal">{inner}</div>'
     return f'<div class="stats">{out}</div>'
 
+ICONS = {'person-arms-spread': '<path d="M104,40a24,24,0,1,1,24,24A24,24,0,0,1,104,40ZM212,80H44c-12.87,0-16.71,17.5-5,22.9L96,128,73.13,214.93a12,12,0,0,0,21.75,10.14L128,168l33.12,57.07a12,12,0,0,0,21.75-10.14L160,128l57-25.1C228.69,97.5,224.85,80,212,80Z" opacity="0.2"/><path d="M160,40a32,32,0,1,0-32,32A32,32,0,0,0,160,40ZM128,56a16,16,0,1,1,16-16A16,16,0,0,1,128,56ZM231.5,87.71A19.62,19.62,0,0,0,212,72H44a20,20,0,0,0-8.38,38.16l.13.06,50.75,22.35-21,79.72A20,20,0,0,0,102,228.82l26-44.88,26,44.88a20,20,0,0,0,36.4-16.53l-21-79.72,50.75-22.35.13-.06A19.63,19.63,0,0,0,231.5,87.71Zm-17.8,7.9-56.93,25.07a8,8,0,0,0-4.51,9.36L175.13,217a7,7,0,0,0,.49,1.35,4,4,0,1,1-7.25,3.38c-.11-.22-.22-.43-.34-.63L134.92,164a8,8,0,0,0-13.84,0L88,221.06c-.12.2-.23.41-.34.63a4,4,0,1,1-7.25-3.38,7,7,0,0,0,.49-1.35L103.74,130a8,8,0,0,0-4.51-9.36L42.3,95.61A4,4,0,0,1,44,88H212a4,4,0,0,1,1.73,7.61Z"/>', 'person-simple-tai-chi': '<path d="M152,48a24,24,0,1,1-24-24A24,24,0,0,1,152,48Z" opacity="0.2"/><path d="M128,80A32,32,0,1,0,96,48,32,32,0,0,0,128,80Zm0-48a16,16,0,1,1-16,16A16,16,0,0,1,128,32Zm96,72a8,8,0,0,1-8,8H136v26.72l51.15,21.93A8,8,0,0,1,192,168v48a8,8,0,0,1-16,0V173.28l-46.45-19.91L53.35,222a8,8,0,1,1-10.7-11.9L120,140.44V112H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,104Z"/>', 'monitor-play': '<path d="M208,48H48A16,16,0,0,0,32,64V176a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V64A16,16,0,0,0,208,48ZM112,152V88l48,32Z" opacity="0.2"/><path d="M208,40H48A24,24,0,0,0,24,64V176a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V64A24,24,0,0,0,208,40Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V64a8,8,0,0,1,8-8H208a8,8,0,0,1,8,8Zm-48,48a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,224Zm-3.56-110.66-48-32A8,8,0,0,0,104,88v64a8,8,0,0,0,12.44,6.66l48-32a8,8,0,0,0,0-13.32ZM120,137.05V103l25.58,17Z"/>'}
+
+def icon(name):
+    """Phosphor duotone icon (MIT), inlined so it needs no extra download."""
+    return f'<svg class="ic" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">{ICONS[name]}</svg>'
+
 # ---------------------------------------------------------------- layout
 NAV = [('About', '/about'), ('Choreographies', '/choreographies'), ('Learn', '/learn'), ('Natya IQ', '/natya-iq'), ('Calendar', '/events')]
 MENU = [('Home', '/'), ('About Divyanjali', '/about'), ('Dr. S. Divyasena', '/divyasena'), ('Sri B.P. Haribabu', '/haribabu'), ('30 Years', '/30-years'),
@@ -194,10 +200,16 @@ def home():
     def bento(p, i):
         img = ph(f"prod-{p['slug']}.jpg", f"poster · {p['title']}", '1500×900' if i else '1200×1500', '' if i else 'tall')
         return f'<a class="bento-i{" big" if i == 0 else ""} reveal" href="/productions/{p["slug"]}">{img}<span class="bento-t"><small>{e(p["year"])} · {e(p["cats"][0])}</small><b>{e(p["title"])}</b></span></a>'
-    classes = [('01', 'Children', f'From {todo("youngest age")} · weekday and weekend batches in CIT Nagar', 'learn-children.jpg'),
-               ('02', 'Teens and adults', 'Beginners, and dancers coming back after a break', 'learn-adults.jpg'),
-               ('03', 'Online, from abroad', 'Live classes from Chennai, set to your time zone', 'learn-online.jpg')]
-    rows = ''.join(f'<a class="crow reveal" href="/learn#paths"><span class="cn">{n}</span><span class="ct"><b>{t}</b><span class="muted">{d}</span></span>{ph(f, t + " class", "800×600")}<span class="ca" aria-hidden="true">→</span></a>' for n, t, d, f in classes)
+    classes = [('01', 'Children', 'person-arms-spread', f'From {todo("youngest age")} · weekday and weekend batches in CIT Nagar',
+                ['Small batches grouped by age', 'Adavus, rhythm and simple items first', 'A path to arangetram for those who wish'], 'Children'),
+               ('02', 'Teens and adults', 'person-simple-tai-chi', 'Beginners, and dancers coming back after a break',
+                ['Complete beginners welcome', 'Abhinaya and theory alongside technique', 'Come back after a break at your own pace'], 'Teens and adults'),
+               ('03', 'Online, from abroad', 'monitor-play', 'Live classes from Chennai, set to your time zone',
+                ['Live with the teacher, not recorded', 'Batches set to your time zone', 'The same syllabus as the Chennai classes'], 'Online')]
+    rows = ''.join(f'''<details class="crow reveal" name="classes"{" open" if n == "01" else ""}>
+      <summary><span class="cn">{n}</span><span class="ci">{icon(ic)}</span><span class="ct"><b>{t}</b><span class="muted">{d}</span></span><span class="ca" aria-hidden="true">+</span></summary>
+      <div class="cbody"><ul>{"".join(f"<li>{e(x)}</li>" for x in pts)}</ul><a class="btn" href="/learn?class={tag.replace(" ", "+")}#enquire">Book a trial</a></div>
+    </details>''' for n, t, ic, d, pts, tag in classes)
     return page('/', 'Divyanjali · Bharatanatyam school in Chennai since 1994',
         'Divyanjali, the Bharatanatyam school of Dr. S. Divyasena and Sri B.P. Haribabu in CIT Nagar, Chennai. See the season calendar of performances, workshops and arangetrams.', f'''
 <section class="vh" data-vh="7g505MXqnec" data-start="12" aria-label="Divyanjali on stage">

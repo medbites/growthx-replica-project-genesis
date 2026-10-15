@@ -7,9 +7,6 @@ Videos and Instagram posts for the Gallery: edit `divyanjali-site/assets/media.j
 
 | File name | What to show | Size (px) | Page |
 |---|---|---|---|
-| `learn-children.jpg` | Children class | 800×600 | / |
-| `learn-adults.jpg` | Teens and adults class | 800×600 | / |
-| `learn-online.jpg` | Online, from abroad class | 800×600 | / |
 | `home-divyasena.jpg` | Dr. S. Divyasena, portrait | 1200×1500 | / |
 | `home-haribabu.jpg` | Sri B.P. Haribabu with mridangam | 1200×1500 | / |
 | `prod-hanumath-margam.jpg` | poster · Hanumath Margam | 1200×1500 | / |
@@ -127,6 +124,9 @@ Videos and Instagram posts for the Gallery: edit `divyanjali-site/assets/media.j
 | `prod-puratchi-mandhaar-3.jpg` | Puratchi Mandhaar still 3 | 1200×900 | /productions/puratchi-mandhaar |
 | `prod-puratchi-mandhaar-4.jpg` | Puratchi Mandhaar still 4 | 1200×900 | /productions/puratchi-mandhaar |
 | `learn-hero.jpg` | a class in progress | 1600×1200 | /learn |
+| `learn-children.jpg` | children's batch | 1200×900 | /learn |
+| `learn-adults.jpg` | teens and adults batch | 1200×900 | /learn |
+| `learn-online.jpg` | online class on a laptop | 1200×900 | /learn |
 | `book-festival.jpg` | festival stage | 1200×900 | /book |
 | `book-temple.jpg` | temple performance | 1200×900 | /book |
 | `book-cultural.jpg` | cultural body event | 1200×900 | /book |

@@ -213,6 +213,7 @@ $$('form[data-enquiry]').forEach((f) => {
   const qs = new URLSearchParams(location.search);
   if (qs.get('type') && f.elements['enquiry_type']) f.elements['enquiry_type'].value = qs.get('type');
   if (qs.get('production') && f.elements['message'] && !f.elements['message'].value) f.elements['message'].value = 'About the production: ' + qs.get('production');
+  if (qs.get('class') && f.elements['message'] && !f.elements['message'].value) f.elements['message'].value = 'I would like a trial class: ' + qs.get('class');
   $$('[data-settype]').forEach((b) => b.addEventListener('click', () => {
     f.elements['enquiry_type'].value = b.dataset.settype;
     $$('[data-settype]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));

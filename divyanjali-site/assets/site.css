@@ -417,16 +417,37 @@ a.next:hover{color:#F6EDE6;transform:translateY(-2px)}
 .bento-i:not(.big){display:block}
 .bento-i:not(.big) .ph{--r:16/9}
 
-/* classes as rows */
+/* classes as rows that open */
 .learn-grid{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,7fr);gap:clamp(24px,5vw,64px);align-items:start}
 .crows{display:flex;flex-direction:column}
-.crow{display:grid;grid-template-columns:44px minmax(0,1fr) 120px 24px;gap:16px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none}
+.crow{border-bottom:1px solid var(--line)}
 .crow:first-child{border-top:1px solid var(--line)}
-.crow .cn{font-family:var(--serif);font-size:1.5rem;color:var(--saffron)}
-.crow .ct{display:flex;flex-direction:column;gap:2px}.crow .ct b{font-family:var(--serif);font-size:1.45rem;font-weight:600}.crow .ct span{font-size:.88rem}
-.crow .ph{--r:4/3}.crow .ph>span{display:none}
-.crow .ca{font-size:1.2rem;color:var(--deep);transition:transform .2s}
-.crow:hover .ca{transform:translateX(4px)}
+.crow summary{list-style:none;display:grid;grid-template-columns:36px 64px minmax(0,1fr) 36px;gap:16px;align-items:center;padding:18px 8px;cursor:pointer;border-radius:8px;position:relative;isolation:isolate}
+.crow summary::-webkit-details-marker{display:none}
+.crow summary::before{content:"";position:absolute;inset:4px 0;border-radius:8px;background:var(--tint);z-index:-1;transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+.crow summary:hover::before,.crow[open] summary::before{transform:none}
+.crow .cn{font-family:var(--sans);font-weight:600;font-size:.85rem;letter-spacing:.06em;color:var(--saffron);font-variant-numeric:lining-nums}
+.crow .ci{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:#FFE7D6;color:var(--saffron);transition:background .35s,color .35s,transform .45s cubic-bezier(.2,.8,.2,1)}
+.crow .ic{width:34px;height:34px;transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
+.crow summary:hover .ci,.crow[open] .ci{background:var(--saffron);color:#FFFFFF;transform:rotate(-8deg)}
+.crow summary:hover .ic,.crow[open] .ic{transform:scale(1.12) rotate(8deg)}
+.crow .ct{display:flex;flex-direction:column;gap:2px;min-width:0}.crow .ct b{font-family:var(--serif);font-size:1.45rem;font-weight:600}.crow .ct span{font-size:.88rem}
+.crow .ca{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:1.2rem;color:var(--deep);background:var(--bg);transition:transform .35s,background .2s,border-color .2s}
+.crow summary:hover .ca{border-color:var(--deep)}
+.crow[open] .ca{transform:rotate(45deg);background:var(--deep);border-color:var(--deep);color:#FFFFFF}
+.cbody{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;padding:4px 8px 22px calc(36px + 64px + 32px + 8px);animation:rise .35s both}
+.cbody ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:.9rem}
+.cbody li{display:flex;gap:10px;align-items:baseline}
+.cbody li::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;background:var(--saffron);transform:translateY(-1px)}
+@media (max-width:600px){
+  .crow summary{grid-template-columns:48px minmax(0,1fr) 32px;gap:12px;padding:14px 4px}
+  .crow .cn{display:none}
+  .crow .ci{width:48px;height:48px}.crow .ic{width:26px;height:26px}
+  .crow .ct b{font-size:1.2rem}.crow .ct span{font-size:.8rem}
+  .crow .ca{width:32px;height:32px}
+  .cbody{padding:0 4px 18px 64px}
+}
+@media (prefers-reduced-motion:reduce){.crow summary::before,.crow .ci,.crow .ic,.cbody{transition:none;animation:none}}
 
 @media (max-width:900px){
   .hc-grid,.stage-grid,.learn-grid{grid-template-columns:minmax(0,1fr)}
@@ -434,7 +455,7 @@ a.next:hover{color:#F6EDE6;transform:translateY(-2px)}
 }
 @media (max-width:600px){
   .duo{grid-template-columns:1fr 1fr;gap:12px}.duo-i.off{margin-top:40px}.duo-t>span:last-child{display:none}.duo-t b{font-size:1.2rem}
-  .crow{grid-template-columns:32px minmax(0,1fr) 72px;gap:12px}.crow .ca{display:none}
+
   .cal-d{font-size:.85rem}.cal-m{font-size:1.35rem}
   .next-date{width:64px}.next-date b{font-size:2rem}
   .follow .row{width:100%}.follow .row>*{flex:1 1 100%}
