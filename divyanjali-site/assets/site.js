@@ -806,3 +806,22 @@ $$('form[data-enquiry]').forEach((f) => {
     btns.forEach((x) => { const on = x === b; x.setAttribute('aria-expanded', String(on)); $('#' + x.getAttribute('aria-controls')).hidden = !on; });
   }));
 })();
+
+/* ----- Book and Enquire: the chosen type decides which questions the form asks ----- */
+(function enquiryTypes() {
+  const f = $('[data-enq-form]'); if (!f) return;
+  const LABEL = { 'Performance booking': 'Book a performance', 'Classes for a student': 'Join a class', 'Workshop or lecture demonstration': 'Invite a workshop or lec-dem', 'Collaboration': 'Collaborate with us' };
+  const MSG = { 'Performance booking': 'Audience size and anything else', 'Classes for a student': 'Anything we should know (optional)', 'Workshop or lecture demonstration': 'Dates, duration and anything else', 'Collaboration': 'Tell us about your idea' };
+  function apply(type) {
+    if (!LABEL[type]) type = 'Performance booking';
+    f.elements['enquiry_type'].value = type; f.dataset.enquiry = type;
+    $('.enq-h', f).textContent = LABEL[type]; $('.enq-ml', f).textContent = MSG[type];
+    $$('.enq-g', f).forEach((g) => {
+      const on = g.dataset.for.split('|').includes(type);
+      g.hidden = !on; $$('input, select, textarea', g).forEach((el) => { el.disabled = !on; });
+    });
+    $$('[data-settype]').forEach((b) => { const on = b.dataset.settype === type; b.setAttribute('aria-pressed', String(on)); b.setAttribute('aria-checked', String(on)); });
+  }
+  $$('[data-settype]').forEach((b) => b.addEventListener('click', () => apply(b.dataset.settype)));
+  apply(f.elements['enquiry_type'].value);
+})();

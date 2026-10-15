@@ -94,10 +94,6 @@ Videos and Instagram posts for the Gallery: edit `divyanjali-site/assets/media.j
 | `prod-puratchi-mandhaar-2.jpg` | Puratchi Mandhaar still 2 | 1200×900 | /productions/puratchi-mandhaar |
 | `prod-puratchi-mandhaar-3.jpg` | Puratchi Mandhaar still 3 | 1200×900 | /productions/puratchi-mandhaar |
 | `prod-puratchi-mandhaar-4.jpg` | Puratchi Mandhaar still 4 | 1200×900 | /productions/puratchi-mandhaar |
-| `book-festival.jpg` | festival stage | 1200×900 | /book |
-| `book-temple.jpg` | temple performance | 1200×900 | /book |
-| `book-cultural.jpg` | cultural body event | 1200×900 | /book |
-| `book-events.jpg` | school or corporate event | 1200×900 | /book |
 | `gallery-01.jpg` | Productions photo 1 | 1600×1200 | /gallery |
 | `gallery-02.jpg` | Classes photo 1 | 1600×1200 | /gallery |
 | `gallery-03.jpg` | Arangetrams photo 1 | 1600×1200 | /gallery |
