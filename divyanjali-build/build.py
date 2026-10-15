@@ -453,13 +453,6 @@ def st_tags(p):
     if 'founder' in t or 'director -' in t or 'director of' in t: tags.append('Runs a school')
     return tags
 
-def st_firsts(p):
-    return sum(len(re.findall(r'\b(first|1st)\b', i, re.I)) for i in p['items'])
-
-def st_years(p):
-    ys = [int(y) for i in p['items'] for y in re.findall(r'\b(19[89]\d|20[0-2]\d)\b', i)]
-    return (min(ys), max(ys)) if ys else None
-
 def initials(n):
     w = [x for x in re.sub(r'\b(Dr|S)\.?\s', '', n).replace('.', ' ').split() if len(x) > 1]
     return (w[0][0] + (w[1][0] if len(w) > 1 else '')).upper() if w else n[:2].upper()
@@ -472,19 +465,16 @@ def st_face(p, cls='face'):
 def st_card(p, i=0):
     tags = st_tags(p)
     return (f'<a class="stc reveal" href="/students/{p["slug"]}" data-cat="{"|".join(tags)}" data-name="{e(p["display"].lower())}" style="--i:{i % 6}">'
-            f'{st_face(p)}<b>{e(p["display"])}</b><small>{e(tags[0] if tags[0] != "Students" else "Student")} · {len(p["items"])} achievements</small>'
+            f'{st_face(p)}<b>{e(p["display"])}</b><small>{e(tags[0] if tags[0] != "Students" else "Student")}</small>'
             f'<span class="stc-one">{e(p["items"][0][:90])}{"…" if len(p["items"][0]) > 90 else ""}</span></a>')
 
 def accolades():
-    n_dd = sum('Doordarshan graded' in st_tags(p) for p in STUDENTS)
-    n_sc = sum('Scholarship' in st_tags(p) for p in STUDENTS)
-    n_first = sum(st_firsts(p) for p in STUDENTS)
     chips = ['All', 'Faculty', 'Students', 'Alumni', 'Doordarshan graded', 'Scholarship', 'Performed abroad', 'Runs a school']
     return page('/accolades', "Student's Accolades · Divyanjali", 'Faculty, students and alumni of Divyanjali: Doordarshan graded artists, scholarship holders, prize winners and teachers. Each dancer has a page of their own.', f'''
 <section class="acc-hero"><div class="wrap">
   <h1>Student's Accolades</h1>
   <p class="lead">The faculty, students and alumni of Divyanjali, with every award listed in the Souvenir 2026. Tap a dancer to open their page, share it, or save it as a one-page résumé.</p>
-  {stats([(len(STUDENTS), '', 'dancers on this page'), (n_dd, '', 'Doordarshan graded'), (n_sc, '', 'scholarship holders'), (n_first, '+', 'first places')])}
+  <div class="acc-groups"><a href="#studentGrid" data-jump="Faculty">Faculty</a><a href="#studentGrid" data-jump="Students">Students</a><a href="#studentGrid" data-jump="Alumni">Alumni</a></div>
 </div></section>
 <section class="alt acc-list"><div class="wrap">
   <div class="acc-tools">
@@ -509,12 +499,9 @@ def student_page(p):
     i = STUDENTS.index(p)
     prev, nxt = STUDENTS[i - 1], STUDENTS[(i + 1) % len(STUDENTS)]
     tags = st_tags(p)
-    yrs = st_years(p)
-    def year_of(t):
-        m = re.findall(r'\b(19[89]\d|20[0-2]\d)\b', t)
-        return max(m) if m else ''
-    items = sorted(p['items'], key=lambda t: year_of(t) or '0', reverse=True)
-    lis = ''.join(f'<li><span class="yr">{year_of(t) or "·"}</span><span>{e(t)}</span></li>' for t in items)
+    lis = ''.join(f'<li><span class="dot" aria-hidden="true"></span><span>{e(t)}</span></li>' for t in p['items'])
+    ig = p.get('instagram', '').strip().lstrip('@')
+    ig_btn = f'<a class="btn-o ig" href="https://www.instagram.com/{e(ig)}/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>@{e(ig)}</a>' if ig else ''
     role = {'Faculty': 'Faculty, Divyanjali', 'Alumni': 'Alumna of Divyanjali', 'Student': 'Student of Divyanjali'}[p['group']]
     if p['display'] in ('Sumodh', 'Anandaraj A', 'Dr. Shabin Bright'): role = role.replace('Alumna', 'Alumnus')
     ld = {'@context': 'https://schema.org', '@type': 'Person', 'name': p['display'], 'description': role + '. ' + p['items'][0],
@@ -531,9 +518,9 @@ def student_page(p):
       <p class="cv-role">{e(role)}</p>
       <h1>{e(p['display'])}</h1>
       <div class="cv-tags">{''.join(f'<span>{e(t)}</span>' for t in tags if t not in ('Students', 'Faculty', 'Alumni'))}</div>
-      <div class="cv-nums"><span><b>{len(p['items'])}</b>achievements</span><span><b>{st_firsts(p)}</b>first places</span>{f'<span><b>{yrs[0]}{"–" + str(yrs[1]) if yrs[1] != yrs[0] else ""}</b>active years</span>' if yrs else ''}</div>
       <div class="cv-acts">
         <button class="btn" type="button" data-copy>Copy link</button>
+        {ig_btn}
         <a class="btn-o" data-wa="{e(p['display'])}, {e(role)}" data-wa-url href="#">WhatsApp</a>
         <button class="btn-o" type="button" data-share hidden>Share</button>
         <button class="btn-o" type="button" data-print>Save as PDF</button>
@@ -578,9 +565,9 @@ def flipbook():
   </div>
   <div class="fb" id="flip" data-pages="68" tabindex="0" aria-label="Souvenir 2026, a book you can page through">
     <div class="fb-stage">
-      <button class="fb-edge prev" type="button" data-fb="prev" aria-label="Previous page">‹</button>
+      <button class="fb-edge fb-p" type="button" data-fb="prev" aria-label="Previous page">‹</button>
       <div class="fb-book" id="fbBook"></div>
-      <button class="fb-edge next" type="button" data-fb="next" aria-label="Next page">›</button>
+      <button class="fb-edge fb-n" type="button" data-fb="next" aria-label="Next page">›</button>
     </div>
     <div class="fb-bar"><input type="range" id="fbRange" min="1" max="68" value="1" aria-label="Go to page"><span id="fbNum" aria-live="polite">Cover</span></div>
     <div class="fb-text" id="fbText" hidden></div>

@@ -265,6 +265,7 @@ $$('[data-share]').forEach((b) => {
   const count = () => { const n = $$('.stc', grid).filter((c) => !c.classList.contains('off') && !c.classList.contains('hide')).length; $('#accCount').textContent = n ? 'Showing ' + n : 'No dancer by that name yet'; };
   q.addEventListener('input', () => { const v = q.value.trim().toLowerCase(); $$('.stc', grid).forEach((c) => c.classList.toggle('hide', !!v && !c.dataset.name.includes(v))); count(); });
   $$('[data-f]').forEach((c) => c.addEventListener('click', () => setTimeout(count)));
+  $$('[data-jump]').forEach((a) => a.addEventListener('click', (ev) => { ev.preventDefault(); const c = $('[data-f="' + a.dataset.jump + '"]'); if (c) c.click(); grid.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' }); }));
 })();
 
 /* ----- 30 years: the souvenir as a book. Two pages side by side on wide screens, one on phones ----- */
@@ -311,13 +312,14 @@ $$('[data-share]').forEach((b) => {
       const n = dir > 0 ? to[1] : to[0];
       under.innerHTML = img(n); under.classList.toggle('empty', !n);
     } else {
-      leaf.className = 'fb-leaf fwd';
+      // one page at a time: the page peels off from the right corner, or peels back on
+      leaf.className = 'fb-leaf fwd peel' + (dir > 0 ? '' : ' unpeel');
       if (dir > 0) { leaf.innerHTML = '<div class="f">' + img(from[0]) + '</div><div class="b"></div>'; $('.fb-pg', book).innerHTML = img(to[0]); }
-      else { leaf.innerHTML = '<div class="f">' + img(to[0]) + '</div><div class="b"></div>'; leaf.style.transform = 'rotateY(-180deg)'; }
+      else { leaf.innerHTML = '<div class="f">' + img(to[0]) + '</div><div class="b"></div>'; }
     }
     book.appendChild(leaf);
-    requestAnimationFrame(() => requestAnimationFrame(() => { leaf.style.transform = spread ? (dir > 0 ? 'rotateY(-180deg)' : 'rotateY(180deg)') : (dir > 0 ? 'rotateY(-180deg)' : 'rotateY(0deg)'); }));
-    setTimeout(() => { page = target; busy = false; paint(); }, 760);
+    if (spread) requestAnimationFrame(() => requestAnimationFrame(() => { leaf.style.transform = dir > 0 ? 'rotateY(-180deg)' : 'rotateY(180deg)'; }));
+    setTimeout(() => { page = target; busy = false; paint(); }, spread ? 760 : 820);
   }
   const step = (d) => { const v = view(page).filter(Boolean); go(d > 0 ? v[v.length - 1] + 1 : v[0] - 1); };
   async function showText() {
@@ -358,6 +360,14 @@ $$('[data-share]').forEach((b) => {
   book.addEventListener('touchend', (ev) => { if (x0 === null) return; const dx = ev.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 40) { ev.preventDefault(); step(dx < 0 ? 1 : -1); } });
   const m = location.hash.match(/p=(\d+)/); if (m) page = Math.max(1, Math.min(N, Number(m[1])));
   spread = fb.clientWidth >= 760; fb.classList.toggle('spread', spread); paint();
+  if (!m && 'IntersectionObserver' in window && !reduceMotion) {
+    new IntersectionObserver(([en], o) => {
+      if (!en.isIntersecting) return; o.disconnect();
+      if (page !== 1) return;
+      if (spread) setTimeout(() => go(2), 700);            // wide screens: the cover swings open
+      else { const c = $('.fb-pg', book); c.classList.add('hint'); setTimeout(() => c.classList.remove('hint'), 1500); }   // phones: the corner lifts
+    }, { threshold: 0.6 }).observe(fb);
+  }
   addEventListener('resize', layout);
   addEventListener('hashchange', () => { const h = location.hash.match(/p=(\d+)/); if (h) go(Number(h[1])); });
 })();
