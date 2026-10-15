@@ -13,8 +13,9 @@ Videos and Instagram posts for the Gallery: edit `divyanjali-site/assets/media.j
 | `prod-thirumurugaatrupadai.jpg` | poster · Thirumurugaatrupadai | 1500×900 | / |
 | `prod-dasavatharam.jpg` | poster · Dasavatharam | 1500×900 | / |
 | `prod-andal-vaibhavam.jpg` | poster · Andal Vaibhavam | 1500×900 | / |
-| `home-students-1.jpg` | students on stage | 1000×1250 | / |
-| `home-students-2.jpg` | arangetram moment | 1000×1250 | / |
+| `home-students-1.jpg` | Students on stage | 1000×1250 | / |
+| `home-students-2.jpg` | An arangetram moment | 1000×1250 | / |
+| `home-students-3.jpg` | In class at CIT Nagar | 1000×1250 | / |
 | `home-natyaiq.jpg` | Natya IQ share card | 1080×1080 | / |
 | `about-hero.jpg` | the school, a class in progress | 1600×1200 | /about |
 | `teach-technique.jpg` | adavu practice | 1200×900 | /about |

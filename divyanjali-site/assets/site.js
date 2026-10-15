@@ -76,7 +76,7 @@ document.addEventListener('click', (ev) => {
     return;
   }
   const pic = ev.target.closest('.ph > img');
-  if (pic) {
+  if (pic && !pic.closest('.deck')) {
     const scope = pic.closest('[data-gallery]') || document;
     gallery = $$('.ph > img', scope).filter((i) => i.complete && i.naturalWidth);
     showPhoto(Math.max(0, gallery.indexOf(pic)));
@@ -237,6 +237,33 @@ $$('a.stat').forEach((a) => {
     });
     c.addEventListener('pointerleave', () => { $('.cc-in', c).style.transform = ''; });
   });
+})();
+
+/* ----- Students: a fanned deck of photos; tap, swipe or use the arrow keys to bring the next one forward ----- */
+(function photoDeck() {
+  const deck = $('#deck'); if (!deck) return;
+  const cards = $$('.dk', deck), cap = $('#deckCap'), dots = $$('.deck-dots i');
+  let order = cards.map((_, i) => i);
+  const paint = () => {
+    order.forEach((ci, pos) => { cards[ci].style.setProperty('--k', pos); cards[ci].style.zIndex = String(cards.length - pos); });
+    cap.textContent = cards[order[0]].dataset.cap;
+    dots.forEach((d, i) => d.classList.toggle('on', i === order[0]));
+  };
+  const step = (dir) => {
+    const top = cards[order[0]];
+    if (dir > 0) { top.classList.add('out'); setTimeout(() => top.classList.remove('out'), 380); order.push(order.shift()); }
+    else order.unshift(order.pop());
+    paint();
+  };
+  deck.addEventListener('click', () => step(1));
+  deck.addEventListener('keydown', (ev) => {
+    if (ev.key === 'ArrowRight' || ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); step(1); }
+    if (ev.key === 'ArrowLeft') { ev.preventDefault(); step(-1); }
+  });
+  let x0 = null;
+  deck.addEventListener('touchstart', (ev) => { x0 = ev.touches[0].clientX; }, { passive: true });
+  deck.addEventListener('touchend', (ev) => { if (x0 === null) return; const dx = ev.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 40) { ev.preventDefault(); step(dx < 0 ? 1 : -1); } });
+  paint();
 })();
 
 /* ----- WhatsApp links with a ready message ----- */

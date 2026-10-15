@@ -288,9 +288,17 @@ def home():
   <div class="cards" id="classCards">{cards}</div>
   <div class="cc-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
 </div></section>
-<section><div class="wrap split">
-  <div class="stack"><h2>71 arangetrams. Stages from Chennai to the world.</h2><p class="muted">Scholarship holders, Doordarshan graded artists and teachers with their own schools in India, the USA, the UK and Singapore.</p><a class="btn-o" href="/accolades" style="align-self:flex-start">Student's Accolades</a></div>
-  <div class="tiles" data-gallery>{ph('home-students-1.jpg', 'students on stage', '1000×1250', 'tall')}{ph('home-students-2.jpg', 'arangetram moment', '1000×1250', 'tall')}</div>
+<section class="alumni"><div class="wrap al-grid">
+  <div class="al-copy">
+    <h2><b data-count="71">71</b> arangetrams. Stages from Chennai to the world.</h2>
+    <p class="muted">Scholarship holders, Doordarshan graded artists, and teachers who now run their own schools.</p>
+    <div class="al-where" aria-label="Where our alumni teach"><span>Alumni teach in</span>{''.join(f'<i style="--i:{i}">{c}</i>' for i, c in enumerate(['India', 'USA', 'UK', 'Singapore']))}</div>
+    <a class="btn-o" href="/accolades" style="align-self:flex-start">Student's Accolades</a>
+  </div>
+  <div class="deck-wrap">
+    <div class="deck" id="deck" role="button" tabindex="0" aria-label="Next photo">{''.join(f'<div class="dk" data-cap="{e(cap)}">{ph(f, cap, "1000×1250", "tall")}</div>' for f, cap in [('home-students-1.jpg', 'Students on stage'), ('home-students-2.jpg', 'An arangetram moment'), ('home-students-3.jpg', 'In class at CIT Nagar')])}</div>
+    <div class="deck-bar"><span id="deckCap">Students on stage</span><span class="deck-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></span><span class="deck-hint">Tap or swipe</span></div>
+  </div>
 </div></section>
 <section class="dark"><div class="wrap split">
   <div class="stack"><h2>How well do you know Bharatanatyam?</h2><p class="muted">Natya IQ: a quick quiz, a tala calculator and a mudra and rasa match. Share your score card.</p><div class="row"><a class="btn" href="/natya-iq">Take the quiz</a></div></div>
