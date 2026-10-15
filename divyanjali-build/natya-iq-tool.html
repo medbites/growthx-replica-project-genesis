@@ -1,0 +1,506 @@
+<title>Natya IQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: one centred temple-corridor column; tabs as a segmented strip; tala beats drawn as rows of dots */
+:root {
+  --bg: #F6F0E4;
+  --surface: #FFFDF8;
+  --ink: #2A1A17;
+  --muted: #6F5A52;
+  --accent: #7A1F2B;
+  --accent-ink: #FFF8EE;
+  --gold: #9C7128;
+  --line: #E3D6C2;
+  --good: #2F7A4B;
+  --bad: #A8322D;
+  --tint: rgba(122, 31, 43, 0.07);
+  --display: "Marcellus", "Palatino Linotype", Palatino, Georgia, serif;
+  --body: "Figtree", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1A1012; --surface: #24171A; --ink: #F3E9DA; --muted: #BCA79A;
+    --accent: #E08A93; --accent-ink: #1A1012; --gold: #D6AE5E; --line: #3D2C2E;
+    --good: #6CC08B; --bad: #EE8A80; --tint: rgba(224, 138, 147, 0.10);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1A1012; --surface: #24171A; --ink: #F3E9DA; --muted: #BCA79A;
+  --accent: #E08A93; --accent-ink: #1A1012; --gold: #D6AE5E; --line: #3D2C2E;
+  --good: #6CC08B; --bad: #EE8A80; --tint: rgba(224, 138, 147, 0.10);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.55; }
+.wrap { max-width: 860px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 56px; display: grid; gap: 24px; }
+header { display: grid; gap: 6px; }
+.eyebrow { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+h1 { font-family: var(--display); font-weight: 400; font-size: clamp(40px, 8vw, 64px); line-height: 1; margin: 0; color: var(--accent); text-wrap: balance; }
+.lede { margin: 0; color: var(--muted); max-width: 60ch; }
+.border { height: 10px; background:
+  radial-gradient(circle at 5px 5px, var(--gold) 2px, transparent 2.5px) 0 0 / 20px 10px repeat-x; opacity: .7; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid var(--line); padding-bottom: 10px; }
+.tab { font: 600 14px var(--body); background: transparent; color: var(--muted); border: 1px solid transparent; border-radius: 999px; padding: 8px 16px; cursor: pointer; }
+.tab[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
+.tab:hover:not([aria-selected="true"]) { border-color: var(--line); color: var(--ink); }
+button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.panel { display: grid; gap: 18px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; display: grid; gap: 16px; min-width: 0; }
+.meta { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+.beats { display: flex; gap: 6px; flex-wrap: wrap; }
+.beat { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--gold); }
+.beat.done-good { background: var(--good); border-color: var(--good); }
+.beat.done-bad { background: var(--bad); border-color: var(--bad); }
+.beat.now { background: var(--gold); }
+.q { font-family: var(--display); font-size: clamp(22px, 4vw, 28px); line-height: 1.25; margin: 0; text-wrap: balance; }
+.opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.opt { text-align: left; font: 500 16px var(--body); color: var(--ink); background: var(--bg); border: 1.5px solid var(--line); border-radius: 10px; padding: 12px 14px; cursor: pointer; }
+.opt:hover:enabled { border-color: var(--gold); }
+.opt.right { border-color: var(--good); background: color-mix(in srgb, var(--good) 14%, var(--surface)); }
+.opt.wrong { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, var(--surface)); }
+.opt:disabled { cursor: default; }
+.explain { margin: 0; padding: 12px 14px; border-radius: 10px; background: var(--tint); font-size: 15px; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.btn { font: 600 15px var(--body); border-radius: 999px; padding: 10px 20px; cursor: pointer; border: 1.5px solid var(--accent); background: var(--accent); color: var(--accent-ink); }
+.btn.ghost { background: transparent; color: var(--accent); }
+.btn:disabled { opacity: .45; cursor: default; }
+.result { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: 22px; align-items: start; }
+@media (max-width: 680px) { .result { grid-template-columns: 1fr; } }
+.score { font-family: var(--display); font-size: 72px; line-height: 1; color: var(--accent); margin: 0; font-variant-numeric: tabular-nums; }
+.rank { font-family: var(--display); font-size: 26px; margin: 4px 0 0; }
+.small { font-size: 13px; color: var(--muted); margin: 0; }
+.share-img { width: 100%; border-radius: 12px; border: 1px solid var(--line); display: block; }
+.share-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.share-links a, .share-links button { font: 600 13px var(--body); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink); background: var(--bg); text-decoration: none; cursor: pointer; }
+.share-links a:hover, .share-links button:hover { border-color: var(--gold); }
+label { font-size: 13px; font-weight: 600; color: var(--muted); display: grid; gap: 6px; }
+select, input[type=range] { font: 500 15px var(--body); color: var(--ink); background: var(--bg); border: 1.5px solid var(--line); border-radius: 10px; padding: 9px 10px; min-width: 0; }
+.controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; align-items: end; }
+.notation { font-family: var(--mono); font-size: 28px; letter-spacing: 0.08em; color: var(--accent); margin: 0; }
+.notation sub { font-size: 14px; }
+.tala-name { font-family: var(--display); font-size: 26px; margin: 0; text-wrap: balance; }
+.total { font-family: var(--mono); font-size: 14px; color: var(--muted); margin: 0; font-variant-numeric: tabular-nums; }
+.angas { display: flex; flex-wrap: wrap; gap: 14px; }
+.anga { display: grid; gap: 8px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; min-width: 0; }
+.anga-name { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); font-weight: 700; }
+.anga-beats { display: flex; gap: 8px; }
+.tb { width: 44px; height: 54px; border-radius: 10px; border: 1.5px solid var(--line); display: grid; place-items: center; align-content: center; gap: 0; font-family: var(--mono); font-size: 15px; background: var(--bg); }
+.tb small { font-family: var(--body); font-size: 10px; color: var(--muted); }
+.tb.on { background: var(--gold); border-color: var(--gold); color: #1A1012; }
+.tb.on small { color: #1A1012; }
+.match { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.col { display: grid; gap: 8px; align-content: start; min-width: 0; }
+.chip { font: 500 15px var(--body); text-align: left; padding: 11px 13px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; }
+.chip.term { font-family: var(--display); font-size: 18px; }
+.chip.sel { border-color: var(--accent); background: var(--tint); }
+.chip.done { border-color: var(--good); color: var(--good); cursor: default; }
+.chip.miss { border-color: var(--bad); animation: shake .3s; }
+@keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+@media (prefers-reduced-motion: reduce) { .chip.miss { animation: none; } }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 3px; }
+.seg button { font: 600 13px var(--body); border: 0; background: transparent; color: var(--muted); padding: 6px 14px; border-radius: 999px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Divyanjali · Bharatanatyam since 1994</div>
+    <h1>Natya IQ</h1>
+    <p class="lede">Test what you know about Bharatanatyam, count a tala, and match mudras and rasas. Every result makes a card you can post.</p>
+  </header>
+  <div class="border" aria-hidden="true"></div>
+
+  <nav class="tabs" role="tablist" aria-label="Games">
+    <button class="tab" role="tab" id="t-quiz" aria-controls="p-quiz" aria-selected="true">Natya IQ quiz</button>
+    <button class="tab" role="tab" id="t-tala" aria-controls="p-tala" aria-selected="false">Tala calculator</button>
+    <button class="tab" role="tab" id="t-match" aria-controls="p-match" aria-selected="false">Mudra and rasa match</button>
+  </nav>
+
+  <!-- QUIZ -->
+  <section class="panel" id="p-quiz" role="tabpanel" aria-labelledby="t-quiz">
+    <div class="card" id="quiz-card">
+      <div class="meta"><span id="q-count">Question 1 of 10</span><div class="beats" id="q-beats" aria-hidden="true"></div></div>
+      <p class="q" id="q-text"></p>
+      <div class="opts" id="q-opts"></div>
+      <p class="explain" id="q-explain" hidden></p>
+      <div class="row"><button class="btn" id="q-next" disabled>Next question</button><span class="small" id="q-score">Score 0</span></div>
+    </div>
+    <div class="card" id="quiz-result" hidden>
+      <div class="result">
+        <div style="display:grid;gap:14px;min-width:0">
+          <div>
+            <p class="small">Your Natya IQ</p>
+            <p class="score" id="r-iq">0</p>
+            <p class="rank" id="r-rank"></p>
+            <p class="small" id="r-line"></p>
+          </div>
+          <div class="share-links" id="r-share"></div>
+          <p class="small">To post on Instagram, save the card: long-press it on a phone, or right-click it on a computer.</p>
+          <div class="row"><button class="btn" id="q-again">Play again with new questions</button></div>
+        </div>
+        <img class="share-img" id="r-img" alt="Your Natya IQ result card">
+      </div>
+    </div>
+  </section>
+
+  <!-- TALA -->
+  <section class="panel" id="p-tala" role="tabpanel" aria-labelledby="t-tala" hidden>
+    <div class="card">
+      <div class="controls">
+        <label for="tala-sel">Tala<select id="tala-sel"></select></label>
+        <label for="jati-sel">Jati (laghu count)<select id="jati-sel"></select></label>
+        <label for="tempo">Tempo <span id="tempo-v">60</span> beats a minute<input type="range" id="tempo" min="40" max="140" step="5" value="60"></label>
+      </div>
+      <div style="display:grid;gap:6px">
+        <p class="tala-name" id="tala-name"></p>
+        <p class="notation" id="tala-notation"></p>
+        <p class="total" id="tala-total"></p>
+      </div>
+      <div class="angas" id="tala-angas"></div>
+      <div class="row">
+        <button class="btn" id="tala-play">Play the count</button>
+        <button class="btn ghost" id="tala-rand">Random tala</button>
+        <button class="btn ghost" id="tala-card">Make a share card</button>
+      </div>
+      <p class="small">I = laghu (a clap, then finger counts; its length is the jati) · O = drutam (a clap and a wave, 2 beats) · U = anudrutam (a clap, 1 beat). Seven talas × five jatis give the 35 suladi talas.</p>
+    </div>
+    <div class="card" id="tala-result" hidden>
+      <div class="result">
+        <div style="display:grid;gap:12px;min-width:0">
+          <p class="rank" id="tr-line"></p>
+          <div class="share-links" id="tr-share"></div>
+          <p class="small">Long-press or right-click the card to save it.</p>
+        </div>
+        <img class="share-img" id="tr-img" alt="Tala share card">
+      </div>
+    </div>
+  </section>
+
+  <!-- MATCH -->
+  <section class="panel" id="p-match" role="tabpanel" aria-labelledby="t-match" hidden>
+    <div class="card">
+      <div class="meta">
+        <div class="seg" role="group" aria-label="Deck">
+          <button id="deck-mudra" aria-pressed="true">Mudras</button>
+          <button id="deck-rasa" aria-pressed="false">Rasas</button>
+        </div>
+        <span id="m-status">Pick a name, then its meaning</span>
+      </div>
+      <div class="match">
+        <div class="col" id="m-left"></div>
+        <div class="col" id="m-right"></div>
+      </div>
+      <div class="row"><button class="btn ghost" id="m-new">New random mix</button><span class="small" id="m-stats">0 matched · 0 misses · 0 s</span></div>
+    </div>
+    <div class="card" id="match-result" hidden>
+      <div class="result">
+        <div style="display:grid;gap:12px;min-width:0">
+          <p class="small">Matched them all</p>
+          <p class="rank" id="mr-line"></p>
+          <div class="share-links" id="mr-share"></div>
+          <p class="small">Long-press or right-click the card to save it.</p>
+        </div>
+        <img class="share-img" id="mr-img" alt="Match game share card">
+      </div>
+    </div>
+  </section>
+
+  <footer>Prototype for divyanjali.dance · Questions follow the Natya Shastra and Abhinaya Darpana traditions as taught at Divyanjali, Chennai.</footer>
+</div>
+
+<script>
+(() => {
+const SITE = "https://divyanjali.dance";
+const HANDLE = "@divyanjalidance";
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+
+/* ---------- tabs ---------- */
+const tabs = ["quiz", "tala", "match"];
+function showTab(name) {
+  tabs.forEach(t => { $("t-" + t).setAttribute("aria-selected", t === name); $("p-" + t).hidden = t !== name; });
+  try { localStorage.setItem("natyaiq-tab", name); } catch (e) {}
+  if (name !== "tala") stopTala();
+}
+tabs.forEach(t => $("t-" + t).addEventListener("click", () => showTab(t)));
+const hash = location.hash.replace("#", "");
+let saved = null; try { saved = localStorage.getItem("natyaiq-tab"); } catch (e) {}
+const start = tabs.includes(hash) ? hash : (tabs.includes(saved) ? saved : "quiz");
+
+/* ---------- share card (canvas) ---------- */
+function drawCard({ eyebrow, big, title, line }) {
+  const W = 1080, H = 1350, c = document.createElement("canvas");
+  c.width = W; c.height = H;
+  const g = c.getContext("2d");
+  g.fillStyle = "#5E1520"; g.fillRect(0, 0, W, H);
+  const grad = g.createRadialGradient(W / 2, H * 0.38, 60, W / 2, H * 0.38, 760);
+  grad.addColorStop(0, "rgba(214,174,94,0.20)"); grad.addColorStop(1, "rgba(214,174,94,0)");
+  g.fillStyle = grad; g.fillRect(0, 0, W, H);
+  g.strokeStyle = "#D6AE5E"; g.lineWidth = 4; g.strokeRect(48, 48, W - 96, H - 96);
+  g.lineWidth = 1.5; g.strokeRect(66, 66, W - 132, H - 132);
+  g.fillStyle = "#D6AE5E";
+  for (let x = 96; x <= W - 96; x += 32) { g.beginPath(); g.arc(x, 112, 4, 0, Math.PI * 2); g.fill(); g.beginPath(); g.arc(x, H - 112, 4, 0, Math.PI * 2); g.fill(); }
+  g.textAlign = "center";
+  g.fillStyle = "#E9CF96"; g.font = "600 34px Figtree, sans-serif";
+  g.fillText(eyebrow.toUpperCase().split("").join(String.fromCharCode(8202)), W / 2, 250);
+  g.fillStyle = "#FFF4E2"; g.font = "300px Marcellus, Georgia, serif";
+  g.fillText(big, W / 2, 610);
+  g.fillStyle = "#FFF4E2"; g.font = "72px Marcellus, Georgia, serif";
+  wrapText(g, title, W / 2, 770, W - 220, 84);
+  g.fillStyle = "#E9CF96"; g.font = "500 40px Figtree, sans-serif";
+  wrapText(g, line, W / 2, 960, W - 240, 54);
+  g.fillStyle = "#FFF4E2"; g.font = "56px Marcellus, Georgia, serif";
+  g.fillText("Divyanjali", W / 2, H - 230);
+  g.fillStyle = "#E9CF96"; g.font = "500 34px Figtree, sans-serif";
+  g.fillText("Play at divyanjali.dance · " + HANDLE, W / 2, H - 172);
+  return c.toDataURL("image/png");
+}
+function wrapText(g, text, x, y, max, lh) {
+  const words = text.split(" "); let line = "", yy = y;
+  words.forEach(w => { const t = line ? line + " " + w : w; if (g.measureText(t).width > max && line) { g.fillText(line, x, yy); line = w; yy += lh; } else line = t; });
+  if (line) g.fillText(line, x, yy);
+}
+function shareLinks(container, text) {
+  container.replaceChildren();
+  const enc = encodeURIComponent(text + " " + SITE);
+  [["WhatsApp", "https://wa.me/?text=" + enc],
+   ["Facebook", "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(SITE) + "&quote=" + encodeURIComponent(text)],
+   ["X", "https://twitter.com/intent/tweet?text=" + enc],
+   ["LinkedIn", "https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(SITE)]
+  ].forEach(([n, href]) => { const a = el("a", null, "Share on " + n); a.href = href; a.target = "_blank"; a.rel = "noopener"; container.append(a); });
+  const copy = el("button", null, "Copy text");
+  copy.type = "button";
+  copy.addEventListener("click", () => {
+    const full = text + " " + SITE;
+    const done = () => { copy.textContent = "Copied"; setTimeout(() => copy.textContent = "Copy text", 1600); };
+    if (navigator.clipboard) navigator.clipboard.writeText(full).then(done, () => fallbackCopy(full, done)); else fallbackCopy(full, done);
+  });
+  container.append(copy);
+}
+function fallbackCopy(t, done) { const ta = el("textarea"); ta.value = t; document.body.append(ta); ta.select(); try { document.execCommand("copy"); done(); } catch (e) {} ta.remove(); }
+const fontsReady = () => (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+
+/* ---------- quiz ---------- */
+// First option is the correct answer; options are shuffled when shown.
+const BANK = [
+  ["Where did Bharatanatyam take shape?", ["Tamil Nadu", "Kerala", "Odisha", "Manipur"], "It grew in the temples and courts of Tamil Nadu, especially around Thanjavur."],
+  ["Which ancient treatise on drama and dance is attributed to Bharata Muni?", ["Natya Shastra", "Abhinaya Darpana", "Sangita Ratnakara", "Silappadikaram"], "The Natya Shastra is the foundational text of Indian performing arts."],
+  ["Who wrote the Abhinaya Darpana, the 'mirror of gesture'?", ["Nandikeshvara", "Bharata Muni", "Kalidasa", "Jayadeva"], "Nandikeshvara's Abhinaya Darpana is still the main reference for hastas."],
+  ["What is a dancer's first full solo recital called?", ["Arangetram", "Varnam", "Margam", "Thillana"], "Arangetram means 'ascending the stage'. Divyanjali has presented 71."],
+  ["What is the traditional sequence of items in a recital called?", ["Margam", "Adavu", "Jathi", "Hasta"], "Margam means 'path': the recital moves from pure dance to expression and back."],
+  ["What are the basic units of steps taught first in Bharatanatyam?", ["Adavus", "Rasas", "Ragas", "Mudras"], "Adavus combine stance, footwork, hands and eyes. Divyanjali's 'Nrithyaharam' CD is for adavu practice."],
+  ["Which is the basic half-seated stance with knees turned out?", ["Aramandi", "Muzhumandi", "Samapadam", "Swastikam"], "Aramandi is the half-sitting posture; muzhumandi is the full sitting posture."],
+  ["Pure dance with no story or meaning is called…", ["Nritta", "Nritya", "Natya", "Abhinaya"], "Nritta is rhythm and line; nritya adds expression; natya is drama."],
+  ["Dance that conveys meaning through gesture and expression is…", ["Nritya", "Nritta", "Adavu", "Jathi"], "Nritya joins rhythm with abhinaya to interpret the lyrics."],
+  ["Which kind of abhinaya covers costume, jewellery and make-up?", ["Aharya", "Angika", "Vachika", "Sattvika"], "The four abhinayas are angika (body), vachika (word), aharya (adornment) and sattvika (inner state)."],
+  ["Sattvika abhinaya expresses…", ["Inner emotional states", "Costume", "Spoken words", "Footwork"], "Sattvika shows feeling from within: a tear, a tremble, a change of colour."],
+  ["How many rasas make up the navarasa?", ["Nine", "Eight", "Six", "Twelve"], "The Natya Shastra lists eight; shanta (peace) was later added as the ninth."],
+  ["Veera rasa is the sentiment of…", ["Heroism", "Love", "Fear", "Wonder"], "Divyanjali's production 'Veeram' is built on this rasa."],
+  ["Adbhuta rasa is the sentiment of…", ["Wonder", "Disgust", "Peace", "Anger"], "Adbhuta is astonishment and wonder."],
+  ["Which pure-dance item traditionally opens the margam?", ["Alarippu", "Varnam", "Padam", "Thillana"], "Alarippu, 'the blossoming', warms up the body like a flower opening."],
+  ["Which long item is the centrepiece of a recital?", ["Varnam", "Jathiswaram", "Alarippu", "Shabdam"], "The varnam weaves complex nritta with deep abhinaya."],
+  ["Which brisk pure-dance item comes near the end of a recital?", ["Thillana", "Alarippu", "Padam", "Jathiswaram"], "The thillana is a joyful burst of rhythm before the closing mangalam."],
+  ["Who conducts a recital with cymbals and recites the rhythmic syllables?", ["The nattuvanar", "The vocalist", "The violinist", "The rasika"], "Dr. S. Divyasena trained in nattuvangam with Sri B.P. Haribabu."],
+  ["Spoken rhythmic syllables such as 'tha thai thei tha' are called…", ["Sollukattu", "Sahityam", "Swaram", "Raga"], "Sollukattu are the spoken rhythm syllables of the dance."],
+  ["Which drum is the main percussion for Bharatanatyam?", ["Mridangam", "Tabla", "Chenda", "Dholak"], "The double-headed mridangam leads the rhythm in the orchestra."],
+  ["What is the wooden stick and block used to beat time in class called?", ["Thattukazhi", "Thalam", "Kanjira", "Morsing"], "The teacher strikes the thattukazhi on a block. Craft Innovative makes an unbreakable fibre version."],
+  ["Which four brothers of Thanjavur shaped the modern margam?", ["The Tanjore Quartet", "The Carnatic Trinity", "The Alwars", "The Nayanmars"], "Chinnaiah, Ponniah, Sivanandam and Vadivelu set the order of the recital."],
+  ["Single-hand gestures are called…", ["Asamyuta hastas", "Samyuta hastas", "Drishti bhedas", "Pada bhedas"], "Asamyuta means 'not joined'; samyuta hastas use both hands."],
+  ["How many asamyuta hastas does the Abhinaya Darpana list?", ["28", "24", "32", "9"], "28 single-hand gestures, from pataka to trishula."],
+  ["The pataka hasta represents…", ["A flag", "A lotus", "A deer", "A bee"], "Pataka means flag: all fingers together and straight."],
+  ["The hamsasya hasta means…", ["Swan's beak", "Peacock", "Snake's hood", "Half moon"], "Hamsa is swan and asya is face or beak."],
+  ["The alapadma hasta shows…", ["A full-bloomed lotus", "A closed bud", "A fist", "A trident"], "The fingers spread and curve like open lotus petals."],
+  ["How many beats (aksharas) are there in Adi tala?", ["8", "6", "7", "10"], "Adi tala is a 4-beat laghu and two 2-beat drutams: 4 + 2 + 2."],
+  ["Adi tala is which tala in the suladi system?", ["Chatusra jati Triputa", "Tisra jati Eka", "Khanda jati Ata", "Misra jati Jhampa"], "Triputa is laghu + drutam + drutam; chatusra jati makes the laghu 4."],
+  ["How many beats does a misra jati laghu have?", ["7", "3", "5", "9"], "Tisra 3, chatusra 4, khanda 5, misra 7, sankeerna 9."],
+  ["How many beats is a drutam?", ["2", "1", "4", "3"], "A drutam is a clap and a wave."],
+  ["Shiva as the cosmic dancer is known as…", ["Nataraja", "Narasimha", "Dakshinamurthy", "Bhairava"], "Nataraja, Lord of Dance, is worshipped at Chidambaram."],
+  ["The 108 karanas are carved on the gopurams of which temple?", ["Chidambaram", "Madurai Meenakshi", "Konark", "Hampi Virupaksha"], "The Chidambaram gopurams show the 108 karanas of the Natya Shastra."],
+  ["In which year did Rukmini Devi Arundale found Kalakshetra?", ["1936", "1947", "1925", "1956"], "Kalakshetra was founded in Chennai in 1936."],
+  ["Kuchipudi, also taught at Divyanjali, comes from which state?", ["Andhra Pradesh", "Tamil Nadu", "Karnataka", "Kerala"], "It is named after the village of Kuchipudi in Andhra Pradesh."],
+  ["The dancer's ankle bells are called…", ["Salangai", "Thalam", "Veena", "Kanjira"], "Salangai (ghungroo) are tied on before every class and performance."],
+  ["What does 'Divyanjali' mean?", ["Divine offering", "Divine dance", "Light of dance", "Temple bell"], "Divya means divine and anjali means offering with folded hands."],
+  ["In which year was Divyanjali founded?", ["1994", "1985", "2004", "2011"], "Founded by Dr. S. Divyasena in 1994; 1985 was her own arangetram."]
+];
+const N = 10;
+let qset = [], qi = 0, correct = 0, history = [];
+
+function rankFor(c) {
+  if (c >= 9) return "Natya Ratna";
+  if (c >= 7) return "Natya Sadhaka";
+  if (c >= 4) return "Sishya on the path";
+  return "Rasika in the making";
+}
+function newQuiz() {
+  qset = shuffle(BANK).slice(0, N).map(([q, opts, e]) => ({ q, e, answer: opts[0], opts: shuffle(opts) }));
+  qi = 0; correct = 0; history = [];
+  $("quiz-result").hidden = true; $("quiz-card").hidden = false;
+  renderQ();
+}
+function renderBeats() {
+  const b = $("q-beats"); b.replaceChildren();
+  for (let i = 0; i < N; i++) { const d = el("span", "beat"); if (i < history.length) d.classList.add(history[i] ? "done-good" : "done-bad"); else if (i === qi) d.classList.add("now"); b.append(d); }
+}
+function renderQ() {
+  const item = qset[qi];
+  $("q-count").textContent = `Question ${qi + 1} of ${N}`;
+  $("q-text").textContent = item.q;
+  $("q-explain").hidden = true;
+  $("q-next").disabled = true;
+  $("q-next").textContent = qi === N - 1 ? "See my Natya IQ" : "Next question";
+  $("q-score").textContent = `Score ${correct}`;
+  const box = $("q-opts"); box.replaceChildren();
+  item.opts.forEach(o => {
+    const b = el("button", "opt", o); b.type = "button";
+    b.addEventListener("click", () => answer(b, o));
+    box.append(b);
+  });
+  renderBeats();
+}
+function answer(btn, choice) {
+  const item = qset[qi], ok = choice === item.answer;
+  if (ok) correct++;
+  history.push(ok);
+  [...$("q-opts").children].forEach(b => { b.disabled = true; if (b.textContent === item.answer) b.classList.add("right"); });
+  if (!ok) btn.classList.add("wrong");
+  $("q-explain").textContent = (ok ? "Correct. " : "The answer is " + item.answer + ". ") + item.e;
+  $("q-explain").hidden = false;
+  $("q-next").disabled = false;
+  $("q-score").textContent = `Score ${correct}`;
+  renderBeats();
+  $("q-next").focus();
+}
+$("q-next").addEventListener("click", () => { if (qi < N - 1) { qi++; renderQ(); } else finishQuiz(); });
+$("q-again").addEventListener("click", newQuiz);
+function finishQuiz() {
+  const iq = 70 + correct * 7, rank = rankFor(correct);
+  $("r-iq").textContent = iq;
+  $("r-rank").textContent = rank;
+  $("r-line").textContent = `${correct} of ${N} correct · questions drawn at random from ${BANK.length}`;
+  $("quiz-card").hidden = true; $("quiz-result").hidden = false;
+  const text = `My Bharatanatyam Natya IQ is ${iq}: ${rank}! Test yours with Divyanjali.`;
+  shareLinks($("r-share"), text);
+  fontsReady().then(() => { $("r-img").src = drawCard({ eyebrow: "My Natya IQ", big: String(iq), title: rank, line: `${correct} of ${N} Bharatanatyam questions right` }); });
+}
+
+/* ---------- tala calculator ---------- */
+const TALAS = [
+  ["Dhruva", "LOLL"], ["Matya", "LOL"], ["Rupaka", "OL"], ["Jhampa", "LUO"],
+  ["Triputa", "LOO"], ["Ata", "LLOO"], ["Eka", "L"]
+];
+const JATIS = [["Tisra", 3], ["Chatusra", 4], ["Khanda", 5], ["Misra", 7], ["Sankeerna", 9]];
+const FAMOUS = { "Triputa|Chatusra": "Adi tala, the most common tala", "Triputa|Tisra": "Tisra Triputa, often heard as a 7-beat cycle" };
+const talaSel = $("tala-sel"), jatiSel = $("jati-sel");
+TALAS.forEach(([n], i) => talaSel.append(new Option(n, i)));
+JATIS.forEach(([n, c], i) => jatiSel.append(new Option(`${n} · ${c}`, i)));
+talaSel.value = 4; jatiSel.value = 1;
+let beatsFlat = [], timer = null, pos = -1;
+
+function buildTala() {
+  const [tName, pattern] = TALAS[talaSel.value], [jName, jc] = JATIS[jatiSel.value];
+  const angas = [...pattern].map(ch => ch === "L" ? { kind: "Laghu", sym: "I", n: jc } : ch === "O" ? { kind: "Drutam", sym: "O", n: 2 } : { kind: "Anudrutam", sym: "U", n: 1 });
+  const total = angas.reduce((s, a) => s + a.n, 0);
+  const famous = FAMOUS[tName + "|" + jName];
+  $("tala-name").textContent = `${jName} jati ${tName} tala` + (famous ? ` · ${famous}` : "");
+  const nota = $("tala-notation"); nota.replaceChildren();
+  angas.forEach((a, i) => { nota.append(document.createTextNode((i ? " " : "") + a.sym)); if (a.kind === "Laghu") nota.append(el("sub", null, String(a.n))); });
+  $("tala-total").textContent = angas.map(a => a.n).join(" + ") + " = " + total + " aksharas (beats) per cycle";
+  const box = $("tala-angas"); box.replaceChildren(); beatsFlat = [];
+  angas.forEach(a => {
+    const wrap = el("div", "anga"); wrap.append(el("div", "anga-name", `${a.kind} · ${a.n}`));
+    const row = el("div", "anga-beats");
+    for (let k = 0; k < a.n; k++) {
+      const action = k === 0 ? "clap" : a.kind === "Drutam" ? "wave" : "count";
+      const t = el("div", "tb"); t.append(el("span", null, String(beatsFlat.length + 1)), el("small", null, action));
+      row.append(t); beatsFlat.push(t);
+    }
+    wrap.append(row); box.append(wrap);
+  });
+  pos = -1;
+  return { tName, jName, total, angas };
+}
+function stopTala() { if (timer) { clearInterval(timer); timer = null; } beatsFlat.forEach(b => b.classList.remove("on")); $("tala-play").textContent = "Play the count"; }
+function playTala() {
+  if (timer) { stopTala(); return; }
+  const ms = 60000 / Number($("tempo").value);
+  $("tala-play").textContent = "Stop";
+  pos = -1;
+  const step = () => { beatsFlat.forEach(b => b.classList.remove("on")); pos = (pos + 1) % beatsFlat.length; beatsFlat[pos].classList.add("on"); };
+  step(); timer = setInterval(step, ms);
+}
+[talaSel, jatiSel].forEach(s => s.addEventListener("change", () => { const was = !!timer; stopTala(); buildTala(); $("tala-result").hidden = true; if (was) playTala(); }));
+$("tempo").addEventListener("input", e => { $("tempo-v").textContent = e.target.value; if (timer) { stopTala(); playTala(); } });
+$("tala-play").addEventListener("click", playTala);
+$("tala-rand").addEventListener("click", () => { stopTala(); talaSel.value = Math.floor(Math.random() * TALAS.length); jatiSel.value = Math.floor(Math.random() * JATIS.length); buildTala(); $("tala-result").hidden = true; });
+$("tala-card").addEventListener("click", () => {
+  const t = buildTala();
+  const line = t.angas.map(a => a.n).join(" + ") + " = " + t.total + " beats";
+  $("tr-line").textContent = `${t.jName} jati ${t.tName}: ${line}`;
+  shareLinks($("tr-share"), `I counted ${t.jName} jati ${t.tName} tala (${t.total} beats) with Divyanjali's tala calculator. Can you keep the beat?`);
+  fontsReady().then(() => { $("tr-img").src = drawCard({ eyebrow: "Tala of the day", big: String(t.total), title: `${t.jName} jati ${t.tName}`, line: line + " · can you keep the beat?" }); $("tala-result").hidden = false; });
+});
+buildTala();
+
+/* ---------- match game ---------- */
+const DECKS = {
+  mudra: [["Pataka", "Flag"], ["Tripataka", "Flag with three parts"], ["Ardhachandra", "Half moon"], ["Kartarimukha", "Scissor blades"], ["Mayura", "Peacock"], ["Shukatunda", "Parrot's beak"], ["Mushti", "Fist"], ["Shikhara", "Peak"], ["Suchi", "Needle"], ["Chandrakala", "Crescent moon"], ["Padmakosha", "Lotus bud"], ["Sarpashirsha", "Snake's head"], ["Mrigashirsha", "Deer's head"], ["Simhamukha", "Lion's face"], ["Alapadma", "Full-bloomed lotus"], ["Bhramara", "Bee"], ["Hamsasya", "Swan's beak"], ["Hamsapaksha", "Swan's wing"], ["Mukula", "Bud"], ["Tamrachuda", "Rooster"], ["Trishula", "Trident"]],
+  rasa: [["Shringara", "Love"], ["Hasya", "Laughter"], ["Karuna", "Compassion"], ["Raudra", "Fury"], ["Veera", "Heroism"], ["Bhayanaka", "Fear"], ["Bibhatsa", "Disgust"], ["Adbhuta", "Wonder"], ["Shanta", "Peace"]]
+};
+let deck = "mudra", pairs = [], pickedL = null, matched = 0, misses = 0, t0 = 0, tick = null;
+const PAIRS = 6;
+function setDeck(d) { deck = d; $("deck-mudra").setAttribute("aria-pressed", d === "mudra"); $("deck-rasa").setAttribute("aria-pressed", d === "rasa"); newMatch(); }
+$("deck-mudra").addEventListener("click", () => setDeck("mudra"));
+$("deck-rasa").addEventListener("click", () => setDeck("rasa"));
+$("m-new").addEventListener("click", newMatch);
+function stats() { const s = t0 ? Math.round((Date.now() - t0) / 1000) : 0; $("m-stats").textContent = `${matched} matched · ${misses} misses · ${s} s`; return s; }
+function newMatch() {
+  pairs = shuffle(DECKS[deck]).slice(0, PAIRS); matched = 0; misses = 0; pickedL = null; t0 = 0;
+  if (tick) clearInterval(tick); tick = null;
+  $("match-result").hidden = true;
+  $("m-status").textContent = deck === "mudra" ? "Pick a hasta, then what it shows" : "Pick a rasa, then its feeling";
+  const L = $("m-left"), R = $("m-right"); L.replaceChildren(); R.replaceChildren();
+  pairs.forEach(([term]) => { const b = el("button", "chip term", term); b.type = "button"; b.dataset.k = term; b.addEventListener("click", () => pickLeft(b)); L.append(b); });
+  shuffle(pairs).forEach(([term, mean]) => { const b = el("button", "chip", mean); b.type = "button"; b.dataset.k = term; b.addEventListener("click", () => pickRight(b)); R.append(b); });
+  stats();
+}
+function startClock() { if (!t0) { t0 = Date.now(); tick = setInterval(stats, 1000); } }
+function pickLeft(b) {
+  if (b.classList.contains("done")) return;
+  startClock();
+  [...$("m-left").children].forEach(x => x.classList.remove("sel"));
+  b.classList.add("sel"); pickedL = b;
+}
+function pickRight(b) {
+  if (b.classList.contains("done")) return;
+  if (!pickedL) { $("m-status").textContent = "First pick a name on the left"; return; }
+  if (b.dataset.k === pickedL.dataset.k) {
+    b.classList.add("done"); pickedL.classList.add("done"); pickedL.classList.remove("sel");
+    b.disabled = true; pickedL.disabled = true; pickedL = null; matched++;
+    if (matched === PAIRS) finishMatch();
+  } else {
+    misses++; b.classList.remove("miss"); void b.offsetWidth; b.classList.add("miss");
+  }
+  stats();
+}
+function finishMatch() {
+  clearInterval(tick); tick = null;
+  const s = stats();
+  const what = deck === "mudra" ? "mudras" : "rasas";
+  $("mr-line").textContent = `${PAIRS} ${what} in ${s} seconds, ${misses} ${misses === 1 ? "miss" : "misses"}`;
+  shareLinks($("mr-share"), `I matched ${PAIRS} Bharatanatyam ${what} in ${s} seconds on Divyanjali's Natya IQ. Beat my time!`);
+  fontsReady().then(() => { $("mr-img").src = drawCard({ eyebrow: deck === "mudra" ? "Mudra match" : "Rasa match", big: s + "s", title: `${PAIRS} ${what} matched`, line: `${misses} ${misses === 1 ? "miss" : "misses"} · beat my time` }); $("match-result").hidden = false; });
+}
+newMatch();
+
+newQuiz();
+showTab(start);
+})();
+</script>

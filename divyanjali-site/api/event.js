@@ -6,7 +6,7 @@ export default async function handler(req) {
   const url = new URL(req.url);
   const code = url.searchParams.get('code');
   const origin = 'https://' + (req.headers.get('x-forwarded-host') || url.host);
-  const [page, events] = await Promise.all([fetch(new URL('/app.html', url.origin)).then((r) => r.text()), code ? getEvents() : []]);
+  const [page, events] = await Promise.all([fetch(new URL(code ? '/app.html' : '/home.html', url.origin)).then((r) => r.text()), code ? getEvents() : []]);
   const headers = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, s-maxage=120, max-age=60' };
   const e = code && findEvent(events, code);
   const card = e
@@ -17,7 +17,7 @@ export default async function handler(req) {
         // Small copy of the poster: WhatsApp skips preview images over about 300 KB.
         image: e.poster_link ? origin + '/img/' + e.event_code + '?s=og&p=' + encodeURIComponent(posterKey(e.poster_link)) : '',
       }
-    : { title: 'Divyanjali Events', desc: 'Performances, arangetrams and workshops by Divyanjali, Bharatanatyam since 1994, Chennai.', link: origin + '/', image: '' };
+    : { title: 'Divyanjali · Bharatanatyam school in Chennai since 1994', desc: 'Classes, productions, events and arangetrams by Dr. S. Divyasena and Sri B.P. Haribabu, CIT Nagar, Chennai.', link: origin + '/', image: '' };
   const img = card.image || origin + '/assets/og-default.jpg';
   const extra =
     '<meta property="og:type" content="website"><meta property="og:url" content="' + esc(card.link) + '"><meta property="og:site_name" content="' + SITE_NAME + '">' +

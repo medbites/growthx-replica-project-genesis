@@ -81,3 +81,11 @@ Dancers request a performance slot from the **Perform in the Season** section of
 - `app.html`: the whole site (HTML, CSS, JS in one file)
 - `apps-script/Code.gs`: the Google Sheet backend
 - `_redirects`: pretty event links on Cloudflare Pages
+
+## Full site (branch `claude/divyanjali-full-site`)
+
+- Pages are built by `divyanjali-build/build.py` (run `python3 divyanjali-build/build.py`). Page text lives in that file; header, footer and menu are shared.
+- `/` is the home page, `/events` is the calendar app (`app.html`), event links stay `/e/EVENT-CODE`.
+- Photos: see `IMAGE-SLOTS.md`. Upload a file with the listed name to `assets/img/` and it appears.
+- Videos and Instagram posts for the Gallery: edit `assets/media.json`. YouTube plays on the page; Instagram opens in a pop-up.
+- Yellow highlighted text on the pages marks facts still to confirm.

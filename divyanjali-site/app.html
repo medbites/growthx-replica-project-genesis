@@ -13,6 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&amp;family=Montserrat:wght@400;500;600&amp;display=swap">
+<link rel="stylesheet" href="/assets/site.css">
 <style>
 /* Layout: one calm column, cream bands between sections, saffron used only as a thin marker and for actions */
 :root{
@@ -211,12 +212,8 @@ footer .logo b,footer .logo{color:#FFFFFF}
 <header class="top">
   <div class="wrap">
     <a class="logo" href="/" aria-label="Divyanjali home"><img src="/assets/logo-mark.webp" alt="" width="46" height="45"><b>Divyanjali</b></a>
-    <nav class="nav" aria-label="Main">
-      <a class="hide-s" href="#upcoming">Upcoming</a>
-      <a class="hide-s" href="#calendar">Calendar</a>
-      <a class="hide-s" href="#past" data-show="past">Past events</a>
-      <a class="hide-s" href="#perform" data-show="forms">Perform</a>
-      <a class="btn" href="#enquire" data-show="forms">Book &amp; enquire</a>
+    <nav class="nav" aria-label="Main"><a class="hide-m" href="/about">About</a><a class="hide-m" href="/choreographies">Choreographies</a><a class="hide-m" href="/learn">Learn</a><a class="hide-m" href="/events" aria-current="page">Events</a><a class="hide-m" href="/natya-iq">Natya IQ</a><a class="btn" href="/book">Book &amp; enquire</a>
+      <details class="menu"><summary aria-label="Menu">☰</summary><div class="menu-panel"><a href="/">Home</a><a href="/about">About Divyanjali</a><a href="/divyasena">Dr. S. Divyasena</a><a href="/haribabu">Sri B.P. Haribabu</a><a href="/30-years">30 Years</a><a href="/accolades">Student's Accolades</a><a href="/choreographies">Choreographies</a><a href="/learn">Learn</a><a href="/events" aria-current="page">Events</a><a href="/gallery">Gallery and Videos</a><a href="/natya-iq">Natya IQ</a><a href="/media">Media Room</a><a href="/store">Store</a><a href="/book">Book and Enquire</a></div></details>
     </nav>
   </div>
 </header>
@@ -354,11 +351,14 @@ footer .logo b,footer .logo{color:#FFFFFF}
 </main>
 
 <footer>
-  <div class="wrap">
+  <div class="wrap cols">
     <div class="stack" style="gap:8px"><a class="logo" href="/"><img src="/assets/logo-mark-white.webp" alt="" width="56" height="55"><b>Divyanjali</b></a><p class="muted">Bharatanatyam since 1994 · CIT Nagar, Chennai</p></div>
-    <div class="stack" style="gap:4px"><p class="muted">Visit</p><p id="fAddr"></p><p id="fWa"></p></div>
-    <div class="stack" style="gap:4px"><p class="muted">Follow</p><a id="fIg" href="#">Instagram</a><a id="fYt" href="#">YouTube</a><a id="fFb" href="#">Facebook</a></div>
+    <div class="stack" style="gap:4px"><p class="muted">Visit</p><p id="fAddr">[Address], CIT Nagar, Chennai</p><p id="fWa">WhatsApp +919000000000</p></div>
+    <div class="stack" style="gap:4px"><p class="muted">Explore</p><a href="/about">About</a><a href="/choreographies">Choreographies</a><a href="/learn">Learn</a><a href="/events">Events</a><a href="/gallery">Gallery and Videos</a></div>
+    <div class="stack" style="gap:4px"><p class="muted">More</p><a href="/media">Media Room</a><a href="/store">Store</a><a href="/book">Book and Enquire</a><a href="/privacy">Privacy</a></div>
+    <div class="stack" style="gap:4px"><p class="muted">Follow</p><a id="fIg" href="https://www.instagram.com/divyanjalidance/" target="_blank" rel="noopener">Instagram</a><a id="fYt" href="https://www.youtube.com/channel/UCLPvhdH5qXt0R4IyDt1eSHg" target="_blank" rel="noopener">YouTube</a><a id="fFb" href="https://www.facebook.com/divyanjali.dance/" target="_blank" rel="noopener">Facebook</a></div>
   </div>
+  <div class="wrap fine">© Divyanjali Dance School and Trust, Chennai · <a href="/privacy">Privacy</a></div>
 </footer>
 <a class="wa" id="waFloat" href="#" aria-label="Chat with Divyanjali on WhatsApp"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20l1.5-4A8 8 0 1 1 8 18.5z"/></svg></a>
 <dialog id="dlg" aria-labelledby="dlgTitle"><div class="dlg" id="dlgBody"></div></dialog>
@@ -834,7 +834,7 @@ function route() {
   if (id) { const t = document.getElementById(id); if (t) t.scrollIntoView(); }
 }
 window.addEventListener('hashchange', () => {
-  if (/\/e\//.test(location.pathname) && !location.hash.startsWith('#e-')) { history.replaceState(null, '', '/' + location.hash); }
+  if (/\/e\//.test(location.pathname) && !location.hash.startsWith('#e-')) { history.replaceState(null, '', '/events' + location.hash); }
   route();
 });
 
