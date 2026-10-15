@@ -65,14 +65,14 @@ def icon(name):
     return f'<svg class="ic" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">{ICONS[name]}</svg>'
 
 # ---------------------------------------------------------------- layout
-NAV = [('About', '/about'), ('Choreographies', '/choreographies'), ('Learn', '/learn'), ('Natya IQ', '/natya-iq'), ('Calendar', '/events')]
+NAV = [('About', '/about'), ('30 Years', '/30-years'), ('Accolades', '/accolades'), ('Choreographies', '/choreographies'), ('Learn', '/learn'), ('Calendar', '/events')]
 ABOUT = [('Dance school', '/about', 'Divyanjali since 1994'), ('Dr. S. Divyasena', '/divyasena', 'Founder and guru'), ('Sri B.P. Haribabu', '/haribabu', 'Mridangam and rhythm')]
 MENU = [('Home', '/'), ('About', ABOUT), ('30 Years', '/30-years'),
         ("Student's Accolades", '/accolades'), ('Choreographies', '/choreographies'), ('Learn', '/learn'), ('Events calendar', '/events'),
         ('Gallery and Videos', '/gallery'), ('Natya IQ', '/natya-iq'), ('Media Room', '/media'), ('Store', '/store'), ('Book and Enquire', '/book')]
 
 def header(path):
-    cur = lambda h: ' aria-current="page"' if h == path or (h != '/' and path.startswith(h + '/')) else ''
+    cur = lambda h: ' aria-current="page"' if h == path or (h != '/' and path.startswith(h + '/')) or (h == '/accolades' and path.startswith('/students/')) else ''
     about_on = ' aria-current="page"' if path in [h for _, h, _ in ABOUT] else ''
     sub = ''.join(f'<a href="{h}"{cur(h)}><b>{t}</b><small>{d}</small></a>' for t, h, d in ABOUT)
     def nav_item(t, h):
@@ -202,6 +202,14 @@ def prod_card(p):
 # ---------------------------------------------------------------- pages
 HOME_VIDEO = 'https://youtu.be/7g505MXqnec'
 
+def marquee_rows():
+    ps = [p for p in STUDENTS if p['photo']]
+    half = (len(ps) + 1) // 2
+    def row(lst, rev):
+        cards = ''.join(f'<a class="mq" href="/students/{p["slug"]}"><img src="{p["photo"]}" alt="" loading="lazy" width="360" height="360"><span><b>{e(p["display"])}</b><small>{e(st_tags(p)[1] if len(st_tags(p)) > 1 else p["group"])}</small></span></a>' for p in lst)
+        return f'<div class="mq-row{" rev" if rev else ""}"><div class="mq-track">{cards}{cards.replace('<a class="mq"', '<a class="mq" aria-hidden="true" tabindex="-1"')}</div></div>'
+    return row(ps[:half], False) + row(ps[half:], True)
+
 def home():
     feat = [p for p in PRODUCTIONS if p['slug'] in ('hanumath-margam', 'andal-vaibhavam', 'thirumurugaatrupadai', 'dasavatharam')]
     def bento(p, i):
@@ -238,6 +246,7 @@ def home():
   <div class="wrap vh-in">
     <p class="vh-kicker">Divyanjali · Bharatanatyam since 1994 · Chennai</p>
     <h1 class="vh-title">{''.join(f'<span style="--i:{i}">{w}</span> ' for i, w in enumerate(['The', 'dancer', 'is', 'the'])) + '<em style="--i:4">dance.</em>'}</h1>
+    <p class="vh-quote">There is no dancer separate from the dance.<br>No dance separate from the dancer.</p>
     <p class="vh-lead">Natyacharya Dr. S. Divyasena and Sri B.P. Haribabu. Thirty years of classes, productions and arangetrams, from CIT Nagar to stages around the world.</p>
     <div class="row vh-cta"><a class="btn vh-btn" href="#season">See the season</a><a class="btn-o vh-btn-o" href="/learn">Learn with us</a></div>
   </div>
@@ -293,13 +302,11 @@ def home():
     <h2><b data-count="71">71</b> arangetrams. Stages from Chennai to the world.</h2>
     <p class="muted">Scholarship holders, Doordarshan graded artists, and teachers who now run their own schools.</p>
     <div class="al-where" aria-label="Where our alumni teach"><span>Alumni teach in</span>{''.join(f'<i style="--i:{i}">{c}</i>' for i, c in enumerate(['India', 'USA', 'UK', 'Singapore']))}</div>
-    <a class="btn-o" href="/accolades" style="align-self:flex-start">Student's Accolades</a>
+    <a class="btn" href="/accolades" style="align-self:flex-start">Meet all {len(STUDENTS)} dancers</a>
   </div>
-  <div class="deck-wrap">
-    <div class="deck" id="deck" role="button" tabindex="0" aria-label="Next photo">{''.join(f'<div class="dk" data-cap="{e(cap)}">{ph(f, cap, "1000×1250", "tall")}</div>' for f, cap in [('home-students-1.jpg', 'Students on stage'), ('home-students-2.jpg', 'An arangetram moment'), ('home-students-3.jpg', 'In class at CIT Nagar')])}</div>
-    <div class="deck-bar"><span id="deckCap">Students on stage</span><span class="deck-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></span><span class="deck-hint">Tap or swipe</span></div>
-  </div>
-</div></section>
+</div>
+  <div class="marq" aria-label="Dancers of Divyanjali">{marquee_rows()}</div>
+</section>
 <section class="dark"><div class="wrap split">
   <div class="stack"><h2>How well do you know Bharatanatyam?</h2><p class="muted">Natya IQ: a quick quiz, a tala calculator and a mudra and rasa match. Share your score card.</p><div class="row"><a class="btn" href="/natya-iq">Take the quiz</a></div></div>
   {ph('home-natyaiq.jpg', 'Natya IQ share card', '1080×1080', 'sq')}
@@ -430,15 +437,174 @@ def haribabu():
 {cta('Book Sri Haribabu', 'Mridangam and nattuvangam for performances and arangetrams.', 'Send an enquiry', '/book?type=Performance+booking')}
 ''')
 
-def thirty():
-    return page('/30-years', '30 Years of Divyanjali', 'Three decades of a divine offering: a class that became a trust, a flood that took everything, and the students who carried the school forward.', f'''
-{crumbs(('About', '/about'), ('30 Years', None))}
-<section style="padding-top:28px"><div class="wrap hero2">
-  <div class="stack"><p class="eyebrow">1994–2024</p><h1>Three decades of a divine offering</h1><p class="lead">A small class that grew into a trust, a flood that took everything, and the students who carried the school forward.</p></div>
-  <figure class="ph sq" style="background:#FFFFFF"><img src="/assets/logo-full.webp" alt="Divyanjali 30 years logo" style="object-fit:contain;padding:12%;cursor:default"></figure>
+# ---------------------------------------------------------------- students (from the Souvenir 2026, pages 50 to 55)
+STUDENTS = json.load(open(os.path.join(ROOT, 'students.json'), encoding='utf-8'))
+ABROAD = ['usa', 'united states', 'singapore', 'bangkok', 'dubai', 'uae', 'united arab', ' uk', 'germany', 'sri lanka', 'srilanka', 'jaffna', 'mauritius', 'australia', 'cleveland', 'nizwa']
+
+def st_tags(p):
+    t = ' ' + ' '.join(p['items']).lower()
+    tags = []
+    if p['group'] == 'Faculty': tags.append('Faculty')
+    elif p['group'] == 'Alumni': tags.append('Alumni')
+    else: tags.append('Students')
+    if any(k in t for k in ('doordarshan', 'doordharsan', 'doordharshab', 'podhigai')): tags.append('Doordarshan graded')
+    if 'scholarship' in t or 'fellowship' in t: tags.append('Scholarship')
+    if any(k in t for k in ABROAD): tags.append('Performed abroad')
+    if 'founder' in t or 'director -' in t or 'director of' in t: tags.append('Runs a school')
+    return tags
+
+def st_firsts(p):
+    return sum(len(re.findall(r'\b(first|1st)\b', i, re.I)) for i in p['items'])
+
+def st_years(p):
+    ys = [int(y) for i in p['items'] for y in re.findall(r'\b(19[89]\d|20[0-2]\d)\b', i)]
+    return (min(ys), max(ys)) if ys else None
+
+def initials(n):
+    w = [x for x in re.sub(r'\b(Dr|S)\.?\s', '', n).replace('.', ' ').split() if len(x) > 1]
+    return (w[0][0] + (w[1][0] if len(w) > 1 else '')).upper() if w else n[:2].upper()
+
+def st_face(p, cls='face'):
+    if p['photo']:
+        return f'<span class="{cls}"><img src="{p["photo"]}" alt="{e(p["display"])}" loading="lazy" width="360" height="360"></span>'
+    return f'<span class="{cls} none" aria-hidden="true">{initials(p["display"])}</span>'
+
+def st_card(p, i=0):
+    tags = st_tags(p)
+    return (f'<a class="stc reveal" href="/students/{p["slug"]}" data-cat="{"|".join(tags)}" data-name="{e(p["display"].lower())}" style="--i:{i % 6}">'
+            f'{st_face(p)}<b>{e(p["display"])}</b><small>{e(tags[0] if tags[0] != "Students" else "Student")} · {len(p["items"])} achievements</small>'
+            f'<span class="stc-one">{e(p["items"][0][:90])}{"…" if len(p["items"][0]) > 90 else ""}</span></a>')
+
+def accolades():
+    n_dd = sum('Doordarshan graded' in st_tags(p) for p in STUDENTS)
+    n_sc = sum('Scholarship' in st_tags(p) for p in STUDENTS)
+    n_first = sum(st_firsts(p) for p in STUDENTS)
+    chips = ['All', 'Faculty', 'Students', 'Alumni', 'Doordarshan graded', 'Scholarship', 'Performed abroad', 'Runs a school']
+    return page('/accolades', "Student's Accolades · Divyanjali", 'Faculty, students and alumni of Divyanjali: Doordarshan graded artists, scholarship holders, prize winners and teachers. Each dancer has a page of their own.', f'''
+<section class="acc-hero"><div class="wrap">
+  <h1>Student's Accolades</h1>
+  <p class="lead">The faculty, students and alumni of Divyanjali, with every award listed in the Souvenir 2026. Tap a dancer to open their page, share it, or save it as a one-page résumé.</p>
+  {stats([(len(STUDENTS), '', 'dancers on this page'), (n_dd, '', 'Doordarshan graded'), (n_sc, '', 'scholarship holders'), (n_first, '+', 'first places')])}
 </div></section>
+<section class="alt acc-list"><div class="wrap">
+  <div class="acc-tools">
+    <div class="chipbar" data-filter="#studentGrid" data-count="#accCount">{''.join(f'<button class="chip" type="button" data-f="{f}" aria-pressed="{str(f == "All").lower()}">{f}</button>' for f in chips)}</div>
+    <label class="acc-search"><span class="sr">Find a dancer</span><input type="search" id="accSearch" placeholder="Find a dancer by name" autocomplete="off"></label>
+  </div>
+  <p class="muted acc-count" id="accCount">Showing {len(STUDENTS)}</p>
+  <div class="stgrid" id="studentGrid">{''.join(st_card(p, i) for i, p in enumerate(STUDENTS))}</div>
+  <p class="muted acc-src">From the Divyanjali Souvenir 2026, pages 50 to 55. <a href="/30-years#p=50">Read those pages in the souvenir</a>. To add or correct a profile, <a data-wa="Hello Divyanjali, I would like to update a profile on Student's Accolades." href="#">message us on WhatsApp</a>.</p>
+</div></section>
+<section><div class="wrap two">
+  <div class="stack">{head('Alumni', 'Students who started schools')}<ol class="tl"><li><b>Kala Roopam</b><span><a href="/students/s-roopa-s">Dr. S. Roopa S</a></span></li><li><b>Shiva Nrittam</b><span><a href="/students/sumodh">Sumodh</a></span></li><li><b>Ananda Natyakshethra</b><span><a href="/students/anandaraj-a">Anandaraj A</a>, Thiruverkadu</span></li></ol></div>
+  <div class="stack">{head('Recognition', 'Scholarships and prizes')}<ul class="list">
+    <li>CCRT Scholarship, Government of India</li><li>Bharat Kalachar Scholarship</li><li>Iyal Isai Nataka Mandram Scholarship</li>
+    <li>Prizes at the Cleveland Thyagaraja Festival, Ohio, USA</li><li>All India Dance Festival, Kalamandir College of Fine Arts, Kannur</li>
+    <li>Natyarangam and Spirit of Youth competitions, Music Academy, Chennai</li></ul></div>
+</div></section>
+{cta('Your child could be next', 'Classes for children from their first steps to arangetram.', 'Ask about classes', '/learn#enquire')}
+''')
+
+def student_page(p):
+    i = STUDENTS.index(p)
+    prev, nxt = STUDENTS[i - 1], STUDENTS[(i + 1) % len(STUDENTS)]
+    tags = st_tags(p)
+    yrs = st_years(p)
+    def year_of(t):
+        m = re.findall(r'\b(19[89]\d|20[0-2]\d)\b', t)
+        return max(m) if m else ''
+    items = sorted(p['items'], key=lambda t: year_of(t) or '0', reverse=True)
+    lis = ''.join(f'<li><span class="yr">{year_of(t) or "·"}</span><span>{e(t)}</span></li>' for t in items)
+    role = {'Faculty': 'Faculty, Divyanjali', 'Alumni': 'Alumna of Divyanjali', 'Student': 'Student of Divyanjali'}[p['group']]
+    if p['display'] in ('Sumodh', 'Anandaraj A', 'Dr. Shabin Bright'): role = role.replace('Alumna', 'Alumnus')
+    ld = {'@context': 'https://schema.org', '@type': 'Person', 'name': p['display'], 'description': role + '. ' + p['items'][0],
+          'affiliation': {'@type': 'Organization', 'name': 'Divyanjali', 'url': '/'}, 'award': p['items'][:8]}
+    if p['photo']: ld['image'] = p['photo']
+    desc = f"{p['display']}, {role.lower()}. {p['items'][0]}"
+    og = f'<meta property="og:image" content="{p["photo"]}">\n' if p['photo'] else ''
+    return page(f'/students/{p["slug"]}', f"{p['display']} · Divyanjali", desc[:300], f'''
+{crumbs(("Student's Accolades", '/accolades'), (p['display'], None))}
+<article class="cv">
+  <div class="wrap cv-top">
+    {st_face(p, 'cv-face')}
+    <div class="cv-id">
+      <p class="cv-role">{e(role)}</p>
+      <h1>{e(p['display'])}</h1>
+      <div class="cv-tags">{''.join(f'<span>{e(t)}</span>' for t in tags if t not in ('Students', 'Faculty', 'Alumni'))}</div>
+      <div class="cv-nums"><span><b>{len(p['items'])}</b>achievements</span><span><b>{st_firsts(p)}</b>first places</span>{f'<span><b>{yrs[0]}{"–" + str(yrs[1]) if yrs[1] != yrs[0] else ""}</b>active years</span>' if yrs else ''}</div>
+      <div class="cv-acts">
+        <button class="btn" type="button" data-copy>Copy link</button>
+        <a class="btn-o" data-wa="{e(p['display'])}, {e(role)}" data-wa-url href="#">WhatsApp</a>
+        <button class="btn-o" type="button" data-share hidden>Share</button>
+        <button class="btn-o" type="button" data-print>Save as PDF</button>
+      </div>
+    </div>
+  </div>
+  <div class="wrap cv-body">
+    <h2>Awards and accomplishments</h2>
+    <ol class="cv-list">{lis}</ol>
+    <p class="muted cv-src">Source: Divyanjali Souvenir 2026, page {p['page']}. <a href="/30-years#p={p['page']}">See the page</a></p>
+  </div>
+</article>
+<nav class="wrap cv-nav" aria-label="More dancers">
+  <a href="/students/{prev['slug']}">{st_face(prev, 'face sm')}<span><small>Previous</small>{e(prev['display'])}</span></a>
+  <a href="/accolades" class="cv-all">All dancers</a>
+  <a href="/students/{nxt['slug']}" class="nx"><span><small>Next</small>{e(nxt['display'])}</span>{st_face(nxt, 'face sm')}</a>
+</nav>
+<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>
+''', extra_head=og)
+
+# ---------------------------------------------------------------- 30 years: the souvenir as a flip book
+SOUV_CHAPTERS = [(1, 'Cover'), (2, 'The dancer is the dance'), (3, 'Trust and faculty'), (5, "Founder's letter"), (7, 'The story'), (11, 'The founders'),
+                 (14, 'Messages'), (39, 'Former faculty'), (41, 'Productions'), (50, 'Awards'), (55, 'Alumni'), (58, 'Nrithya Utsav'), (59, 'Kalarpanam')]
+SOUV_MESSAGES = [(14, 'Smt. Nandini Ramani', 'Veteran Bharatanatyam exponent'), (15, 'Sri V. V. Sundaram', 'Message for the Silver Jubilee'),
+                 (16, 'The Dhananjayans', 'Bharatakalanjali, Chennai'), (19, 'Dr. Ambika Kameshwar', 'Director-Trustee, RASA'),
+                 (21, 'Smt. Hema Rajagopalan', 'Artistic Director, Natya Dance Theatre, Chicago'), (22, 'Smt. Vasanthalakshmi Narasimhachari', 'Director, Kalasamarpana Foundation'),
+                 (24, 'Smt. Parvathi Ravi Ghantasala', 'Managing Trustee, Kala Pradarshini'), (25, 'Sri Srikanth Gopalakrishnan', 'Singer'),
+                 (26, 'Dr. P. Ramaa', 'Singer'), (34, 'Nadanalaya', 'Melbourne, Australia')]
+
+def flipbook():
+    chips = ''.join(f'<button class="chip" type="button" data-goto="{n}">{e(t)} <small>p.{n}</small></button>' for n, t in SOUV_CHAPTERS)
+    return f'''<section class="fb-sec" id="souvenir"><div class="wrap">
+  <div class="fb-head">
+    <div><h2>Souvenir 2026</h2><p class="muted">68 pages. Turn them like a book: tap the edges, swipe, or use the arrow keys.</p></div>
+    <div class="fb-tools">
+      <button class="fb-t" type="button" data-fb="text" aria-pressed="false">Read text</button>
+      <button class="fb-t" type="button" data-fb="zoom">Zoom</button>
+      <button class="fb-t" type="button" data-fb="full">Full screen</button>
+      <button class="fb-t" type="button" data-fb="share">Copy link</button>
+      <a class="fb-t" href="/assets/souvenir/Divyanjali-Souvenir-2026.pdf" download>Download PDF</a>
+    </div>
+  </div>
+  <div class="fb" id="flip" data-pages="68" tabindex="0" aria-label="Souvenir 2026, a book you can page through">
+    <div class="fb-stage">
+      <button class="fb-edge prev" type="button" data-fb="prev" aria-label="Previous page">‹</button>
+      <div class="fb-book" id="fbBook"></div>
+      <button class="fb-edge next" type="button" data-fb="next" aria-label="Next page">›</button>
+    </div>
+    <div class="fb-bar"><input type="range" id="fbRange" min="1" max="68" value="1" aria-label="Go to page"><span id="fbNum" aria-live="polite">Cover</span></div>
+    <div class="fb-text" id="fbText" hidden></div>
+  </div>
+  <div class="chipbar fb-chap">{chips}</div>
+  <div class="fb-thumbs" id="fbThumbs">{''.join(f'<button type="button" data-goto="{n}" aria-label="Page {n}"><img src="/assets/souvenir/t/{n:02d}.webp" alt="" loading="lazy" width="140" height="198"><span>{n}</span></button>' for n in range(1, 69))}</div>
+</div></section>'''
+
+def thirty():
+    msgs = ''.join(f'<button class="msg-c reveal" type="button" data-goto="{n}" style="--i:{i % 5}"><b>{e(nm)}</b><small>{e(t)}</small><span>Read on page {n} ›</span></button>' for i, (n, nm, t) in enumerate(SOUV_MESSAGES))
+    return page('/30-years', '30 Years of Divyanjali · Souvenir 2026', 'Thirty years of Divyanjali: read the Souvenir 2026 as a flip book, with messages from fellow artists, productions, awards and the story of the school.', f'''
+<section class="ty-hero"><div class="wrap">
+  <p class="kicker">1994 to 2024 · Souvenir 2026</p>
+  <h1>Thirty years of a divine offering</h1>
+  <p class="lead">A small class that grew into a trust, a flood that took everything, and the students who carried the school forward. Read the whole story in the souvenir below.</p>
+</div></section>
+{flipbook()}
 <section class="alt" style="padding-block:40px"><div class="wrap">{stats([(1994, '', 'founded'), (71, '', 'arangetrams'), (300, '+', 'dancers trained'), (150, '+', 'books in the rebuilt library')])}</div></section>
-<section><div class="wrap">{head('Timeline', 'The years, one by one')}
+<section><div class="wrap">
+  <div class="sec-head"><div><h2>Messages from fellow artists</h2></div></div>
+  <div class="msgs">{msgs}</div>
+  <p class="muted" style="margin-top:14px">More messages follow on pages 17 to 38 of the souvenir.</p>
+</div></section>
+<section class="alt"><div class="wrap">{head('Timeline', 'The years, one by one')}
   <ol class="tl">
     <li><b>1994</b><span>First classes in CIT Nagar, Chennai</span></li>
     <li><b>2004</b><span>Own workspace inaugurated by Smt. Chithra Visweswaran and Smt. Nandini Ramani</span></li>
@@ -452,47 +618,18 @@ def thirty():
     <li><b>2024</b><span>30 years · Souvenir 2026</span></li>
     <li><b>2026</b><span>Hanumath Margam premieres at the 50th Cleveland Thyagaraja Festival</span></li>
   </ol></div></section>
-<section class="alt"><div class="wrap two">
+<section><div class="wrap two">
   <div class="stack">{head('2015', 'The flood, and the way back')}<div class="prose"><p>In the 2015 Chennai floods the workspace stood under seven feet of water. Choreographies in digital format, library books and musical instruments, the school's treasures, were lost.</p>
   <p>Divyanjali did not lose hope. It came back with the help of many institutions and legends: Smt. Chithra Visweswaran through ABHAI, the Music Academy, Narada Gana Sabha, Sri Nellai Kannan, Sri C.V. Chandrasekar, the core members of Prayathnam, Smt. Vasanthalakshmi Narasimhachari and Sri Jaikishore Mosalikanti, and others who asked not to be named. Today the library holds over 150 books, contributed by Smt. Nandini Ramani.</p></div></div>
   <div class="tiles" data-gallery>{ph('flood-before.jpg', 'the workspace after the flood', '1200×900')}{ph('flood-after.jpg', 'the rebuilt library', '1200×900')}</div>
 </div></section>
-<section><div class="wrap">{head('Messages', 'From fellow artists')}
-  <div class="quotes">{''.join(f'<blockquote><p>“{todo("Quote from the Souvenir")}”</p><cite>{todo("Artist name")}</cite></blockquote>' for _ in range(3))}</div></div></section>
-<section class="alt"><div class="wrap">{head('Celebration', 'Gallery', '<a class="btn-o" href="/gallery">See all photos</a>')}
-  <div class="tiles" data-gallery>{''.join(ph(f'30y-{i}.jpg', f'30 years celebration {i}', '1200×900') for i in range(1, 7))}</div></div></section>
 {faq_section([
-    ('When did Divyanjali complete 30 years?', 'In 2024. The school was founded in 1994.'),
+    ('When did Divyanjali complete 30 years?', 'In 2024. The school was founded in 1994, and the 30-year Souvenir was released in 2026.'),
+    ('Can I download the souvenir?', 'Yes. Use Download PDF above the book, or open any page and copy its link to share that page.'),
     ('What happened in the 2015 floods?', 'The workspace was under seven feet of water and the library, instruments and recordings were lost. Friends and institutions helped the school rebuild.'),
     ('How many arangetrams has Divyanjali conducted?', 'Seventy-one, including one abroad. The 50th was in 2015 and the 60th in 2019.'),
-])}
+], alt=True)}
 {cta('Be part of the next chapter', 'Join a class, or bring a production to your stage.', 'Join a class', '/learn')}
-''')
-
-def accolades():
-    students = [('student-shabin.jpg', 'Dr. Shabin Bright', 'Disciple of Dr. S. Divyasena', 'Teaching abroad|Awards', 'Solo recitals across India, including Navaratri Nayanotsava, Bengaluru')]
-    students += [(f'student-{i}.jpg', '[Student name]', 'Arangetram [year]', ['Awards', 'Scholarships', 'Doordarshan graded', 'Teaching abroad'][i % 4], 'Top two achievements') for i in range(1, 8)]
-    cards = ''.join(f'<div class="tile" data-cat="{c}">{ph(f, n, "800×1000", "tall")}<span class="meta">{e(s)}</span><h3>{e(n)}</h3><p class="muted">{e(a)}</p></div>' for f, n, s, c, a in students)
-    return page('/accolades', "Student's Accolades · Divyanjali", 'Dancers trained at Divyanjali: 71 arangetrams, national scholarships, Doordarshan graded artists and teachers in India and abroad.', f'''
-{crumbs(('About', '/about'), ("Student's Accolades", None))}
-<section style="padding-top:28px"><div class="wrap stack"><p class="eyebrow">Our students</p><h1>Student's Accolades</h1><p class="lead">Dancers trained at Divyanjali, on stages from Chennai sabhas to festivals abroad, and teaching in India and around the world.</p>
-{stats([(71, '', 'arangetrams'), (300, '+', 'dancers trained'), (3, '', 'national scholarships'), (4, '', 'countries with alumni schools')])}</div></section>
-<section class="alt"><div class="wrap">{head('Featured', 'Students')}
-  <div class="chipbar" data-filter="#studentGrid" style="margin-bottom:20px">{''.join(f'<button class="chip" type="button" data-f="{f}" aria-pressed="{str(f == "All").lower()}">{f}</button>' for f in ['All', 'Awards', 'Scholarships', 'Doordarshan graded', 'Teaching abroad'])}</div>
-  <div class="people" id="studentGrid" data-gallery>{cards}</div></div></section>
-<section><div class="wrap two">
-  <div class="stack">{head('Alumni', 'Students who started schools')}<ol class="tl"><li><b>Kala Roopam</b><span>Dr. S. Roopa</span></li><li><b>Shiva Nrittam</b><span>Sumodh</span></li><li><b>Ananda Natyakshethra</b><span>Anandaraj A., Thiruverkadu</span></li></ol><p class="muted">Senior students also teach at leading institutions and run schools in the USA, the UK and Singapore: {todo('names to confirm')}.</p></div>
-  <div class="stack">{head('Recognition', 'Scholarships and prizes')}<ul class="list">
-    <li>CCRT Scholarship, Government of India</li><li>Bharat Kalachar Scholarship</li><li>Iyal Isai Nataka Mandram Scholarship</li>
-    <li>Prizes at the Cleveland Thyagaraja Festival, Ohio, USA</li><li>All India Dance Festival, Kalamandir College of Fine Arts, Kannur</li>
-    <li>Nrithyathi Kalakshetram, Raipur · Navya Nataka Samiti, Hyderabad · Akhil Bharatiya Sanskrutik Sangh, Pune</li>
-    <li>Natyarangam and Spirit of Youth competitions, Music Academy, Chennai</li>
-    <li>Dr. Padma Subramanian Endowment Award · VDS Best Dancer · Indian Fine Arts Best Dancer · Nalanda Nritya Nipuna</li>
-    <li>Students with a master's in Bharatanatyam, and Doordarshan B grade artists</li></ul></div>
-</div></section>
-<section class="alt"><div class="wrap">{head('Big stages', 'Moments')}
-  <div class="tiles" data-gallery>{ph('stage-1.jpg', 'a national stage', '1200×900')}{ph('stage-2.jpg', 'performing abroad', '1200×900')}{ph('stage-3.jpg', 'festival performance', '1200×900')}</div></div></section>
-{cta('Your child could be next', 'Classes for children from their first steps to arangetram.', 'Ask about classes', '/learn#enquire')}
 ''')
 
 def choreographies():
@@ -770,6 +907,7 @@ if __name__ == '__main__':
     write('haribabu.html', haribabu)
     write('30-years.html', thirty)
     write('accolades.html', accolades)
+    for p in STUDENTS: write(f"students/{p['slug']}.html", student_page, p)
     write('choreographies.html', choreographies)
     for p in PRODUCTIONS:
         if p['slug']: write(f"productions/{p['slug']}.html", production, p)

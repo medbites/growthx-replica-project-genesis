@@ -120,7 +120,8 @@ const io = 'IntersectionObserver' in window ? new IntersectionObserver((entries)
     countUp(el);
   });
 }, { rootMargin: '0px 0px -10% 0px' }) : null;
-$$('[data-count], .reveal').forEach((el) => { if (io) io.observe(el); else el.classList.add('in'); });
+// only real numbers count up; a filter bar's data-count points at its counter instead
+$$('[data-count], .reveal').filter((el) => el.classList.contains('reveal') || /^\d+$/.test(el.dataset.count)).forEach((el) => { if (io) io.observe(el); else el.classList.add('in'); });
 $$('a.stat').forEach((a) => {
   let last = 0;
   a.addEventListener('mouseenter', () => { const b = $('[data-count]', a); if (b && Date.now() - last > 1500) { last = Date.now(); countUp(b); } });
@@ -239,35 +240,130 @@ $$('a.stat').forEach((a) => {
   });
 })();
 
-/* ----- Students: a fanned deck of photos; tap, swipe or use the arrow keys to bring the next one forward ----- */
-(function photoDeck() {
-  const deck = $('#deck'); if (!deck) return;
-  const cards = $$('.dk', deck), cap = $('#deckCap'), dots = $$('.deck-dots i');
-  let order = cards.map((_, i) => i);
-  const paint = () => {
-    order.forEach((ci, pos) => { cards[ci].style.setProperty('--k', pos); cards[ci].style.zIndex = String(cards.length - pos); });
-    cap.textContent = cards[order[0]].dataset.cap;
-    dots.forEach((d, i) => d.classList.toggle('on', i === order[0]));
-  };
-  const step = (dir) => {
-    const top = cards[order[0]];
-    if (dir > 0) { top.classList.add('out'); setTimeout(() => top.classList.remove('out'), 380); order.push(order.shift()); }
-    else order.unshift(order.pop());
-    paint();
-  };
-  deck.addEventListener('click', () => step(1));
-  deck.addEventListener('keydown', (ev) => {
-    if (ev.key === 'ArrowRight' || ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); step(1); }
-    if (ev.key === 'ArrowLeft') { ev.preventDefault(); step(-1); }
+/* ----- Small helpers: a toast, and copying a link ----- */
+function toast(msg) {
+  let t = $('.toast'); if (!t) { t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
+  t.textContent = msg; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 1800);
+}
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); toast('Link copied'); }
+  catch (err) { const i = Object.assign(document.createElement('input'), { value: text }); document.body.appendChild(i); i.select(); document.execCommand('copy'); i.remove(); toast('Link copied'); }
+}
+
+/* ----- A dancer's page: copy link, share, save as PDF ----- */
+$$('[data-copy]').forEach((b) => b.addEventListener('click', () => copyText(location.href.split('#')[0])));
+$$('[data-print]').forEach((b) => b.addEventListener('click', () => window.print()));
+$$('[data-share]').forEach((b) => {
+  if (!navigator.share) return;
+  b.hidden = false;
+  b.addEventListener('click', () => navigator.share({ title: document.title, url: location.href.split('#')[0] }).catch(() => {}));
+});
+
+/* ----- Accolades: find a dancer by name, together with the chips ----- */
+(function accSearch() {
+  const q = $('#accSearch'), grid = $('#studentGrid'); if (!q || !grid) return;
+  const count = () => { const n = $$('.stc', grid).filter((c) => !c.classList.contains('off') && !c.classList.contains('hide')).length; $('#accCount').textContent = n ? 'Showing ' + n : 'No dancer by that name yet'; };
+  q.addEventListener('input', () => { const v = q.value.trim().toLowerCase(); $$('.stc', grid).forEach((c) => c.classList.toggle('hide', !!v && !c.dataset.name.includes(v))); count(); });
+  $$('[data-f]').forEach((c) => c.addEventListener('click', () => setTimeout(count)));
+})();
+
+/* ----- 30 years: the souvenir as a book. Two pages side by side on wide screens, one on phones ----- */
+(function flipBook() {
+  const fb = $('#flip'); if (!fb) return;
+  const N = Number(fb.dataset.pages), book = $('#fbBook'), range = $('#fbRange'), num = $('#fbNum'), thumbs = $('#fbThumbs'), textBox = $('#fbText');
+  const src = (n) => '/assets/souvenir/' + String(n).padStart(2, '0') + '.webp';
+  const img = (n) => n ? '<img src="' + src(n) + '" alt="Souvenir page ' + n + '" draggable="false">' : '';
+  let spread = false, page = 1, busy = false, texts = null;
+  // A spread shows [left, right]: the cover sits alone on the right, the back cover alone on the left.
+  const view = (p) => { if (!spread) return [p]; if (p <= 1) return [0, 1]; const l = p % 2 === 0 ? p : p - 1; return [l, l + 1 <= N ? l + 1 : 0]; };
+  const first = (v) => v.find((x) => x) || 1;
+  function paint() {
+    const v = view(page);
+    book.innerHTML = spread
+      ? '<div class="fb-pg l' + (v[0] ? '' : ' empty') + '">' + img(v[0]) + '</div><div class="fb-pg r' + (v[1] ? '' : ' empty') + '">' + img(v[1]) + '</div>'
+      : '<div class="fb-pg">' + img(v[0]) + '</div>';
+    const shown = v.filter(Boolean);
+    num.textContent = shown[0] === 1 && shown.length === 1 ? 'Cover' : 'Page ' + shown.join('–') + ' / ' + N;
+    range.value = shown[0];
+    $('[data-fb="prev"]', fb).disabled = shown[0] <= 1;
+    $('[data-fb="next"]', fb).disabled = shown[shown.length - 1] >= N;
+    $$('button', thumbs).forEach((b) => b.classList.toggle('on', shown.includes(Number(b.dataset.goto))));
+    const on = $('button.on', thumbs);
+    if (on) { const r = on.getBoundingClientRect(), sr = thumbs.getBoundingClientRect(); if (r.left < sr.left || r.right > sr.right) thumbs.scrollTo({ left: thumbs.scrollLeft + r.left - sr.left - sr.width / 2 + r.width / 2, behavior: 'smooth' }); }
+    history.replaceState(null, '', '#p=' + shown[0]);
+    if (!textBox.hidden) showText();
+    // fetch the next pages early so the turn is instant
+    [shown[shown.length - 1] + 1, shown[shown.length - 1] + 2, shown[0] - 1].forEach((n) => { if (n >= 1 && n <= N) new Image().src = src(n); });
+  }
+  function go(target) {
+    target = Math.max(1, Math.min(N, target));
+    const from = view(page), to = view(target);
+    if (busy || first(from) === first(to)) return;
+    const dir = first(to) > first(from) ? 1 : -1;
+    if (reduceMotion) { page = target; paint(); return; }
+    busy = true;
+    // the page underneath shows the destination; one leaf turns over the top
+    const leaf = document.createElement('div');
+    if (spread) {
+      leaf.className = 'fb-leaf ' + (dir > 0 ? 'fwd' : 'back');
+      leaf.innerHTML = dir > 0 ? '<div class="f">' + img(from[1]) + '</div><div class="b">' + img(to[0]) + '</div>' : '<div class="f">' + img(from[0]) + '</div><div class="b">' + img(to[1]) + '</div>';
+      const under = dir > 0 ? $('.fb-pg.r', book) : $('.fb-pg.l', book);
+      const n = dir > 0 ? to[1] : to[0];
+      under.innerHTML = img(n); under.classList.toggle('empty', !n);
+    } else {
+      leaf.className = 'fb-leaf fwd';
+      if (dir > 0) { leaf.innerHTML = '<div class="f">' + img(from[0]) + '</div><div class="b"></div>'; $('.fb-pg', book).innerHTML = img(to[0]); }
+      else { leaf.innerHTML = '<div class="f">' + img(to[0]) + '</div><div class="b"></div>'; leaf.style.transform = 'rotateY(-180deg)'; }
+    }
+    book.appendChild(leaf);
+    requestAnimationFrame(() => requestAnimationFrame(() => { leaf.style.transform = spread ? (dir > 0 ? 'rotateY(-180deg)' : 'rotateY(180deg)') : (dir > 0 ? 'rotateY(-180deg)' : 'rotateY(0deg)'); }));
+    setTimeout(() => { page = target; busy = false; paint(); }, 760);
+  }
+  const step = (d) => { const v = view(page).filter(Boolean); go(d > 0 ? v[v.length - 1] + 1 : v[0] - 1); };
+  async function showText() {
+    if (!texts) { try { texts = await (await fetch('/assets/souvenir/text.json')).json(); } catch (err) { texts = []; } }
+    const v = view(page).filter(Boolean);
+    textBox.innerHTML = v.map((n) => '<h3>Page ' + n + '</h3>' + esc(texts[n - 1] || '(This page is a picture.)')).join('<br><br>');
+  }
+  function layout() {
+    const s = fb.clientWidth >= 760;
+    if (s !== spread) { spread = s; fb.classList.toggle('spread', s); paint(); }
+  }
+  fb.addEventListener('click', (ev) => {
+    const b = ev.target.closest('[data-fb]');
+    if (b) {
+      const a = b.dataset.fb;
+      if (a === 'next') step(1);
+      if (a === 'prev') step(-1);
+      return;
+    }
+    // tap the right half of the book to go on, the left half to go back
+    const pg = ev.target.closest('.fb-book');
+    if (pg) { const r = pg.getBoundingClientRect(); step(ev.clientX > r.left + r.width / 2 ? 1 : -1); }
   });
+  document.addEventListener('click', (ev) => {
+    const g = ev.target.closest('[data-goto]'); if (g) { ev.preventDefault(); go(Number(g.dataset.goto)); if (!g.closest('.fb-thumbs')) fb.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' }); return; }
+    const t = ev.target.closest('.fb-tools [data-fb]'); if (!t) return;
+    const a = t.dataset.fb;
+    if (a === 'text') { const on = textBox.hidden; textBox.hidden = !on; t.setAttribute('aria-pressed', String(on)); if (on) showText(); }
+    if (a === 'zoom') { const v = view(page).filter(Boolean); gallery = []; openModal(v.map((n) => '<img src="' + src(n) + '" alt="Souvenir page ' + n + '" style="max-width:' + (100 / v.length) + '%">').join(''), 'Souvenir 2026 · page ' + v.join('–'), false); $('.mbody', modal).style.display = 'flex'; $('.mbody', modal).style.justifyContent = 'center'; }
+    if (a === 'full') { if (document.fullscreenElement) document.exitFullscreen(); else if (fb.requestFullscreen) fb.requestFullscreen(); else toast('Full screen is not available here'); }
+    if (a === 'share') copyText(location.origin + location.pathname + '#p=' + view(page).filter(Boolean)[0]);
+  });
+  modal.addEventListener('close', () => { $('.mbody', modal).style.display = ''; });
+  range.addEventListener('input', () => go(Number(range.value)));
+  fb.addEventListener('keydown', (ev) => { if (ev.key === 'ArrowRight') { ev.preventDefault(); step(1); } if (ev.key === 'ArrowLeft') { ev.preventDefault(); step(-1); } });
   let x0 = null;
-  deck.addEventListener('touchstart', (ev) => { x0 = ev.touches[0].clientX; }, { passive: true });
-  deck.addEventListener('touchend', (ev) => { if (x0 === null) return; const dx = ev.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 40) { ev.preventDefault(); step(dx < 0 ? 1 : -1); } });
-  paint();
+  book.addEventListener('touchstart', (ev) => { x0 = ev.touches[0].clientX; }, { passive: true });
+  book.addEventListener('touchend', (ev) => { if (x0 === null) return; const dx = ev.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 40) { ev.preventDefault(); step(dx < 0 ? 1 : -1); } });
+  const m = location.hash.match(/p=(\d+)/); if (m) page = Math.max(1, Math.min(N, Number(m[1])));
+  spread = fb.clientWidth >= 760; fb.classList.toggle('spread', spread); paint();
+  addEventListener('resize', layout);
+  addEventListener('hashchange', () => { const h = location.hash.match(/p=(\d+)/); if (h) go(Number(h[1])); });
 })();
 
 /* ----- WhatsApp links with a ready message ----- */
-$$('[data-wa]').forEach((a) => { a.href = waLink(a.dataset.wa || 'Hello Divyanjali'); a.target = '_blank'; a.rel = 'noopener'; });
+$$('[data-wa]').forEach((a) => { a.href = waLink((a.dataset.wa || 'Hello Divyanjali') + (a.hasAttribute('data-wa-url') ? '\n' + location.href.split('#')[0] : '')); a.target = '_blank'; a.rel = 'noopener'; });
 
 /* ----- Enquiry forms: saved to the Enquiries tab of the Google Sheet ----- */
 $$('form[data-enquiry]').forEach((f) => {

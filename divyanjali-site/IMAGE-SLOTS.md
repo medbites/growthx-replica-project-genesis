@@ -13,9 +13,6 @@ Videos and Instagram posts for the Gallery: edit `divyanjali-site/assets/media.j
 | `prod-thirumurugaatrupadai.jpg` | poster · Thirumurugaatrupadai | 1500×900 | / |
 | `prod-dasavatharam.jpg` | poster · Dasavatharam | 1500×900 | / |
 | `prod-andal-vaibhavam.jpg` | poster · Andal Vaibhavam | 1500×900 | / |
-| `home-students-1.jpg` | Students on stage | 1000×1250 | / |
-| `home-students-2.jpg` | An arangetram moment | 1000×1250 | / |
-| `home-students-3.jpg` | In class at CIT Nagar | 1000×1250 | / |
 | `home-natyaiq.jpg` | Natya IQ share card | 1080×1080 | / |
 | `about-hero.jpg` | the school, a class in progress | 1600×1200 | /about |
 | `teach-technique.jpg` | adavu practice | 1200×900 | /about |
@@ -32,23 +29,6 @@ Videos and Instagram posts for the Gallery: edit `divyanjali-site/assets/media.j
 | `haribabu-portrait.jpg` | Sri B.P. Haribabu with mridangam | 1200×1500 | /haribabu |
 | `flood-before.jpg` | the workspace after the flood | 1200×900 | /30-years |
 | `flood-after.jpg` | the rebuilt library | 1200×900 | /30-years |
-| `30y-1.jpg` | 30 years celebration 1 | 1200×900 | /30-years |
-| `30y-2.jpg` | 30 years celebration 2 | 1200×900 | /30-years |
-| `30y-3.jpg` | 30 years celebration 3 | 1200×900 | /30-years |
-| `30y-4.jpg` | 30 years celebration 4 | 1200×900 | /30-years |
-| `30y-5.jpg` | 30 years celebration 5 | 1200×900 | /30-years |
-| `30y-6.jpg` | 30 years celebration 6 | 1200×900 | /30-years |
-| `student-shabin.jpg` | Dr. Shabin Bright | 800×1000 | /accolades |
-| `student-1.jpg` | [Student name] | 800×1000 | /accolades |
-| `student-2.jpg` | [Student name] | 800×1000 | /accolades |
-| `student-3.jpg` | [Student name] | 800×1000 | /accolades |
-| `student-4.jpg` | [Student name] | 800×1000 | /accolades |
-| `student-5.jpg` | [Student name] | 800×1000 | /accolades |
-| `student-6.jpg` | [Student name] | 800×1000 | /accolades |
-| `student-7.jpg` | [Student name] | 800×1000 | /accolades |
-| `stage-1.jpg` | a national stage | 1200×900 | /accolades |
-| `stage-2.jpg` | performing abroad | 1200×900 | /accolades |
-| `stage-3.jpg` | festival performance | 1200×900 | /accolades |
 | `prod-shiva-shakti-margam.jpg` | poster · Shiva Shakti Margam | 1500×900 | /choreographies |
 | `prod-annamayya-navarasa-nrithyamala.jpg` | poster · Annamayya Navarasa Nrithyamala | 1500×900 | /choreographies |
 | `prod-nava-vidha-sambandham.jpg` | poster · Nava Vidha Sambandham | 1500×900 | /choreographies |
