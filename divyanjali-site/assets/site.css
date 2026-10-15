@@ -297,3 +297,13 @@ mark.todo{background:#FBF3DB;color:#7A5200;padding:0 4px;border-radius:3px}
 .facts span{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 footer .wrap.fine{padding-block:0 24px;display:block;font-size:.75rem;color:#E3CFC4}
 footer .cols a{display:block;padding:2px 0}
+
+@media (max-width:600px){
+  #prodGrid{grid-template-columns:1fr 1fr;gap:10px}
+  #prodGrid .tile{padding:12px;gap:4px}
+  #prodGrid .tile>.ph{margin:-12px -12px 4px}
+  #prodGrid .tile>.ph>span{display:none}
+  #prodGrid h3{font-size:1.05rem}
+  #prodGrid .tile p.muted{display:none}
+  #prodGrid .tile a{font-size:.75rem!important}
+}

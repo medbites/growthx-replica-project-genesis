@@ -221,7 +221,7 @@ def home():
   {ph('home-natyaiq.jpg', 'Natya IQ share card', '1080×1080', 'sq')}
 </div></section>
 <section><div class="wrap">{head('Kind words', 'From rasikas and families')}
-  <div class="quotes"><blockquote>“{todo('Quote from the Souvenir or the press')}”<cite>{todo('Name, title')}</cite></blockquote><blockquote>“{todo('Quote from a parent or student')}”<cite>{todo('Name')}</cite></blockquote></div></div></section>
+  <div class="quotes"><blockquote><p>“{todo('Quote from the Souvenir or the press')}”</p><cite>{todo('Name, title')}</cite></blockquote><blockquote><p>“{todo('Quote from a parent or student')}”</p><cite>{todo('Name')}</cite></blockquote></div></div></section>
 {faq_section([
     ('What age can my child start?', f'Children can start from {todo("youngest age")}. Adults and complete beginners of any age are welcome.'),
     ('Do you teach online?', 'Yes. Live classes from Chennai for students abroad, with batches set to your time zone.'),
@@ -374,7 +374,7 @@ def thirty():
   <div class="tiles" data-gallery>{ph('flood-before.jpg', 'the workspace after the flood', '1200×900')}{ph('flood-after.jpg', 'the rebuilt library', '1200×900')}</div>
 </div></section>
 <section><div class="wrap">{head('Messages', 'From fellow artists')}
-  <div class="quotes">{''.join(f'<blockquote>“{todo("Quote from the Souvenir")}”<cite>{todo("Artist name")}</cite></blockquote>' for _ in range(3))}</div></div></section>
+  <div class="quotes">{''.join(f'<blockquote><p>“{todo("Quote from the Souvenir")}”</p><cite>{todo("Artist name")}</cite></blockquote>' for _ in range(3))}</div></div></section>
 <section class="alt"><div class="wrap">{head('Celebration', 'Gallery', '<a class="btn-o" href="/gallery">See all photos</a>')}
   <div class="tiles" data-gallery>{''.join(ph(f'30y-{i}.jpg', f'30 years celebration {i}', '1200×900') for i in range(1, 7))}</div></div></section>
 {faq_section([
