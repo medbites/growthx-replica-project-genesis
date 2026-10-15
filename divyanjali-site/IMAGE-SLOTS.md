@@ -7,12 +7,12 @@ Videos and Instagram posts for the Gallery: edit `divyanjali-site/assets/media.j
 
 | File name | What to show | Size (px) | Page |
 |---|---|---|---|
+| `learn-children.jpg` | Children class | 800×600 | / |
+| `learn-adults.jpg` | Teens and adults class | 800×600 | / |
+| `learn-online.jpg` | Online, from abroad class | 800×600 | / |
 | `home-divyasena.jpg` | Dr. S. Divyasena, portrait | 1200×1500 | / |
 | `home-haribabu.jpg` | Sri B.P. Haribabu with mridangam | 1200×1500 | / |
-| `learn-children.jpg` | children's batch | 1200×900 | / |
-| `learn-adults.jpg` | teens and adults batch | 1200×900 | / |
-| `learn-online.jpg` | online class on a laptop | 1200×900 | / |
-| `prod-hanumath-margam.jpg` | poster · Hanumath Margam | 1500×900 | / |
+| `prod-hanumath-margam.jpg` | poster · Hanumath Margam | 1200×1500 | / |
 | `prod-thirumurugaatrupadai.jpg` | poster · Thirumurugaatrupadai | 1500×900 | / |
 | `prod-dasavatharam.jpg` | poster · Dasavatharam | 1500×900 | / |
 | `prod-andal-vaibhavam.jpg` | poster · Andal Vaibhavam | 1500×900 | / |

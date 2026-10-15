@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Divyanjali · Bharatanatyam school in Chennai since 1994</title>
-<meta name="description" content="Divyanjali, the Bharatanatyam school of Dr. S. Divyasena and Sri B.P. Haribabu in CIT Nagar, Chennai. Classes, productions, events and arangetrams since 1994.">
+<meta name="description" content="Divyanjali, the Bharatanatyam school of Dr. S. Divyasena and Sri B.P. Haribabu in CIT Nagar, Chennai. See the season calendar of performances, workshops and arangetrams.">
 <meta property="og:title" content="Divyanjali · Bharatanatyam school in Chennai since 1994">
-<meta property="og:description" content="Divyanjali, the Bharatanatyam school of Dr. S. Divyasena and Sri B.P. Haribabu in CIT Nagar, Chennai. Classes, productions, events and arangetrams since 1994.">
+<meta property="og:description" content="Divyanjali, the Bharatanatyam school of Dr. S. Divyasena and Sri B.P. Haribabu in CIT Nagar, Chennai. See the season calendar of performances, workshops and arangetrams.">
 <meta property="og:type" content="website">
 <link rel="icon" type="image/png" href="/assets/favicon.png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
@@ -19,53 +19,80 @@
 <header class="top">
   <div class="wrap">
     <a class="logo" href="/" aria-label="Divyanjali home"><img src="/assets/logo-mark.webp" alt="" width="46" height="45"><b>Divyanjali</b></a>
-    <nav class="nav" aria-label="Main"><a class="hide-m" href="/about">About</a><a class="hide-m" href="/choreographies">Choreographies</a><a class="hide-m" href="/learn">Learn</a><a class="hide-m" href="/events">Events</a><a class="hide-m" href="/natya-iq">Natya IQ</a><a class="btn" href="/book">Book &amp; enquire</a>
-      <details class="menu"><summary aria-label="Menu">☰</summary><div class="menu-panel"><a href="/" aria-current="page">Home</a><a href="/about">About Divyanjali</a><a href="/divyasena">Dr. S. Divyasena</a><a href="/haribabu">Sri B.P. Haribabu</a><a href="/30-years">30 Years</a><a href="/accolades">Student's Accolades</a><a href="/choreographies">Choreographies</a><a href="/learn">Learn</a><a href="/events">Events</a><a href="/gallery">Gallery and Videos</a><a href="/natya-iq">Natya IQ</a><a href="/media">Media Room</a><a href="/store">Store</a><a href="/book">Book and Enquire</a></div></details>
+    <nav class="nav" aria-label="Main"><a class="hide-m" href="/about">About</a><a class="hide-m" href="/choreographies">Choreographies</a><a class="hide-m" href="/learn">Learn</a><a class="hide-m" href="/natya-iq">Natya IQ</a><a class="navcal" href="/events">Calendar</a><a class="btn" href="/book">Book &amp; enquire</a>
+      <details class="menu"><summary aria-label="Menu">☰</summary><div class="menu-panel"><a href="/" aria-current="page">Home</a><a href="/about">About Divyanjali</a><a href="/divyasena">Dr. S. Divyasena</a><a href="/haribabu">Sri B.P. Haribabu</a><a href="/30-years">30 Years</a><a href="/accolades">Student's Accolades</a><a href="/choreographies">Choreographies</a><a href="/learn">Learn</a><a href="/events">Events calendar</a><a href="/gallery">Gallery and Videos</a><a href="/natya-iq">Natya IQ</a><a href="/media">Media Room</a><a href="/store">Store</a><a href="/book">Book and Enquire</a></div></details>
     </nav>
   </div>
 </header>
 <div class="season"><a href="/events" style="color:inherit">Dance Season 2026–27 · November to January · see the calendar</a></div>
 <main>
 
-<section class="hero" style="padding-block:clamp(32px,6vw,72px)">
-  <div class="wrap">
-    <div class="hero-copy">
-      <p class="eyebrow">Bharatanatyam since 1994 · CIT Nagar, Chennai</p>
-      <h1>The dancer is the dance.</h1>
-      <p class="lead">Bharatanatyam taught and staged by Natyacharya Dr. S. Divyasena and Sri B.P. Haribabu. Thirty years of classes, productions and arangetrams, from Chennai to stages around the world.</p>
-      <div class="row"><a class="btn" href="/learn">Learn with us</a><a class="btn-o" href="/book">Book a performance</a></div>
+<section class="hc">
+  <div class="wrap hc-grid">
+    <div class="hc-copy">
+      <p class="kicker">Divyanjali · Bharatanatyam since 1994 · Chennai</p>
+      <h1>Every performance of the season, <em>on one calendar.</em></h1>
+      <p class="lead">Recitals, workshops and arangetrams by Dr. S. Divyasena, Sri B.P. Haribabu and their students. Tap a date to see what is on, then add it to your phone in one tap.</p>
+      <div class="next" id="nextUp" aria-live="polite">
+        <div class="next-skel"><span></span><span></span><span></span></div>
+      </div>
     </div>
-    <a class="yt" href="https://youtu.be/7g505MXqnec" data-yt="https://youtu.be/7g505MXqnec" data-start="12" aria-label="Play: Watch Divyanjali on stage"><span class="cap">Watch Divyanjali on stage</span></a>
+    <div class="cal" id="homeCal" aria-label="Season calendar">
+      <div class="cal-top">
+        <button class="cal-arr" type="button" data-cal="-1" aria-label="Previous month">‹</button>
+        <h2 class="cal-m" id="calMonth">Season calendar</h2>
+        <button class="cal-arr" type="button" data-cal="1" aria-label="Next month">›</button>
+      </div>
+      <div class="cal-dow" aria-hidden="true"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+      <div class="cal-days" id="calDays" role="grid"></div>
+      <div class="cal-list" id="calList"><div class="cal-skel"></div><div class="cal-skel"></div></div>
+      <div class="cal-foot"><a class="btn" href="/events">Open full calendar</a><a class="btn-o" href="#follow">Subscribe</a></div>
+    </div>
   </div>
 </section>
-<section class="alt" style="padding-block:40px"><div class="wrap"><div class="stats"><div class="stat reveal"><b data-count="30" data-plus="">30</b><span>years of teaching</span></div><div class="stat reveal"><b data-count="71" data-plus="">71</b><span>arangetrams</span></div><div class="stat reveal"><b data-count="300" data-plus="+">300+</b><span>dancers trained</span></div><div class="stat reveal"><b data-count="23" data-plus="">23</b><span>productions</span></div></div></div></section>
-<section><div class="wrap stack" style="gap:48px">
-  <div class="split reveal"><figure class="ph tall" data-src="/assets/img/home-divyasena.jpg" data-alt="Dr. S. Divyasena, portrait"><span>Photo · Dr. S. Divyasena, portrait · 1200×1500</span></figure>
-    <div class="stack"><p class="eyebrow">The guru</p><h2>Dr. S. Divyasena</h2><p class="muted">Founder · Natyacharya · Doordarshan A grade artist · Doctorate in Bharatanatyam</p><p>Dancer, choreographer and nattuvanar, she founded Divyanjali in 1994 and has staged more than twenty productions in India and abroad.</p><a class="btn-o" href="/divyasena" style="align-self:flex-start">Meet the guru</a></div></div>
-  <div class="split rev reveal"><figure class="ph tall" data-src="/assets/img/home-haribabu.jpg" data-alt="Sri B.P. Haribabu with mridangam"><span>Photo · Sri B.P. Haribabu with mridangam · 1200×1500</span></figure>
-    <div class="stack"><p class="eyebrow">The musician</p><h2>Sri B.P. Haribabu</h2><p class="muted">Mridangam · nattuvangam · rhythm composer · Vaadhya Visharadha</p><p>Accompanying dance for more than 25 years, with over 85 tours to some 20 countries. At Divyanjali he teaches laya, rhythm, as a subject of its own.</p><a class="btn-o" href="/haribabu" style="align-self:flex-start">Meet the musician</a></div></div>
+<section class="strip-sec">
+  <div class="wrap sec-head"><div><h2>The season, poster by poster</h2></div>
+    <div class="strip-nav"><button class="cal-arr" type="button" data-strip="-1" aria-label="Scroll back">‹</button><button class="cal-arr" type="button" data-strip="1" aria-label="Scroll on">›</button></div></div>
+  <div class="strip" id="seasonStrip"><div class="strip-card skel"></div><div class="strip-card skel"></div><div class="strip-card skel"></div></div>
+</section>
+<section class="follow" id="follow"><div class="wrap follow-in">
+  <div class="stack" style="gap:8px"><h2>Never miss a performance</h2><p class="muted">Subscribe once. New dates from Divyanjali appear in your own calendar, with venue and timing, as soon as we add them.</p></div>
+  <div class="row"><a class="btn" id="subG" href="/events#subscribe" target="_blank" rel="noopener">Google Calendar</a><a class="btn-o" id="subA" href="/calendar.ics">Apple and Outlook</a><a class="btn-o" data-wa="Hello Divyanjali, please add me to your events list on WhatsApp." href="#">WhatsApp updates</a></div>
 </div></section>
-<section class="alt"><div class="wrap"><div class="sec-head"><div><p class="eyebrow">Classes</p><h2>Find your class</h2></div><a class="btn-o" href="/learn">All about classes</a></div>
-  <div class="tiles">
-    <a class="tile" href="/learn#paths"><figure class="ph " data-src="/assets/img/learn-children.jpg" data-alt="children&#x27;s batch"><span>Photo · children&#x27;s batch · 1200×900</span></figure><h3>Children</h3><p class="muted">From <mark class="todo">youngest age</mark> · CIT Nagar</p></a>
-    <a class="tile" href="/learn#paths"><figure class="ph " data-src="/assets/img/learn-adults.jpg" data-alt="teens and adults batch"><span>Photo · teens and adults batch · 1200×900</span></figure><h3>Teens and adults</h3><p class="muted">Beginners and returning dancers</p></a>
-    <a class="tile" href="/learn#paths"><figure class="ph " data-src="/assets/img/learn-online.jpg" data-alt="online class on a laptop"><span>Photo · online class on a laptop · 1200×900</span></figure><h3>Online, from abroad</h3><p class="muted">Live classes from Chennai, in your time zone</p></a>
-  </div></div></section>
-<section><div class="wrap"><div class="sec-head"><div><p class="eyebrow">Productions</p><h2>Enchanting Choreographies</h2></div><a class="btn-o" href="/choreographies">All productions</a></div>
-  <div class="tiles"><a class="tile" data-cat="Devotional|Margam" href="/productions/hanumath-margam"><figure class="ph wide" data-src="/assets/img/prod-hanumath-margam.jpg" data-alt="poster · Hanumath Margam"><span>Photo · poster · Hanumath Margam · 1500×900</span></figure><span class="meta">2026 · Devotional</span><h3>Hanumath Margam</h3><p class="muted">World premiere, 50th Cleveland Thyagaraja Festival</p></a><a class="tile" data-cat="Tamil literature|Devotional|Dance drama" href="/productions/thirumurugaatrupadai"><figure class="ph wide" data-src="/assets/img/prod-thirumurugaatrupadai.jpg" data-alt="poster · Thirumurugaatrupadai"><span>Photo · poster · Thirumurugaatrupadai · 1500×900</span></figure><span class="meta">2019 · Tamil literature</span><h3>Thirumurugaatrupadai</h3><p class="muted">A Sangam-era poem, staged</p></a><a class="tile" data-cat="Epics|Devotional|Dance drama" href="/productions/dasavatharam"><figure class="ph wide" data-src="/assets/img/prod-dasavatharam.jpg" data-alt="poster · Dasavatharam"><span>Photo · poster · Dasavatharam · 1500×900</span></figure><span class="meta">2017 · Epics</span><h3>Dasavatharam</h3><p class="muted">The ten avatars of Vishnu</p></a><a class="tile" data-cat="Devotional|Tamil literature|Dance drama" href="/productions/andal-vaibhavam"><figure class="ph wide" data-src="/assets/img/prod-andal-vaibhavam.jpg" data-alt="poster · Andal Vaibhavam"><span>Photo · poster · Andal Vaibhavam · 1500×900</span></figure><span class="meta">2015 · Devotional</span><h3>Andal Vaibhavam</h3><p class="muted">Staged on 13 stages in one year</p></a></div></div></section>
-<section class="alt"><div class="wrap"><div class="sec-head"><div><p class="eyebrow">Coming up</p><h2>Events</h2></div><a class="btn-o" href="/events">Full calendar</a></div>
-  <div class="tiles" id="nextEvents"><div class="empty">Loading events…</div></div></div></section>
+<section class="stage"><div class="wrap stage-grid">
+  <div class="stage-v"><a class="yt" href="https://youtu.be/7g505MXqnec" data-yt="https://youtu.be/7g505MXqnec" data-start="12" aria-label="Play: Watch Divyanjali on stage"><span class="cap">Watch Divyanjali on stage</span></a></div>
+  <div class="stack stage-c">
+    <h2>The dancer is the dance.</h2>
+    <p class="muted">Thirty years of classes, productions and arangetrams, from CIT Nagar to stages in some twenty countries.</p>
+    <div class="stats"><div class="stat reveal"><b data-count="30" data-plus="">30</b><span>years of teaching</span></div><div class="stat reveal"><b data-count="71" data-plus="">71</b><span>arangetrams</span></div><div class="stat reveal"><b data-count="300" data-plus="+">300+</b><span>dancers trained</span></div><div class="stat reveal"><b data-count="23" data-plus="">23</b><span>productions</span></div></div>
+  </div>
+</div></section>
+<section class="alt"><div class="wrap">
+  <div class="sec-head"><div><h2>Two gurus, one stage</h2></div></div>
+  <div class="duo">
+    <a class="duo-i reveal" href="/divyasena"><figure class="ph tall" data-src="/assets/img/home-divyasena.jpg" data-alt="Dr. S. Divyasena, portrait"><span>Photo · Dr. S. Divyasena, portrait · 1200×1500</span></figure><span class="duo-t"><b>Dr. S. Divyasena</b><span>Founder · Natyacharya · Doordarshan A grade artist</span><span class="muted">Dancer, choreographer and nattuvanar. More than twenty productions in India and abroad.</span></span></a>
+    <a class="duo-i off reveal" href="/haribabu"><figure class="ph tall" data-src="/assets/img/home-haribabu.jpg" data-alt="Sri B.P. Haribabu with mridangam"><span>Photo · Sri B.P. Haribabu with mridangam · 1200×1500</span></figure><span class="duo-t"><b>Sri B.P. Haribabu</b><span>Mridangam · nattuvangam · rhythm composer</span><span class="muted">Over 85 tours to some 20 countries. He teaches laya, rhythm, as a subject of its own.</span></span></a>
+  </div>
+</div></section>
+<section><div class="wrap">
+  <div class="sec-head"><div><h2>Enchanting choreographies</h2></div><a class="btn-o" href="/choreographies">All 23 productions</a></div>
+  <div class="bento"><a class="bento-i big reveal" href="/productions/hanumath-margam"><figure class="ph tall" data-src="/assets/img/prod-hanumath-margam.jpg" data-alt="poster · Hanumath Margam"><span>Photo · poster · Hanumath Margam · 1200×1500</span></figure><span class="bento-t"><small>2026 · Devotional</small><b>Hanumath Margam</b></span></a><a class="bento-i reveal" href="/productions/thirumurugaatrupadai"><figure class="ph " data-src="/assets/img/prod-thirumurugaatrupadai.jpg" data-alt="poster · Thirumurugaatrupadai"><span>Photo · poster · Thirumurugaatrupadai · 1500×900</span></figure><span class="bento-t"><small>2019 · Tamil literature</small><b>Thirumurugaatrupadai</b></span></a><a class="bento-i reveal" href="/productions/dasavatharam"><figure class="ph " data-src="/assets/img/prod-dasavatharam.jpg" data-alt="poster · Dasavatharam"><span>Photo · poster · Dasavatharam · 1500×900</span></figure><span class="bento-t"><small>2017 · Epics</small><b>Dasavatharam</b></span></a><a class="bento-i reveal" href="/productions/andal-vaibhavam"><figure class="ph " data-src="/assets/img/prod-andal-vaibhavam.jpg" data-alt="poster · Andal Vaibhavam"><span>Photo · poster · Andal Vaibhavam · 1500×900</span></figure><span class="bento-t"><small>2015 · Devotional</small><b>Andal Vaibhavam</b></span></a></div>
+</div></section>
+<section class="alt"><div class="wrap learn-grid">
+  <div class="stack" style="gap:12px"><h2>Find your class</h2><p class="muted">Technique, abhinaya, laya and theory, taught in small batches. Start with a trial class.</p><a class="btn" href="/learn#enquire" style="align-self:flex-start">Ask about classes</a></div>
+  <div class="crows"><a class="crow reveal" href="/learn#paths"><span class="cn">01</span><span class="ct"><b>Children</b><span class="muted">From <mark class="todo">youngest age</mark> · weekday and weekend batches in CIT Nagar</span></span><figure class="ph " data-src="/assets/img/learn-children.jpg" data-alt="Children class"><span>Photo · Children class · 800×600</span></figure><span class="ca" aria-hidden="true">→</span></a><a class="crow reveal" href="/learn#paths"><span class="cn">02</span><span class="ct"><b>Teens and adults</b><span class="muted">Beginners, and dancers coming back after a break</span></span><figure class="ph " data-src="/assets/img/learn-adults.jpg" data-alt="Teens and adults class"><span>Photo · Teens and adults class · 800×600</span></figure><span class="ca" aria-hidden="true">→</span></a><a class="crow reveal" href="/learn#paths"><span class="cn">03</span><span class="ct"><b>Online, from abroad</b><span class="muted">Live classes from Chennai, set to your time zone</span></span><figure class="ph " data-src="/assets/img/learn-online.jpg" data-alt="Online, from abroad class"><span>Photo · Online, from abroad class · 800×600</span></figure><span class="ca" aria-hidden="true">→</span></a></div>
+</div></section>
 <section><div class="wrap split">
-  <div class="stack"><p class="eyebrow">Students</p><h2>71 arangetrams. Stages from Chennai to the world.</h2><p class="muted">Scholarship holders, Doordarshan graded artists and teachers with their own schools in India, the USA, the UK and Singapore.</p><a class="btn-o" href="/accolades" style="align-self:flex-start">Student's Accolades</a></div>
+  <div class="stack"><h2>71 arangetrams. Stages from Chennai to the world.</h2><p class="muted">Scholarship holders, Doordarshan graded artists and teachers with their own schools in India, the USA, the UK and Singapore.</p><a class="btn-o" href="/accolades" style="align-self:flex-start">Student's Accolades</a></div>
   <div class="tiles" data-gallery><figure class="ph tall" data-src="/assets/img/home-students-1.jpg" data-alt="students on stage"><span>Photo · students on stage · 1000×1250</span></figure><figure class="ph tall" data-src="/assets/img/home-students-2.jpg" data-alt="arangetram moment"><span>Photo · arangetram moment · 1000×1250</span></figure></div>
 </div></section>
 <section class="dark"><div class="wrap split">
-  <div class="stack"><p class="eyebrow">Natya IQ</p><h2>How well do you know Bharatanatyam?</h2><p class="muted">A quick quiz, a tala calculator and a mudra and rasa match. Share your score card.</p><div class="row"><a class="btn" href="/natya-iq">Take the quiz</a></div></div>
+  <div class="stack"><h2>How well do you know Bharatanatyam?</h2><p class="muted">Natya IQ: a quick quiz, a tala calculator and a mudra and rasa match. Share your score card.</p><div class="row"><a class="btn" href="/natya-iq">Take the quiz</a></div></div>
   <figure class="ph sq" data-src="/assets/img/home-natyaiq.jpg" data-alt="Natya IQ share card"><span>Photo · Natya IQ share card · 1080×1080</span></figure>
 </div></section>
 <section><div class="wrap"><div class="sec-head"><div><p class="eyebrow">Kind words</p><h2>From rasikas and families</h2></div></div>
   <div class="quotes"><blockquote><p>“<mark class="todo">Quote from the Souvenir or the press</mark>”</p><cite><mark class="todo">Name, title</mark></cite></blockquote><blockquote><p>“<mark class="todo">Quote from a parent or student</mark>”</p><cite><mark class="todo">Name</mark></cite></blockquote></div></div></section>
-<section class=alt><div class="wrap"><div class="sec-head"><div><p class="eyebrow">Questions</p><h2>Frequently asked</h2></div></div><div class="faqs"><details class="faq"><summary>What age can my child start?</summary><p>Children can start from <mark class="todo">youngest age</mark>. Adults and complete beginners of any age are welcome.</p></details><details class="faq"><summary>Do you teach online?</summary><p>Yes. Live classes from Chennai for students abroad, with batches set to your time zone.</p></details><details class="faq"><summary>Do you teach Kuchipudi?</summary><p>Divyanjali teaches Bharatanatyam only: technique, abhinaya, laya and theory.</p></details><details class="faq"><summary>Can we book a production for our festival?</summary><p>Yes. Send the date, venue and audience through <a href="/book">Book and Enquire</a>, and we reply on WhatsApp within 24 hours.</p></details><details class="faq"><summary>Where is the school?</summary><p>CIT Nagar, Chennai. The full address and map are on the <a href="/book">Book and Enquire</a> page.</p></details></div><script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What age can my child start?", "acceptedAnswer": {"@type": "Answer", "text": "Children can start from youngest age. Adults and complete beginners of any age are welcome."}}, {"@type": "Question", "name": "Do you teach online?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Live classes from Chennai for students abroad, with batches set to your time zone."}}, {"@type": "Question", "name": "Do you teach Kuchipudi?", "acceptedAnswer": {"@type": "Answer", "text": "Divyanjali teaches Bharatanatyam only: technique, abhinaya, laya and theory."}}, {"@type": "Question", "name": "Can we book a production for our festival?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Send the date, venue and audience through Book and Enquire, and we reply on WhatsApp within 24 hours."}}, {"@type": "Question", "name": "Where is the school?", "acceptedAnswer": {"@type": "Answer", "text": "CIT Nagar, Chennai. The full address and map are on the Book and Enquire page."}}]}</script></div></section>
+<section class=alt><div class="wrap"><div class="sec-head"><div><p class="eyebrow">Questions</p><h2>Frequently asked</h2></div></div><div class="faqs"><details class="faq"><summary>How do I know when the next performance is?</summary><p>Every date is on the <a href="/events">calendar</a>. Tap Subscribe and new dates appear in your phone calendar on their own.</p></details><details class="faq"><summary>What age can my child start?</summary><p>Children can start from <mark class="todo">youngest age</mark>. Adults and complete beginners of any age are welcome.</p></details><details class="faq"><summary>Do you teach online?</summary><p>Yes. Live classes from Chennai for students abroad, with batches set to your time zone.</p></details><details class="faq"><summary>Do you teach Kuchipudi?</summary><p>Divyanjali teaches Bharatanatyam only: technique, abhinaya, laya and theory.</p></details><details class="faq"><summary>Can we book a production for our festival?</summary><p>Yes. Send the date, venue and audience through <a href="/book">Book and Enquire</a>, and we reply on WhatsApp within 24 hours.</p></details></div><script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I know when the next performance is?", "acceptedAnswer": {"@type": "Answer", "text": "Every date is on the calendar. Tap Subscribe and new dates appear in your phone calendar on their own."}}, {"@type": "Question", "name": "What age can my child start?", "acceptedAnswer": {"@type": "Answer", "text": "Children can start from youngest age. Adults and complete beginners of any age are welcome."}}, {"@type": "Question", "name": "Do you teach online?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Live classes from Chennai for students abroad, with batches set to your time zone."}}, {"@type": "Question", "name": "Do you teach Kuchipudi?", "acceptedAnswer": {"@type": "Answer", "text": "Divyanjali teaches Bharatanatyam only: technique, abhinaya, laya and theory."}}, {"@type": "Question", "name": "Can we book a production for our festival?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Send the date, venue and audience through Book and Enquire, and we reply on WhatsApp within 24 hours."}}]}</script></div></section>
 <section class="dark"><div class="wrap cta"><div class="stack" style="gap:8px"><h2>Begin your Bharatanatyam journey</h2><p class="muted">Classes for children and adults in Chennai, and live online classes worldwide.</p></div><div class="row"><a class="btn" href="/learn#enquire">Ask about classes</a><a class="btn-o" data-wa="Hello Divyanjali, I would like to know about classes." href="#">WhatsApp us</a></div></div></section>
 
 </main>

@@ -29,7 +29,7 @@ modal.addEventListener('close', () => { $('.mbody', modal).innerHTML = ''; });
 modal.addEventListener('click', (ev) => {
   if (ev.target.closest('.mprev')) return showPhoto(gi - 1);
   if (ev.target.closest('.mnext')) return showPhoto(gi + 1);
-  if (ev.target.closest('.mx') || ev.target === modal || ev.target.classList.contains('mbody') || ev.target.tagName === 'IMG') modal.close();
+  if (ev.target.closest('.mx') || ev.target === modal || ev.target.classList.contains('mbody') || (ev.target.tagName === 'IMG' && !ev.target.closest('.qv'))) modal.close();
 });
 document.addEventListener('keydown', (ev) => {
   if (!modal.open || !gallery.length || !$('.mbody img', modal)) return;
@@ -154,17 +154,136 @@ $$('form[data-enquiry]').forEach((f) => {
   });
 });
 
-/* ----- Home: the next three events, from the same Google Sheet as the calendar ----- */
-(async function nextEvents() {
-  const box = $('#nextEvents'); if (!box) return;
-  let list = null;
-  try { const r = await fetch(CONFIG.SCRIPT_URL + '?action=events'); list = (await r.json()).events; } catch (err) { try { list = JSON.parse(localStorage.getItem('dv_events') || 'null'); } catch (e) { list = null; } }
-  const now = Date.now();
-  const up = (list || []).map((e) => Object.assign(e, { start: new Date(e.date + 'T' + String(e.start_time || '00:00').slice(0, 5) + ':00+05:30') }))
-    .filter((e) => !isNaN(e.start) && e.start.getTime() > now - 3 * 3600e3).sort((a, b) => a.start - b.start).slice(0, 3);
-  if (!up.length) { box.innerHTML = '<div class="empty">New events will appear here soon. <a href="/events">See the calendar</a>.</div>'; return; }
-  const d = (x, o) => new Intl.DateTimeFormat('en-IN', Object.assign({ timeZone: 'Asia/Kolkata' }, o)).format(x);
-  box.innerHTML = up.map((e) => '<a class="tile" href="/e/' + encodeURIComponent(e.event_code) + '"><span class="meta">' + d(e.start, { weekday: 'short', day: 'numeric', month: 'short' }) + ' · ' + d(e.start, { hour: 'numeric', minute: '2-digit', hour12: true }).toUpperCase() + '</span><h3>' + esc(e.title) + '</h3><p class="muted">' + esc(e.type || '') + ' · ' + esc(e.mode === 'Online' ? 'Online' : (e.venue_name || '')) + '</p><span class="badge ' + (e.mode === 'Online' ? 'm-ol' : e.mode === 'Hybrid' ? 'm-hy' : 'm-ip') + '" style="align-self:flex-start">' + esc(e.mode || 'In person') + '</span></a>').join('');
+/* ----- Home: the season calendar, from the same Google Sheet as /events ----- */
+(async function homeCalendar() {
+  const cal = $('#homeCal'); if (!cal) return;
+  const tz = { timeZone: 'Asia/Kolkata' };
+  const fmt = (x, o) => new Intl.DateTimeFormat('en-IN', Object.assign({}, tz, o)).format(x);
+  const dayKey = (x) => fmt(x, { year: 'numeric', month: '2-digit', day: '2-digit' }).split('/').reverse().join('-');
+  const durMin = (s) => { s = String(s || '').toLowerCase(); const h = s.match(/(\d+(?:\.\d+)?)\s*h/), m = s.match(/(\d+)\s*m/); return ((h ? parseFloat(h[1]) * 60 : 0) + (m ? parseInt(m[1], 10) : 0)) || 120; };
+  const cache = (v) => { try { if (v === undefined) return JSON.parse(localStorage.getItem('dv_events') || 'null'); localStorage.setItem('dv_events', JSON.stringify(v)); } catch (err) { return null; } };
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Show what we saw last time straight away, then refresh from the sheet.
+  let raw = cache();
+  const fresh = (async () => {
+    try {
+      const ctrl = new AbortController(); setTimeout(() => ctrl.abort(), 9000);
+      const j = await (await fetch(CONFIG.SCRIPT_URL + '?action=events', { signal: ctrl.signal })).json();
+      if (j && Array.isArray(j.events)) { cache(j.events); return j.events; }
+    } catch (err) { /* keep the cached list */ }
+    return null;
+  })();
+
+  const now = new Date();
+  let evs = [], month = null, sel = null;
+  const prep = (list) => (list || []).map((x) => {
+    const start = new Date(x.date + 'T' + String(x.start_time || '00:00').slice(0, 5) + ':00+05:30');
+    return Object.assign({}, x, { start, end: new Date(start.getTime() + durMin(x.duration) * 60000), mode: x.mode || 'In person', type: x.type || 'Performance' });
+  }).filter((x) => x.event_code && !isNaN(x.start) && x.end > now).sort((a, b) => a.start - b.start);
+  const driveId = (u) => (String(u || '').match(/\/d\/([\w-]{20,})/) || String(u || '').match(/[?&]id=([\w-]{20,})/) || [])[1];
+  const posterSrc = (x) => { const id = driveId(x.poster_link); if (id) return '/img/' + encodeURIComponent(x.event_code) + '?p=' + id.slice(0, 8); return /^https?:/.test(x.poster_link || '') ? x.poster_link : ''; };
+  const where = (x) => x.mode === 'Online' ? 'Live online' : (x.venue_name || 'Chennai');
+  const stamp = (d) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const gcal = (x) => 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(x.title + ' · Divyanjali') + '&dates=' + stamp(x.start) + '/' + stamp(x.end) + '&details=' + encodeURIComponent((x.why_attend || '') + '\n\n' + location.origin + '/e/' + x.event_code) + '&location=' + encodeURIComponent(x.mode === 'Online' ? 'Online' : [x.venue_name, x.venue_address].filter(Boolean).join(', '));
+  const img = (x, cls) => { const s = posterSrc(x); return s ? '<img' + (cls ? ' class="' + cls + '"' : '') + ' src="' + esc(s) + '" alt="" loading="lazy" onerror="this.parentNode.classList.add(\'nophoto\');this.remove()">' : ''; };
+
+  /* next performance, with a live countdown */
+  let tick = null;
+  function nextUp() {
+    const box = $('#nextUp'); const x = evs[0];
+    clearInterval(tick);
+    if (!x) { box.outerHTML = '<a class="next" id="nextUp" href="#follow"><span class="next-date"><b>★</b><small>Soon</small></span><span class="next-i"><small>Next on stage</small><b>New dates are on their way</b><span>Subscribe and they reach your calendar first.</span></span></a>'; return; }
+    box.outerHTML = '<a class="next" id="nextUp" href="/e/' + encodeURIComponent(x.event_code) + '"><span class="next-date"><b>' + fmt(x.start, { day: 'numeric' }) + '</b><small>' + fmt(x.start, { month: 'short' }) + '</small></span><span class="next-i"><small>Next on stage · ' + esc(x.type) + '</small><b>' + esc(x.title) + '</b><span>' + fmt(x.start, { weekday: 'long' }) + ', ' + fmt(x.start, { hour: 'numeric', minute: '2-digit', hour12: true }).toUpperCase() + ' · ' + esc(where(x)) + '</span><span class="cd" id="cd"></span></span></a>';
+    const cd = $('#cd');
+    const draw = () => {
+      let s = Math.max(0, Math.floor((x.start - Date.now()) / 1000));
+      if (!s) { cd.innerHTML = '<span><b>On now</b>or about to begin</span>'; return; }
+      const d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60); s %= 60;
+      cd.innerHTML = [[d, 'days'], [h, 'hrs'], [m, 'min']].concat(reduce ? [] : [[s, 'sec']]).map(([n, l]) => '<span><b>' + String(n).padStart(2, '0') + '</b>' + l + '</span>').join('');
+    };
+    draw(); tick = setInterval(draw, reduce ? 60000 : 1000);
+  }
+
+  /* month grid */
+  function grid() {
+    const [y, m] = month;
+    const first = new Date(Date.UTC(y, m, 1)), days = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+    const byDay = {}; evs.forEach((x) => { (byDay[dayKey(x.start)] = byDay[dayKey(x.start)] || []).push(x); });
+    const today = dayKey(now);
+    $('#calMonth').textContent = new Intl.DateTimeFormat('en-IN', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(first);
+    let h = '<span class="cal-d out"></span>'.repeat(first.getUTCDay());
+    for (let d = 1; d <= days; d++) {
+      const k = y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0'), list = byDay[k] || [];
+      const cls = 'cal-d' + (k < today ? ' past' : '') + (k === today ? ' today' : '') + (list.length ? ' has' : '') + (k === sel ? ' sel' : '');
+      h += list.length
+        ? '<button type="button" class="' + cls + '" data-day="' + k + '" aria-label="' + d + ': ' + list.length + ' event' + (list.length > 1 ? 's' : '') + '" aria-pressed="' + (k === sel) + '">' + d + '<i class="' + (list.length > 1 ? 'two' : '') + '"></i></button>'
+        : '<span class="' + cls + '">' + d + '</span>';
+    }
+    $('#calDays').innerHTML = h;
+    const lastEv = evs[evs.length - 1];
+    $('[data-cal="-1"]', cal).disabled = y < now.getFullYear() || (y === now.getFullYear() && m <= now.getMonth());
+    $('[data-cal="1"]', cal).disabled = !lastEv || (y * 12 + m) >= (lastEv.start.getUTCFullYear() * 12 + lastEv.start.getUTCMonth()) + 2;
+    list();
+  }
+  function list() {
+    const [y, m] = month;
+    const inMonth = evs.filter((x) => { const k = dayKey(x.start); return sel ? k === sel : k.startsWith(y + '-' + String(m + 1).padStart(2, '0')); });
+    const note = sel
+      ? '<div class="cal-note"><span>' + fmt(new Date(sel + 'T12:00:00+05:30'), { weekday: 'long', day: 'numeric', month: 'long' }) + '</span><button type="button" data-allmonth>Whole month</button></div>'
+      : '<div class="cal-note"><span>' + (inMonth.length ? inMonth.length + ' event' + (inMonth.length > 1 ? 's' : '') + ' this month' : '') + '</span></div>';
+    const later = evs.find((x) => x.start > new Date(Date.UTC(y, m + 1, 1)));
+    $('#calList').innerHTML = note + (inMonth.length
+      ? inMonth.map((x, i) => '<button type="button" class="cal-ev" data-ev="' + esc(x.event_code) + '" style="animation-delay:' + (i * 50) + 'ms"><span class="dd"><b>' + fmt(x.start, { day: 'numeric' }) + '</b><small>' + fmt(x.start, { weekday: 'short' }) + '</small></span><span class="ti"><b>' + esc(x.title) + '</b><span>' + fmt(x.start, { hour: 'numeric', minute: '2-digit', hour12: true }).toUpperCase() + ' · ' + esc(x.type) + ' · ' + esc(where(x)) + '</span></span><span class="badge ' + (x.mode === 'Online' ? 'm-ol' : x.mode === 'Hybrid' ? 'm-hy' : 'm-ip') + '">' + esc(x.mode) + '</span></button>').join('')
+      : '<div class="cal-empty">' + (evs.length ? 'No performances this month.' + (later ? ' <button type="button" class="cal-arr" style="display:inline-grid;width:auto;height:auto;border:0;font-size:.9rem;color:var(--deep);font-weight:600" data-jump="' + later.event_code + '">Next one: ' + fmt(later.start, { day: 'numeric', month: 'short' }) + ' ›</button>' : '') : 'The new season is being planned. Subscribe below and dates reach your calendar as soon as we add them.') + '</div>');
+  }
+
+  /* quick view: details, add to calendar, share, previous and next */
+  function quick(code) {
+    const i = evs.findIndex((x) => x.event_code === code); if (i < 0) return;
+    const x = evs[i], url = location.origin + '/e/' + x.event_code;
+    const rows = [['When', fmt(x.start, { weekday: 'long', day: 'numeric', month: 'long' }) + ', ' + fmt(x.start, { hour: 'numeric', minute: '2-digit', hour12: true }).toUpperCase()], ['Where', x.mode === 'Online' ? 'Live online' : [x.venue_name, x.venue_address].filter(Boolean).join(', ')], ['Artist', x.lead_artist], ['Entry', x.entry]].filter((r) => r[1]);
+    gallery = [];
+    openModal('<div class="qv"><div class="qv-p' + (posterSrc(x) ? '' : ' nophoto') + '"><b>' + esc(x.title) + '</b>' + img(x) + '</div><div class="qv-b"><span class="badge ' + (x.mode === 'Online' ? 'm-ol' : x.mode === 'Hybrid' ? 'm-hy' : 'm-ip') + '" style="align-self:flex-start">' + esc(x.type) + ' · ' + esc(x.mode) + '</span><h3>' + esc(x.title) + '</h3>' + (x.why_attend ? '<p class="muted" style="margin:0">' + esc(x.why_attend) + '</p>' : '') + '<dl>' + rows.map((r) => '<dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd>').join('') + '</dl><div class="qv-acts"><a class="btn" href="/e/' + encodeURIComponent(x.event_code) + '">Event page</a><a class="btn-o" href="' + gcal(x) + '" target="_blank" rel="noopener">Add to calendar</a><a class="btn-o" href="' + waLink(x.title + ' · ' + fmt(x.start, { day: 'numeric', month: 'short' })) + '%0A' + encodeURIComponent(url) + '" target="_blank" rel="noopener">Share</a></div><div class="qv-nav"><button type="button" data-qv="' + esc(evs[(i - 1 + evs.length) % evs.length].event_code) + '"' + (evs.length < 2 ? ' hidden' : '') + '>‹ Previous</button><span>' + (i + 1) + ' of ' + evs.length + '</span><button type="button" data-qv="' + esc(evs[(i + 1) % evs.length].event_code) + '"' + (evs.length < 2 ? ' hidden' : '') + '>Next ›</button></div></div></div>', 'Divyanjali calendar', false);
+  }
+
+  /* posters of the whole season, side by side */
+  function strip() {
+    const box = $('#seasonStrip');
+    box.closest('section').hidden = !evs.length;
+    box.innerHTML = evs.map((x) => '<button type="button" class="strip-card' + (posterSrc(x) ? '' : ' nophoto') + '" data-ev="' + esc(x.event_code) + '">' + img(x) + '<span class="sd"><b>' + fmt(x.start, { day: 'numeric' }) + '</b><small>' + fmt(x.start, { month: 'short' }) + '</small></span><span class="st">' + esc(x.title) + '</span><span class="sm">' + esc(x.type) + ' · ' + esc(where(x)) + '</span></button>').join('');
+  }
+
+  function render(list) {
+    evs = prep(list);
+    const first = evs[0] ? evs[0].start : now;
+    if (!month) month = [Number(fmt(first, { year: 'numeric' })), Number(fmt(first, { month: 'numeric' })) - 1];
+    nextUp(); grid(); strip();
+  }
+
+  cal.addEventListener('click', (ev) => {
+    const arr = ev.target.closest('[data-cal]');
+    if (arr) { const t = month[0] * 12 + month[1] + Number(arr.dataset.cal); month = [Math.floor(t / 12), t % 12]; sel = null; grid(); return; }
+    const d = ev.target.closest('[data-day]');
+    if (d) { sel = sel === d.dataset.day ? null : d.dataset.day; grid(); return; }
+    if (ev.target.closest('[data-allmonth]')) { sel = null; grid(); return; }
+    const j = ev.target.closest('[data-jump]');
+    if (j) { const x = evs.find((v) => v.event_code === j.dataset.jump); month = [x.start.getUTCFullYear(), x.start.getUTCMonth()]; sel = dayKey(x.start); grid(); return; }
+    const e1 = ev.target.closest('[data-ev]'); if (e1) quick(e1.dataset.ev);
+  });
+  $('#seasonStrip').addEventListener('click', (ev) => { const c = ev.target.closest('[data-ev]'); if (c) quick(c.dataset.ev); });
+  modal.addEventListener('click', (ev) => { const b = ev.target.closest('[data-qv]'); if (b) { ev.stopPropagation(); quick(b.dataset.qv); } }, true);
+  $$('[data-strip]').forEach((b) => b.addEventListener('click', () => { const s = $('#seasonStrip'); s.scrollBy({ left: Number(b.dataset.strip) * s.clientWidth * 0.8, behavior: reduce ? 'auto' : 'smooth' }); }));
+
+  // Subscribe buttons point at this site's own feed, so they work on any domain.
+  const feed = location.host + '/calendar.ics';
+  if ($('#subG')) $('#subG').href = 'https://calendar.google.com/calendar/r?cid=' + encodeURIComponent('webcal://' + feed);
+  if ($('#subA')) $('#subA').href = 'webcal://' + feed;
+
+  if (raw) render(raw);
+  const got = await fresh;
+  if (got) render(got);
+  else if (!raw) render([]);
 })();
 
 /* ----- Gallery videos and Instagram posts, from assets/media.json (easy to edit, no rebuild) ----- */

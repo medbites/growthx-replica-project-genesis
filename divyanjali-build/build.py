@@ -50,14 +50,14 @@ def stats(items):
     return '<div class="stats">' + ''.join(f'<div class="stat reveal"><b data-count="{n}" data-plus="{p}">{n}{p}</b><span>{e(l)}</span></div>' for n, p, l in items) + '</div>'
 
 # ---------------------------------------------------------------- layout
-NAV = [('About', '/about'), ('Choreographies', '/choreographies'), ('Learn', '/learn'), ('Events', '/events'), ('Natya IQ', '/natya-iq')]
+NAV = [('About', '/about'), ('Choreographies', '/choreographies'), ('Learn', '/learn'), ('Natya IQ', '/natya-iq'), ('Calendar', '/events')]
 MENU = [('Home', '/'), ('About Divyanjali', '/about'), ('Dr. S. Divyasena', '/divyasena'), ('Sri B.P. Haribabu', '/haribabu'), ('30 Years', '/30-years'),
-        ("Student's Accolades", '/accolades'), ('Choreographies', '/choreographies'), ('Learn', '/learn'), ('Events', '/events'),
+        ("Student's Accolades", '/accolades'), ('Choreographies', '/choreographies'), ('Learn', '/learn'), ('Events calendar', '/events'),
         ('Gallery and Videos', '/gallery'), ('Natya IQ', '/natya-iq'), ('Media Room', '/media'), ('Store', '/store'), ('Book and Enquire', '/book')]
 
 def header(path):
     cur = lambda h: ' aria-current="page"' if h == path or (h != '/' and path.startswith(h + '/')) else ''
-    nav = ''.join(f'<a class="hide-m" href="{h}"{cur(h)}>{t}</a>' for t, h in NAV)
+    nav = ''.join(f'<a class="{"navcal" if h == "/events" else "hide-m"}" href="{h}"{cur(h)}>{t}</a>' for t, h in NAV)
     menu = ''.join(f'<a href="{h}"{cur(h)}>{t}</a>' for t, h in MENU)
     return f'''<header class="top">
   <div class="wrap">
@@ -182,52 +182,86 @@ HOME_VIDEO = 'https://youtu.be/7g505MXqnec'
 
 def home():
     feat = [p for p in PRODUCTIONS if p['slug'] in ('hanumath-margam', 'andal-vaibhavam', 'thirumurugaatrupadai', 'dasavatharam')]
+    def bento(p, i):
+        img = ph(f"prod-{p['slug']}.jpg", f"poster · {p['title']}", '1500×900' if i else '1200×1500', '' if i else 'tall')
+        return f'<a class="bento-i{" big" if i == 0 else ""} reveal" href="/productions/{p["slug"]}">{img}<span class="bento-t"><small>{e(p["year"])} · {e(p["cats"][0])}</small><b>{e(p["title"])}</b></span></a>'
+    classes = [('01', 'Children', f'From {todo("youngest age")} · weekday and weekend batches in CIT Nagar', 'learn-children.jpg'),
+               ('02', 'Teens and adults', 'Beginners, and dancers coming back after a break', 'learn-adults.jpg'),
+               ('03', 'Online, from abroad', 'Live classes from Chennai, set to your time zone', 'learn-online.jpg')]
+    rows = ''.join(f'<a class="crow reveal" href="/learn#paths"><span class="cn">{n}</span><span class="ct"><b>{t}</b><span class="muted">{d}</span></span>{ph(f, t + " class", "800×600")}<span class="ca" aria-hidden="true">→</span></a>' for n, t, d, f in classes)
     return page('/', 'Divyanjali · Bharatanatyam school in Chennai since 1994',
-        'Divyanjali, the Bharatanatyam school of Dr. S. Divyasena and Sri B.P. Haribabu in CIT Nagar, Chennai. Classes, productions, events and arangetrams since 1994.', f'''
-<section class="hero" style="padding-block:clamp(32px,6vw,72px)">
-  <div class="wrap">
-    <div class="hero-copy">
-      <p class="eyebrow">Bharatanatyam since 1994 · CIT Nagar, Chennai</p>
-      <h1>The dancer is the dance.</h1>
-      <p class="lead">Bharatanatyam taught and staged by Natyacharya Dr. S. Divyasena and Sri B.P. Haribabu. Thirty years of classes, productions and arangetrams, from Chennai to stages around the world.</p>
-      <div class="row"><a class="btn" href="/learn">Learn with us</a><a class="btn-o" href="/book">Book a performance</a></div>
+        'Divyanjali, the Bharatanatyam school of Dr. S. Divyasena and Sri B.P. Haribabu in CIT Nagar, Chennai. See the season calendar of performances, workshops and arangetrams.', f'''
+<section class="hc">
+  <div class="wrap hc-grid">
+    <div class="hc-copy">
+      <p class="kicker">Divyanjali · Bharatanatyam since 1994 · Chennai</p>
+      <h1>Every performance of the season, <em>on one calendar.</em></h1>
+      <p class="lead">Recitals, workshops and arangetrams by Dr. S. Divyasena, Sri B.P. Haribabu and their students. Tap a date to see what is on, then add it to your phone in one tap.</p>
+      <div class="next" id="nextUp" aria-live="polite">
+        <div class="next-skel"><span></span><span></span><span></span></div>
+      </div>
     </div>
-    {yt(HOME_VIDEO, 'Watch Divyanjali on stage', 12)}
+    <div class="cal" id="homeCal" aria-label="Season calendar">
+      <div class="cal-top">
+        <button class="cal-arr" type="button" data-cal="-1" aria-label="Previous month">‹</button>
+        <h2 class="cal-m" id="calMonth">Season calendar</h2>
+        <button class="cal-arr" type="button" data-cal="1" aria-label="Next month">›</button>
+      </div>
+      <div class="cal-dow" aria-hidden="true"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+      <div class="cal-days" id="calDays" role="grid"></div>
+      <div class="cal-list" id="calList"><div class="cal-skel"></div><div class="cal-skel"></div></div>
+      <div class="cal-foot"><a class="btn" href="/events">Open full calendar</a><a class="btn-o" href="#follow">Subscribe</a></div>
+    </div>
   </div>
 </section>
-<section class="alt" style="padding-block:40px"><div class="wrap">{stats([(30, '', 'years of teaching'), (71, '', 'arangetrams'), (300, '+', 'dancers trained'), (len(PRODUCTIONS), '', 'productions')])}</div></section>
-<section><div class="wrap stack" style="gap:48px">
-  <div class="split reveal">{ph('home-divyasena.jpg', 'Dr. S. Divyasena, portrait', '1200×1500', 'tall')}
-    <div class="stack"><p class="eyebrow">The guru</p><h2>Dr. S. Divyasena</h2><p class="muted">Founder · Natyacharya · Doordarshan A grade artist · Doctorate in Bharatanatyam</p><p>Dancer, choreographer and nattuvanar, she founded Divyanjali in 1994 and has staged more than twenty productions in India and abroad.</p><a class="btn-o" href="/divyasena" style="align-self:flex-start">Meet the guru</a></div></div>
-  <div class="split rev reveal">{ph('home-haribabu.jpg', 'Sri B.P. Haribabu with mridangam', '1200×1500', 'tall')}
-    <div class="stack"><p class="eyebrow">The musician</p><h2>Sri B.P. Haribabu</h2><p class="muted">Mridangam · nattuvangam · rhythm composer · Vaadhya Visharadha</p><p>Accompanying dance for more than 25 years, with over 85 tours to some 20 countries. At Divyanjali he teaches laya, rhythm, as a subject of its own.</p><a class="btn-o" href="/haribabu" style="align-self:flex-start">Meet the musician</a></div></div>
+<section class="strip-sec">
+  <div class="wrap sec-head"><div><h2>The season, poster by poster</h2></div>
+    <div class="strip-nav"><button class="cal-arr" type="button" data-strip="-1" aria-label="Scroll back">‹</button><button class="cal-arr" type="button" data-strip="1" aria-label="Scroll on">›</button></div></div>
+  <div class="strip" id="seasonStrip"><div class="strip-card skel"></div><div class="strip-card skel"></div><div class="strip-card skel"></div></div>
+</section>
+<section class="follow" id="follow"><div class="wrap follow-in">
+  <div class="stack" style="gap:8px"><h2>Never miss a performance</h2><p class="muted">Subscribe once. New dates from Divyanjali appear in your own calendar, with venue and timing, as soon as we add them.</p></div>
+  <div class="row"><a class="btn" id="subG" href="/events#subscribe" target="_blank" rel="noopener">Google Calendar</a><a class="btn-o" id="subA" href="/calendar.ics">Apple and Outlook</a><a class="btn-o" data-wa="Hello Divyanjali, please add me to your events list on WhatsApp." href="#">WhatsApp updates</a></div>
 </div></section>
-<section class="alt"><div class="wrap">{head('Classes', 'Find your class', '<a class="btn-o" href="/learn">All about classes</a>')}
-  <div class="tiles">
-    <a class="tile" href="/learn#paths">{ph('learn-children.jpg', "children's batch", '1200×900')}<h3>Children</h3><p class="muted">From {todo('youngest age')} · CIT Nagar</p></a>
-    <a class="tile" href="/learn#paths">{ph('learn-adults.jpg', 'teens and adults batch', '1200×900')}<h3>Teens and adults</h3><p class="muted">Beginners and returning dancers</p></a>
-    <a class="tile" href="/learn#paths">{ph('learn-online.jpg', 'online class on a laptop', '1200×900')}<h3>Online, from abroad</h3><p class="muted">Live classes from Chennai, in your time zone</p></a>
-  </div></div></section>
-<section><div class="wrap">{head('Productions', 'Enchanting Choreographies', '<a class="btn-o" href="/choreographies">All productions</a>')}
-  <div class="tiles">{''.join(prod_card(p) for p in feat)}</div></div></section>
-<section class="alt"><div class="wrap">{head('Coming up', 'Events', '<a class="btn-o" href="/events">Full calendar</a>')}
-  <div class="tiles" id="nextEvents"><div class="empty">Loading events…</div></div></div></section>
+<section class="stage"><div class="wrap stage-grid">
+  <div class="stage-v">{yt(HOME_VIDEO, 'Watch Divyanjali on stage', 12)}</div>
+  <div class="stack stage-c">
+    <h2>The dancer is the dance.</h2>
+    <p class="muted">Thirty years of classes, productions and arangetrams, from CIT Nagar to stages in some twenty countries.</p>
+    {stats([(30, '', 'years of teaching'), (71, '', 'arangetrams'), (300, '+', 'dancers trained'), (len(PRODUCTIONS), '', 'productions')])}
+  </div>
+</div></section>
+<section class="alt"><div class="wrap">
+  <div class="sec-head"><div><h2>Two gurus, one stage</h2></div></div>
+  <div class="duo">
+    <a class="duo-i reveal" href="/divyasena">{ph('home-divyasena.jpg', 'Dr. S. Divyasena, portrait', '1200×1500', 'tall')}<span class="duo-t"><b>Dr. S. Divyasena</b><span>Founder · Natyacharya · Doordarshan A grade artist</span><span class="muted">Dancer, choreographer and nattuvanar. More than twenty productions in India and abroad.</span></span></a>
+    <a class="duo-i off reveal" href="/haribabu">{ph('home-haribabu.jpg', 'Sri B.P. Haribabu with mridangam', '1200×1500', 'tall')}<span class="duo-t"><b>Sri B.P. Haribabu</b><span>Mridangam · nattuvangam · rhythm composer</span><span class="muted">Over 85 tours to some 20 countries. He teaches laya, rhythm, as a subject of its own.</span></span></a>
+  </div>
+</div></section>
+<section><div class="wrap">
+  <div class="sec-head"><div><h2>Enchanting choreographies</h2></div><a class="btn-o" href="/choreographies">All {len(PRODUCTIONS)} productions</a></div>
+  <div class="bento">{''.join(bento(p, i) for i, p in enumerate(feat))}</div>
+</div></section>
+<section class="alt"><div class="wrap learn-grid">
+  <div class="stack" style="gap:12px"><h2>Find your class</h2><p class="muted">Technique, abhinaya, laya and theory, taught in small batches. Start with a trial class.</p><a class="btn" href="/learn#enquire" style="align-self:flex-start">Ask about classes</a></div>
+  <div class="crows">{rows}</div>
+</div></section>
 <section><div class="wrap split">
-  <div class="stack"><p class="eyebrow">Students</p><h2>71 arangetrams. Stages from Chennai to the world.</h2><p class="muted">Scholarship holders, Doordarshan graded artists and teachers with their own schools in India, the USA, the UK and Singapore.</p><a class="btn-o" href="/accolades" style="align-self:flex-start">Student's Accolades</a></div>
+  <div class="stack"><h2>71 arangetrams. Stages from Chennai to the world.</h2><p class="muted">Scholarship holders, Doordarshan graded artists and teachers with their own schools in India, the USA, the UK and Singapore.</p><a class="btn-o" href="/accolades" style="align-self:flex-start">Student's Accolades</a></div>
   <div class="tiles" data-gallery>{ph('home-students-1.jpg', 'students on stage', '1000×1250', 'tall')}{ph('home-students-2.jpg', 'arangetram moment', '1000×1250', 'tall')}</div>
 </div></section>
 <section class="dark"><div class="wrap split">
-  <div class="stack"><p class="eyebrow">Natya IQ</p><h2>How well do you know Bharatanatyam?</h2><p class="muted">A quick quiz, a tala calculator and a mudra and rasa match. Share your score card.</p><div class="row"><a class="btn" href="/natya-iq">Take the quiz</a></div></div>
+  <div class="stack"><h2>How well do you know Bharatanatyam?</h2><p class="muted">Natya IQ: a quick quiz, a tala calculator and a mudra and rasa match. Share your score card.</p><div class="row"><a class="btn" href="/natya-iq">Take the quiz</a></div></div>
   {ph('home-natyaiq.jpg', 'Natya IQ share card', '1080×1080', 'sq')}
 </div></section>
 <section><div class="wrap">{head('Kind words', 'From rasikas and families')}
   <div class="quotes"><blockquote><p>“{todo('Quote from the Souvenir or the press')}”</p><cite>{todo('Name, title')}</cite></blockquote><blockquote><p>“{todo('Quote from a parent or student')}”</p><cite>{todo('Name')}</cite></blockquote></div></div></section>
 {faq_section([
+    ('How do I know when the next performance is?', 'Every date is on the <a href="/events">calendar</a>. Tap Subscribe and new dates appear in your phone calendar on their own.'),
     ('What age can my child start?', f'Children can start from {todo("youngest age")}. Adults and complete beginners of any age are welcome.'),
     ('Do you teach online?', 'Yes. Live classes from Chennai for students abroad, with batches set to your time zone.'),
     ('Do you teach Kuchipudi?', 'Divyanjali teaches Bharatanatyam only: technique, abhinaya, laya and theory.'),
     ('Can we book a production for our festival?', 'Yes. Send the date, venue and audience through <a href="/book">Book and Enquire</a>, and we reply on WhatsApp within 24 hours.'),
-    ('Where is the school?', 'CIT Nagar, Chennai. The full address and map are on the <a href="/book">Book and Enquire</a> page.'),
 ], alt=True)}
 {cta('Begin your Bharatanatyam journey', 'Classes for children and adults in Chennai, and live online classes worldwide.', 'Ask about classes', '/learn#enquire', 'Hello Divyanjali, I would like to know about classes.')}
 ''')
