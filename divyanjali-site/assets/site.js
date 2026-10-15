@@ -126,57 +126,68 @@ $$('a.stat').forEach((a) => {
   a.addEventListener('mouseenter', () => { const b = $('[data-count]', a); if (b && Date.now() - last > 1500) { last = Date.now(); countUp(b); } });
 });
 
-/* ----- Landing video: plays muted in the background; pause and sound buttons talk to the YouTube player ----- */
+/* ----- Landing video: the dancers' photo shows first; the video fades in only once YouTube says it is really playing ----- */
 (function landingVideo() {
   const vh = $('.vh[data-vh]'); if (!vh) return;
-  const id = vh.dataset.vh, media = $('.vh-media', vh), poster = $('.vh-poster', vh);
+  const id = vh.dataset.vh, start = Number(vh.dataset.start || 0), media = $('.vh-media', vh), poster = $('.vh-poster', vh);
   poster.style.backgroundImage = 'url(https://i.ytimg.com/vi/' + id + '/maxresdefault.jpg), url(https://i.ytimg.com/vi/' + id + '/hqdefault.jpg)';
   const saveData = navigator.connection && navigator.connection.saveData;
   const btnPlay = $('[data-vh-play]', vh), btnMute = $('[data-vh-mute]', vh), hint = $('.vh-hint', vh);
-  let frame = null, userPaused = false, ready = false;
-  const cmd = (func, args) => { if (frame && frame.contentWindow) frame.contentWindow.postMessage(JSON.stringify({ event: 'command', func, args: args || [] }), '*'); };
-  function load(autoplay) {
-    if (frame) return;
-    frame = document.createElement('iframe');
-    frame.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=' + (autoplay ? 1 : 0) + '&mute=1&controls=0&disablekb=1&fs=0&loop=1&playlist=' + id + '&modestbranding=1&playsinline=1&rel=0&iv_load_policy=3&enablejsapi=1&start=' + (vh.dataset.start || 0) + '&origin=' + encodeURIComponent(location.origin);
-    frame.title = 'Divyanjali on stage (background video)';
-    frame.allow = 'autoplay; encrypted-media; picture-in-picture';
-    frame.tabIndex = -1;
-    frame.addEventListener('load', () => { frame.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 'vh' }), '*'); });
-    media.appendChild(frame);
-    setTimeout(() => { if (!userPaused) vh.classList.add('playing'); }, 4500);   // fallback if the player never reports back
+  let player = null, userPaused = false, playing = false, wantSound = false;
+  const setPaused = (p) => { vh.classList.toggle('paused', p); btnPlay.setAttribute('aria-label', p ? 'Play video' : 'Pause video'); };
+  const setSound = (on) => { wantSound = on; vh.classList.toggle('sound', on); btnMute.setAttribute('aria-label', on ? 'Turn sound off' : 'Turn sound on'); hint.textContent = on ? 'Sound on' : 'Sound off · tap to listen'; };
+  // If the phone blocks the player (low power mode and the like), open the normal player with sound instead.
+  const fallback = () => { gallery = []; openModal('<iframe style="width:min(100%,1100px);height:auto;aspect-ratio:16/9;background:#000" src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&playsinline=1&start=' + start + '" title="Divyanjali on stage" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>', 'Divyanjali on stage', false); };
+  function load() {
+    if (player || window.__vhLoading) return; window.__vhLoading = true;
+    const holder = document.createElement('div'); media.appendChild(holder);
+    const make = () => {
+      player = new YT.Player(holder, {
+        host: 'https://www.youtube-nocookie.com', videoId: id,
+        playerVars: { autoplay: 1, mute: 1, controls: 0, disablekb: 1, fs: 0, loop: 1, playlist: id, modestbranding: 1, playsinline: 1, rel: 0, iv_load_policy: 3, start, origin: location.origin },
+        events: {
+          onReady: (ev) => { ev.target.mute(); if (!userPaused) ev.target.playVideo(); const f = ev.target.getIframe(); f.tabIndex = -1; f.title = 'Divyanjali on stage (background video)'; },
+          onStateChange: (ev) => {
+            if (ev.data === 1) { playing = true; setTimeout(() => { if (playing) vh.classList.add('playing'); }, 600); setPaused(false); }
+            if (ev.data === 2) { playing = false; }
+            if (ev.data === 0) { ev.target.seekTo(start); ev.target.playVideo(); }
+          },
+          onError: () => { vh.classList.remove('playing'); setPaused(true); }
+        }
+      });
+    };
+    if (window.YT && YT.Player) make();
+    else {
+      const prev = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => { if (prev) prev(); make(); };
+      const sc = document.createElement('script'); sc.src = 'https://www.youtube.com/iframe_api'; sc.async = true;
+      sc.onerror = () => setPaused(true);
+      document.head.appendChild(sc);
+    }
+    // Nothing playing after a few seconds: keep the photo, show the play button.
+    setTimeout(() => { if (!playing) setPaused(true); }, 7000);
   }
-  window.addEventListener('message', (ev) => {
-    if (!frame || ev.source !== frame.contentWindow) return;
-    let d; try { d = typeof ev.data === 'string' ? JSON.parse(ev.data) : ev.data; } catch (err) { return; }
-    const st = d && d.info && d.info.playerState;
-    if (st === 1) { ready = true; setTimeout(() => vh.classList.add('playing'), 500); }   // wait out the YouTube title card
-  });
-  function setPaused(p) {
-    vh.classList.toggle('paused', p);
-    btnPlay.setAttribute('aria-label', p ? 'Play video' : 'Pause video');
+  function play() {
+    userPaused = false;
+    if (!player) { load(); setPaused(false); return; }
+    player.playVideo(); setPaused(false);
+    setTimeout(() => { if (!playing) { setPaused(true); fallback(); } }, 2500);
   }
   btnPlay.addEventListener('click', () => {
-    if (!frame) { load(true); userPaused = false; setPaused(false); return; }
-    userPaused = !vh.classList.contains('paused');
-    cmd(userPaused ? 'pauseVideo' : 'playVideo'); setPaused(userPaused);
+    if (vh.classList.contains('paused')) return play();
+    userPaused = true; if (player && player.pauseVideo) player.pauseVideo(); setPaused(true);
   });
   btnMute.addEventListener('click', () => {
-    if (!frame) load(true);
-    const on = !vh.classList.contains('sound');
-    vh.classList.toggle('sound', on);
-    btnMute.setAttribute('aria-label', on ? 'Turn sound off' : 'Turn sound on');
-    if (on) { cmd('unMute'); cmd('setVolume', [100]); if (vh.classList.contains('paused')) { userPaused = false; cmd('playVideo'); setPaused(false); } }
-    else cmd('mute');
-    hint.textContent = on ? 'Sound on' : 'Sound off · tap to listen';
+    const on = !wantSound; setSound(on);
+    if (!player || !player.unMute) { if (on) fallback(); return; }
+    if (on) { player.unMute(); player.setVolume(100); if (!playing) play(); } else player.mute();
   });
-  // Autoplay unless the visitor asked for less motion or less data. Then the still frame stays, with a play button.
   if (reduceMotion || saveData) { setPaused(true); hint.textContent = 'Tap play to watch'; }
-  else load(true);
+  else load();
   // Pause when scrolled away, carry on when back (unless the visitor paused it).
   if ('IntersectionObserver' in window) new IntersectionObserver(([en]) => {
-    if (!frame || userPaused) return;
-    cmd(en.isIntersecting ? 'playVideo' : 'pauseVideo');
+    if (!player || !player.playVideo || userPaused) return;
+    if (en.isIntersecting) player.playVideo(); else player.pauseVideo();
   }, { threshold: 0.15 }).observe(vh);
   // Gentle depth on scroll: the words lift and fade, the video drifts slower.
   if (!reduceMotion) {
