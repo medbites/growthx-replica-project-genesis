@@ -2,7 +2,7 @@
 // (WhatsApp, Instagram, Facebook, LinkedIn) with the event's poster, title and date.
 // Everything else is served as the normal static site.
 
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1jf4-uZtCLtY4Im3zvBlnm5gMTmncxx-pIG14BjkDIAmzH8_J1lWOu5ThyC-vf4yt/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwlZ0KujTvaUagVM4TVpEUeVyp2XH2svG3bRkh-k7ipESLJchbw4Bj6afAUSl-JWfWE/exec';
 const SITE_NAME = 'Divyanjali';
 
 async function getEvents() {
@@ -86,7 +86,7 @@ export default {
     // Event links: serve the page with event-specific preview tags.
     const ev = url.pathname.match(/^\/e\/([\w-]+)\/?$/);
     if (ev) {
-      const page = await env.ASSETS.fetch(new URL('/index.html', url.origin));
+      const page = await env.ASSETS.fetch(new URL('/app.html', url.origin));
       const e = (await getEvents()).find((x) => x.event_code.toUpperCase() === ev[1].toUpperCase());
       if (!e) return page;
       const title = e.title + ' · ' + SITE_NAME;
@@ -107,6 +107,7 @@ export default {
         .transform(new Response(page.body, { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=120' } }));
     }
 
+    if (url.pathname === '/') return env.ASSETS.fetch(new URL('/app.html', url.origin));
     return env.ASSETS.fetch(request);
   }
 };

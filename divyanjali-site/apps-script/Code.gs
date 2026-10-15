@@ -157,7 +157,12 @@ function checkPhotos() {
   const sh = book().getSheetByName('Events');
   const n = sh.getLastRow() - 1; if (n < 1) return;
   const pCol = TABS.Events.indexOf('poster_link') + 1, cCol = TABS.Events.indexOf('photo_check') + 1;
-  const links = sh.getRange(2, pCol, n, 1).getValues();
+  // A photo link pasted into photo_check by mistake is moved to poster_link first.
+  const checks = sh.getRange(2, cCol, n, 1).getValues();
+  const links = sh.getRange(2, pCol, n, 1).getValues().map(([u], i) => {
+    if (!u && isLink(checks[i][0])) { sh.getRange(i + 2, pCol).setValue(checks[i][0]); return [checks[i][0]]; }
+    return [u];
+  });
   const out = links.map(([u]) => {
     if (!u) return ['No poster'];
     const m = String(u).match(/\/d\/([\w-]{20,})/) || String(u).match(/[?&]id=([\w-]{20,})/);
@@ -191,18 +196,18 @@ function doGet(e) {
 
 function publishedEvents() {
   const sh = book().getSheetByName('Events');
-  const values = sh.getDataRange().getValues();
+  const values = withShownTimes(sh.getDataRange());
   const head = values.shift().map((h) => String(h).trim().toLowerCase());
   return values.map((r) => {
     const o = {};
     head.forEach((h, i) => { o[h] = r[i]; });
     return o;
   }).filter((o) => String(o.status).trim() === 'Published' && o.event_code && o.date).map((o) => {
+    if (!o.poster_link && isLink(o.photo_check)) o.poster_link = o.photo_check; // photo pasted one column too far
     const ev = {};
     PUBLIC_FIELDS.forEach((h) => {
       let v = o[h];
       if (h === 'date' && v instanceof Date) v = Utilities.formatDate(v, TZ, 'yyyy-MM-dd');
-      else if (h === 'start_time' && v instanceof Date) v = Utilities.formatDate(v, TZ, 'HH:mm');
       else if (h === 'start_time' && v) v = normalTime(String(v));
       ev[h] = v === undefined || v === null ? '' : String(v).trim();
     });
@@ -210,11 +215,11 @@ function publishedEvents() {
   });
 }
 function normalTime(s) {
-  const m = s.trim().match(/^(\d{1,2})[:.](\d{2})\s*(am|pm)?$/i);
+  const m = s.trim().match(/^(\d{1,2})[:.](\d{2})(?:[:.]\d{2})?\s*([ap]\.?m\.?)?$/i);
   if (!m) return s;
   let h = parseInt(m[1], 10);
-  if (m[3] && /pm/i.test(m[3]) && h < 12) h += 12;
-  if (m[3] && /am/i.test(m[3]) && h === 12) h = 0;
+  if (m[3] && /p/i.test(m[3]) && h < 12) h += 12;
+  if (m[3] && /a/i.test(m[3]) && h === 12) h = 0;
   return ('0' + h).slice(-2) + ':' + m[2];
 }
 function publicWishes(code) {
@@ -269,9 +274,20 @@ function notify(subject, body) {
  * The first request holds the slot, so two artists can never get the same one.
  * In Applications set status to Approved (slot Booked, Draft row added to Events)
  * or Rejected (slot Open again). */
+// Time-only cells come back as dates in 1899, and time zone maths on those dates is
+// wrong by minutes or hours. Use the time exactly as the cell shows it instead.
+function withShownTimes(range) {
+  const v = range.getValues(), shown = range.getDisplayValues();
+  const head = v[0].map((h) => String(h).trim().toLowerCase());
+  ['start_time', 'end_time'].forEach((k) => {
+    const c = head.indexOf(k); if (c < 0) return;
+    for (let r = 1; r < v.length; r++) if (v[r][c] instanceof Date) v[r][c] = shown[r][c];
+  });
+  return v;
+}
 function rowsOf(name) {
   const sh = book().getSheetByName(name);
-  const v = sh.getDataRange().getValues(); const h = v.shift().map(String);
+  const v = withShownTimes(sh.getDataRange()); const h = v.shift().map(String);
   return { sh, h, rows: v, col: (k) => h.indexOf(k) };
 }
 function slotTime(v) { return v instanceof Date ? Utilities.formatDate(v, TZ, 'HH:mm') : normalTime(String(v || '')); }
@@ -382,6 +398,7 @@ function ensureSize(sh, rows, cols) {
   if (sh.getMaxRows() < rows) sh.insertRowsAfter(sh.getMaxRows(), rows - sh.getMaxRows());
   if (sh.getMaxColumns() < cols) sh.insertColumnsAfter(sh.getMaxColumns(), cols - sh.getMaxColumns());
 }
+function isLink(v) { return /^https?:\/\//i.test(String(v || '').trim()); }
 function json(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
 function columnLetter(n) { let s = ''; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; }
 

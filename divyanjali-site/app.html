@@ -7,9 +7,13 @@
 <meta name="description" content="Divyanjali, Bharatanatyam since 1994, CIT Nagar, Chennai. Upcoming performances, arangetrams, workshops and the Dance Season calendar.">
 <meta property="og:title" content="Divyanjali Events">
 <meta property="og:description" content="Performances, arangetrams and workshops by Divyanjali, Chennai.">
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#FFFFFF">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&amp;family=Montserrat:wght@400;500;600&amp;display=swap">
+<link rel="stylesheet" href="/assets/site.css">
 <style>
 /* Layout: one calm column, cream bands between sections, saffron used only as a thin marker and for actions */
 :root{
@@ -21,6 +25,7 @@
   color-scheme: light;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6}
@@ -57,6 +62,8 @@ section.alt{background:var(--cream)}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
 .logo .ring{width:38px;height:38px;border:1.5px solid var(--saffron);border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-size:1.3rem;font-weight:600;color:var(--deep)}
 .logo b{font-family:var(--serif);font-size:1.45rem;font-weight:600}
+.logo img{display:block;height:45px;width:auto}
+footer .logo img{height:55px}
 .nav{display:flex;align-items:center;gap:22px;font-size:.82rem;font-weight:500}
 .nav a{color:var(--ink);text-decoration:none}
 .nav a:hover{color:var(--deep)}
@@ -73,7 +80,7 @@ section.alt{background:var(--cream)}
 
 /* poster */
 .poster{position:relative;aspect-ratio:5/3;max-width:100%;border-radius:6px;overflow:hidden;background:var(--cream);border:1px solid var(--line)}
-.poster img{width:100%;height:100%;object-fit:cover}
+.poster img{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:cover;background:var(--cream)}
 .pfb{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:18px;background:radial-gradient(circle at 78% 28%,transparent 0 46px,var(--saffron) 47px 48px,transparent 49px 66px,var(--gold) 67px 67.6px,transparent 68.6px),var(--tint)}
 .pfb span{font-family:var(--serif);font-size:1.5rem;font-weight:600;line-height:1.1;color:var(--ink);max-width:70%}
 .pfb small{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:6px}
@@ -122,6 +129,17 @@ section.alt{background:var(--cream)}
 dialog{border:0;border-radius:8px;padding:0;width:min(560px,calc(100% - 32px));max-height:88vh;color:var(--ink);background:var(--bg)}
 dialog::backdrop{background:rgba(30,22,18,.5)}
 .dlg{padding:24px;display:flex;flex-direction:column;gap:14px}
+/* full-screen photo viewer */
+.poster img{cursor:zoom-in}
+#viewer{position:fixed;inset:0;width:100vw;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;border-radius:0;background:rgba(15,10,8,.95);overflow:hidden}
+#viewer::backdrop{background:rgba(15,10,8,.95)}
+#viewer img{display:block;width:100%;height:100%;object-fit:contain;padding:calc(56px + env(safe-area-inset-top,0px)) 8px calc(16px + env(safe-area-inset-bottom,0px));cursor:zoom-out}
+#viewer .vx{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));right:8px;width:48px;height:48px;border:0;border-radius:50%;background:rgba(255,255,255,.14);color:#FFFFFF;font:inherit;font-size:1.8rem;line-height:1;cursor:pointer}
+#viewer p{position:fixed;left:16px;right:72px;top:calc(18px + env(safe-area-inset-top,0px));margin:0;color:#F6EDE6;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qnav{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding-top:14px;margin-top:4px}
+.qnav span{display:flex;flex-direction:column;align-items:center;font-size:.85rem;font-variant-numeric:tabular-nums}
+.qnav small{font-size:.72rem;color:var(--muted)}
+.qnav .ib:disabled{opacity:.3;cursor:default}
 .x{font:inherit;font-size:1.6rem;line-height:1;align-self:flex-end;width:44px;height:44px;margin:-14px -14px -10px 0;border:0;background:none;color:var(--ink);cursor:pointer}
 
 /* event page */
@@ -193,13 +211,9 @@ footer .logo b,footer .logo{color:#FFFFFF}
 <body>
 <header class="top">
   <div class="wrap">
-    <a class="logo" href="#top" aria-label="Divyanjali home"><span class="ring">D</span><b>Divyanjali</b></a>
-    <nav class="nav" aria-label="Main">
-      <a class="hide-s" href="#upcoming">Upcoming</a>
-      <a class="hide-s" href="#calendar">Calendar</a>
-      <a class="hide-s" href="#past">Past events</a>
-      <a class="hide-s" href="#perform">Perform</a>
-      <a class="btn" href="#enquire">Book &amp; enquire</a>
+    <a class="logo" href="/" aria-label="Divyanjali home"><img src="/assets/logo-mark.webp" alt="" width="46" height="45"><b>Divyanjali</b></a>
+    <nav class="nav" aria-label="Main"><div class="dd hide-m"><a class="dd-t" href="/about" aria-haspopup="true">About<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a><div class="dd-p"><a href="/about"><b>Dance school</b><small>Divyanjali since 1994</small></a><a href="/divyasena"><b>Dr. S. Divyasena</b><small>Founder and guru</small></a><a href="/haribabu"><b>Sri B.P. Haribabu</b><small>Mridangam and rhythm</small></a><a href="/media"><b>Media Room</b><small>Press kit, facts and photos</small></a></div></div><div class="dd hide-m"><a class="dd-t" href="/30-years" aria-haspopup="true">30 Years<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a><div class="dd-p"><a href="/30-years#souvenir"><b>The souvenir book</b><small>Page through Souvenir 2026</small></a><a href="/30-years#messages"><b>Messages</b><small>From fellow artists</small></a><a href="/30-years#timeline"><b>Timeline</b><small>1994 to 2024, year by year</small></a><a href="/30-years#flood"><b>The 2015 flood</b><small>And the way back</small></a></div></div><div class="dd hide-m"><a class="dd-t" href="/accolades" aria-haspopup="true">Accolades<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a><div class="dd-p"><a href="/accolades"><b>All dancers</b><small>Every profile in one place</small></a><a href="/accolades#faculty"><b>Faculty</b><small>Our teachers</small></a><a href="/accolades#students"><b>Students</b><small>Students and alumni</small></a></div></div><div class="dd hide-m r"><a class="dd-t" href="/choreographies" aria-haspopup="true">Choreographies<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a><div class="dd-p"><a href="/choreographies"><b>All productions</b><small>Every production, newest first</small></a><a href="/productions/hanumath-margam"><b>Hanumath Margam</b><small>World premiere, 2026</small></a><a href="/productions/andal-vaibhavam"><b>Andal Vaibhavam</b><small>Staged on 13 stages in a year</small></a><a href="/productions/thirumurugaatrupadai"><b>Thirumurugaatrupadai</b><small>A Sangam-era poem, staged</small></a><a href="/gallery"><b>Gallery</b><small>Photos and videos</small></a></div></div><div class="dd hide-m r"><a class="dd-t" href="/learn" aria-haspopup="true">Learn<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a><div class="dd-p"><a href="/learn#finder"><b>Find your class</b><small>Three taps to the right batch</small></a><a href="/learn#path"><b>The path</b><small>From adavus to arangetram</small></a><a href="/learn#batches"><b>Batches and timings</b><small>Days, times and places</small></a><a href="/natya-iq"><b>Natya IQ</b><small>Games to practise theory</small></a><a href="/store"><b>Store</b><small>Books, the CD and more</small></a></div></div><a class="navcal" href="/events" aria-current="page">Calendar</a><a class="btn" href="/book">Book &amp; enquire</a>
+      <details class="menu"><summary aria-label="Menu">☰</summary><div class="menu-panel"><a href="/">Home</a><details class="mg"><summary>About<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></summary><a class="menu-sub" href="/about">Dance school</a><a class="menu-sub" href="/divyasena">Dr. S. Divyasena</a><a class="menu-sub" href="/haribabu">Sri B.P. Haribabu</a><a class="menu-sub" href="/media">Media Room</a></details><details class="mg"><summary>30 Years<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></summary><a class="menu-sub" href="/30-years#souvenir">The souvenir book</a><a class="menu-sub" href="/30-years#messages">Messages</a><a class="menu-sub" href="/30-years#timeline">Timeline</a><a class="menu-sub" href="/30-years#flood">The 2015 flood</a></details><details class="mg"><summary>Accolades<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></summary><a class="menu-sub" href="/accolades">All dancers</a><a class="menu-sub" href="/accolades#faculty">Faculty</a><a class="menu-sub" href="/accolades#students">Students</a></details><details class="mg"><summary>Choreographies<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></summary><a class="menu-sub" href="/choreographies">All productions</a><a class="menu-sub" href="/productions/hanumath-margam">Hanumath Margam</a><a class="menu-sub" href="/productions/andal-vaibhavam">Andal Vaibhavam</a><a class="menu-sub" href="/productions/thirumurugaatrupadai">Thirumurugaatrupadai</a><a class="menu-sub" href="/gallery">Gallery</a></details><details class="mg"><summary>Learn<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></summary><a class="menu-sub" href="/learn#finder">Find your class</a><a class="menu-sub" href="/learn#path">The path</a><a class="menu-sub" href="/learn#batches">Batches and timings</a><a class="menu-sub" href="/natya-iq">Natya IQ</a><a class="menu-sub" href="/store">Store</a></details><a href="/events" aria-current="page">Events calendar</a><a class="menu-cta" href="/book">Book and Enquire</a></div></details>
     </nav>
   </div>
 </header>
@@ -243,14 +257,14 @@ footer .logo b,footer .logo{color:#FFFFFF}
     </div>
   </section>
 
-  <section class="alt" id="past">
+  <section class="alt" id="past" data-show="past">
     <div class="wrap">
       <div class="sec-head"><div><p class="eyebrow">From our stage</p><h2>Past events</h2></div><a class="btn-o" href="#archive">See all past events</a></div>
       <div class="cards" id="pastList"></div>
     </div>
   </section>
 
-  <section id="perform">
+  <section id="perform" data-show="forms">
     <div class="wrap two">
       <div class="stack">
         <p class="eyebrow">For dancers</p>
@@ -291,7 +305,7 @@ footer .logo b,footer .logo{color:#FFFFFF}
     </div>
   </section>
 
-  <section class="alt" id="enquire">
+  <section class="alt" id="enquire" data-show="forms">
     <div class="wrap two">
       <div class="stack">
         <p class="eyebrow">Book &amp; enquire</p>
@@ -337,22 +351,30 @@ footer .logo b,footer .logo{color:#FFFFFF}
 </main>
 
 <footer>
-  <div class="wrap">
-    <div class="stack" style="gap:8px"><a class="logo" href="#top"><span class="ring" style="border-color:#FFB37A;color:#FFFFFF">D</span><b>Divyanjali</b></a><p class="muted">Bharatanatyam since 1994 · CIT Nagar, Chennai</p></div>
-    <div class="stack" style="gap:4px"><p class="muted">Visit</p><p id="fAddr"></p><p id="fWa"></p></div>
-    <div class="stack" style="gap:4px"><p class="muted">Follow</p><a id="fIg" href="#">Instagram</a><a id="fYt" href="#">YouTube</a><a id="fFb" href="#">Facebook</a></div>
+  <div class="wrap cols">
+    <div class="stack" style="gap:8px"><a class="logo" href="/"><img src="/assets/logo-mark-white.webp" alt="" width="56" height="55"><b>Divyanjali</b></a><p class="muted">Bharatanatyam since 1994 · CIT Nagar, Chennai</p></div>
+    <div class="stack" style="gap:4px"><p class="muted">Visit</p><p id="fAddr">[Address], CIT Nagar, Chennai</p><p id="fWa">WhatsApp +919000000000</p></div>
+    <div class="stack" style="gap:4px"><p class="muted">Explore</p><a href="/about">About</a><a href="/choreographies">Choreographies</a><a href="/learn">Learn</a><a href="/events">Events</a><a href="/gallery">Gallery and Videos</a></div>
+    <div class="stack" style="gap:4px"><p class="muted">More</p><a href="/media">Media Room</a><a href="/store">Store</a><a href="/book">Book and Enquire</a><a href="/privacy">Privacy</a></div>
+    <div class="stack" style="gap:4px"><p class="muted">Follow</p><a id="fIg" href="https://www.instagram.com/divyanjalidance/" target="_blank" rel="noopener">Instagram</a><a id="fYt" href="https://www.youtube.com/channel/UCLPvhdH5qXt0R4IyDt1eSHg" target="_blank" rel="noopener">YouTube</a><a id="fFb" href="https://www.facebook.com/divyanjali.dance/" target="_blank" rel="noopener">Facebook</a></div>
   </div>
+  <div class="wrap fine">© Divyanjali Dance School and Trust, Chennai · <a href="/privacy">Privacy</a></div>
 </footer>
 <a class="wa" id="waFloat" href="#" aria-label="Chat with Divyanjali on WhatsApp"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20l1.5-4A8 8 0 1 1 8 18.5z"/></svg></a>
 <dialog id="dlg" aria-labelledby="dlgTitle"><div class="dlg" id="dlgBody"></div></dialog>
+<dialog id="viewer" aria-label="Poster, full size"><p id="viewerTitle"></p><button class="vx" type="button" aria-label="Close">×</button><img id="viewerImg" alt=""></dialog>
 
 <script>
 /* ===== Settings: change these four lines when going live ===== */
 const CONFIG = {
-  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycby1jf4-uZtCLtY4Im3zvBlnm5gMTmncxx-pIG14BjkDIAmzH8_J1lWOu5ThyC-vf4yt/exec',                                  // Apps Script web app URL (ends with /exec). Empty = demo data.
+  SUPABASE_URL: '',                                // set both to switch from the Google Sheet to Supabase, e.g. https://abcd.supabase.co
+  SUPABASE_KEY: '',                                // the anon / publishable key (public by design). Never the service_role key.
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwlZ0KujTvaUagVM4TVpEUeVyp2XH2svG3bRkh-k7ipESLJchbw4Bj6afAUSl-JWfWE/exec',                                  // Apps Script web app URL (ends with /exec). Empty = demo data.
   SITE_URL: /^https?:/.test(location.protocol) ? location.origin : 'https://divyanjalidance.com', // share links use the address the site is open on
   PRETTY_LINKS: true,                              // true: /e/CODE (Cloudflare Pages). false: /?e=CODE (GitHub Pages)
   WHATSAPP: '919000000000',                        // country code + number, digits only
+  SHOW_PAST: false,                                // true: show the Past events section and archive
+  SHOW_FORMS: false,                               // true: show the Perform in the Season and Book & enquire forms
   SEASON: 'Dance Season 2026–27 · November to January',
   ADDRESS: '[Address], CIT Nagar, Chennai',
   INSTAGRAM: '#', FACEBOOK: '#',
@@ -402,8 +424,47 @@ function normalize(e) {
   return Object.assign({}, e, { start, end, past: end < new Date(), mode: e.mode || 'In person', type: e.type || 'Performance' });
 }
 
+/* ===== Supabase (used when SUPABASE_URL and SUPABASE_KEY are set) ===== */
+const SB = () => CONFIG.SUPABASE_URL && CONFIG.SUPABASE_KEY;
+async function sb(path, opts = {}) {
+  const r = await fetch(CONFIG.SUPABASE_URL + '/rest/v1/' + path, Object.assign({}, opts, { headers: Object.assign({ apikey: CONFIG.SUPABASE_KEY, Authorization: 'Bearer ' + CONFIG.SUPABASE_KEY, 'Content-Type': 'application/json' }, opts.headers || {}) }));
+  if (!r.ok) throw new Error('Supabase ' + r.status);
+  return r.status === 204 || r.status === 201 ? null : r.json();
+}
+// Database rows to the shape the page already uses. Uploaded posters win over Drive links.
+function fromDb(e) {
+  const o = {}; Object.keys(e).forEach((k) => { o[k] = e[k] == null ? '' : String(e[k]); });
+  o.start_time = o.start_time.slice(0, 5);
+  if (e.poster) o.poster_link = CONFIG.SUPABASE_URL + '/storage/v1/object/public/posters/' + encodeURIComponent(e.poster);
+  return o;
+}
+async function sbPost(d) {
+  if (d.website) return { ok: true };                                   // spam trap: pretend success
+  const t = (v, n) => (v == null ? '' : String(v)).trim().slice(0, n || 500) || null;
+  if (d.form === 'response') {
+    await sb('responses', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ event_code: t(d.event_code, 60), kind: t(d.kind, 20), name: t(d.name, 80), city: t(d.city, 80), rating: d.rating ? Number(d.rating) : null, message: t(d.message, 2000), show_public: d.show_public === 'Yes' }) });
+    return { ok: true };
+  }
+  if (d.form === 'enquiry') {
+    await sb('enquiries', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ enquiry_type: t(d.enquiry_type, 60), from_event_code: t(d.from_event_code, 60), name: t(d.name, 80), organisation: t(d.organisation, 120), whatsapp: t(d.whatsapp, 20), email: t(d.email, 120), date_needed: t(d.date_needed, 10), message: t(d.message, 2000) }) });
+    return { ok: true };
+  }
+  if (d.form === 'application') {
+    return sb('rpc/request_slot', { method: 'POST', body: JSON.stringify({ p_slot: d.slot_id, p_artist: d.artist_name, p_whatsapp: d.whatsapp, p_format: t(d.format), p_dancers: t(d.dancers), p_guru: t(d.guru), p_programme: t(d.programme, 1500), p_music: t(d.music), p_email: t(d.email), p_city: t(d.city), p_video: t(d.video_link), p_message: t(d.message, 1500) }) });
+  }
+  return { ok: false, error: 'Unknown form' };
+}
+
 async function loadEvents() {
-  if (CONFIG.SCRIPT_URL) {
+  if (SB()) {
+    try {
+      const rows = await sb('events?select=*&status=eq.Published&order=date,start_time');
+      const list = rows.map(fromDb); store('dv_events', list); return list;
+    } catch (err) {
+      const cached = store('dv_events');
+      if (cached) return cached;
+    }
+  } else if (CONFIG.SCRIPT_URL) {
     try {
       const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), 8000);
       const r = await fetch(CONFIG.SCRIPT_URL + '?action=events', { signal: ctrl.signal });
@@ -420,6 +481,7 @@ async function loadEvents() {
 }
 
 async function post(payload) {
+  if (SB()) return sbPost(payload);
   if (!CONFIG.SCRIPT_URL) return { ok: true, demo: true };
   const r = await fetch(CONFIG.SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
   return r.json();
@@ -438,8 +500,14 @@ function downloadIcs(e) {
   a.download = e.event_code + '.ics'; document.body.appendChild(a); a.click(); a.remove();
 }
 
+// On the live site, Drive photos come through our own /img/ link: browsers often block Drive images.
+function posterSrc(e) {
+  const m = String(e.poster_link || '').match(/\/d\/([\w-]{20,})/) || String(e.poster_link || '').match(/[?&]id=([\w-]{20,})/);
+  if (m && CONFIG.PRETTY_LINKS && /^https?:/.test(location.protocol)) return '/img/' + encodeURIComponent(e.event_code) + '?p=' + m[1].slice(0, 8);
+  return driveImg(e.poster_link);
+}
 function poster(e, label) {
-  const src = driveImg(e.poster_link);
+  const src = posterSrc(e);
   const fb = '<div class="pfb"><span>' + esc(e.title) + '</span><small>' + esc(label || e.type) + '</small></div>';
   return '<div class="poster">' + fb + (src ? '<img src="' + esc(src) + '" alt="Poster: ' + esc(e.title) + '" loading="lazy" onerror="this.remove()">' : '') + '</div>';
 }
@@ -523,9 +591,24 @@ function openQuick(code) {
     (e.why_attend ? '<div class="why"><b>Why attend:</b> ' + esc(e.why_attend) + '</div>' : '') +
     '<dl class="dl"><dt>When</dt><dd>' + fmtLong(e.start) + ' · ' + fmtTime(e.start) + '</dd><dt>Where</dt><dd>' + where + (e.mode !== 'Online' && e.maps_link ? '<br><a href="' + esc(e.maps_link) + '" target="_blank" rel="noopener">Open in Google Maps</a>' : '') + '</dd><dt>Entry</dt><dd>' + esc(e.entry || '') + '</dd></dl>' +
     '<div class="row"><a class="btn" href="#e-' + esc(e.event_code) + '" data-close>Open event page</a>' + (e.past ? '' : '<a class="btn-o" href="' + gcalLink(e) + '" target="_blank" rel="noopener">Add to calendar</a>') + '<button class="btn-o" type="button" data-share="' + esc(e.event_code) + '" aria-expanded="false" aria-controls="qShare">Share</button></div>' +
-    '<div id="qShare" class="stack" style="gap:10px" hidden><div class="sg">' + shareLinks(e) + '</div><p class="muted">Event link: <span style="user-select:all">' + esc(shareUrl(e.event_code)) + '</span></p></div>';
-  $('#dlg').showModal();
+    '<div id="qShare" class="stack" style="gap:10px" hidden><div class="sg">' + shareLinks(e) + '</div><p class="muted">Event link: <span style="user-select:all">' + esc(shareUrl(e.event_code)) + '</span></p></div>' +
+    quickNav(e);
+  $('#dlg').scrollTop = 0;
+  if (!$('#dlg').open) $('#dlg').showModal();
 }
+// Previous / next through the events in the calendar (same filter), in date order.
+function quickList() { return state.events.filter((x) => state.filter === 'All' || x.type === state.filter); }
+function quickNav(e) {
+  const list = quickList(), i = list.findIndex((x) => x.event_code === e.event_code);
+  if (i < 0 || list.length < 2) return '';
+  const prev = list[i - 1], next = list[i + 1];
+  const btn = (x, label, cls) => x ? '<button class="ib qn ' + cls + '" type="button" data-code="' + esc(x.event_code) + '" aria-label="' + label + ': ' + esc(x.title) + '">' + (cls === 'p' ? '‹' : '›') + '</button>' : '<button class="ib qn" type="button" disabled aria-hidden="true">' + (cls === 'p' ? '‹' : '›') + '</button>';
+  return '<div class="qnav">' + btn(prev, 'Previous event', 'p') + '<span><span><b>' + (i + 1) + '</b> of ' + list.length + '</span><small>' + (next ? 'Next: ' + fmtDate(next.start) : 'Last event') + '</small></span>' + btn(next, 'Next event', 'n') + '</div>';
+}
+document.addEventListener('keydown', (ev) => {
+  if ($('#viewer').open || !$('#dlg').open || (ev.key !== 'ArrowLeft' && ev.key !== 'ArrowRight')) return;
+  const b = $('#dlgBody .qn.' + (ev.key === 'ArrowLeft' ? 'p' : 'n')); if (b) b.click();
+});
 function shareText(e) { return e.title + ' · ' + fmtDate(e.start) + ', ' + fmtTime(e.start) + (e.mode === 'Online' ? ' · Online' : ' · ' + (e.venue_name || '')) + '\n' + shareUrl(e.event_code); }
 function shareLinks(e) {
   const url = shareUrl(e.event_code), t = shareText(e);
@@ -539,7 +622,7 @@ function shareLinks(e) {
 }
 async function quickShare(btn) {
   const e = state.events.find((x) => x.event_code === btn.dataset.share); if (!e) return;
-  if (navigator.share) { try { await navigator.share({ title: e.title, text: shareText(e), url: shareUrl(e.event_code) }); return; } catch (err) { if (err && err.name === 'AbortError') return; } }
+  if (navigator.share) { try { await navigator.share({ title: e.title, text: shareText(e).split('\n')[0], url: shareUrl(e.event_code) }); return; } catch (err) { if (err && err.name === 'AbortError') return; } }
   const p = $('#qShare'); p.hidden = !p.hidden; btn.setAttribute('aria-expanded', String(!p.hidden));
 }
 async function copyLink(btn) {
@@ -611,14 +694,14 @@ function renderEvent(code) {
       (e.past ? '<label class="l" for="w_rating">Rating (optional)<select id="w_rating"><option value="">Choose</option><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></label>' : '') +
       '<label class="l" for="w_msg">Your message<textarea id="w_msg" required></textarea></label><label class="ck" for="w_pub"><input type="checkbox" id="w_pub"> Show my message on this page after review</label><input class="hp" tabindex="-1" autocomplete="off" id="w_hp" aria-hidden="true"><div class="row"><button class="btn" type="submit">Send</button></div><div id="w_box" role="status"></div></form>' +
       '<div class="wall" id="wall"></div></div></section>' +
-    '<section><div class="wrap cta"><div class="stack" style="gap:6px"><p class="eyebrow">' + cta[0] + '</p><h3>' + cta[1] + '</h3></div><div class="row"><a class="btn" href="#enquire" id="ctaBtn">' + cta[2] + '</a><a class="btn-o" href="' + waLink('Hello Divyanjali, I saw ' + e.title + ' (' + e.event_code + ') and would like to know more.') + '" target="_blank" rel="noopener">Reach us on WhatsApp</a></div></div></section>' +
+    '<section><div class="wrap cta"><div class="stack" style="gap:6px"><p class="eyebrow">' + cta[0] + '</p><h3>' + cta[1] + '</h3></div><div class="row">' + (CONFIG.SHOW_FORMS ? '<a class="btn" href="#enquire" id="ctaBtn">' + cta[2] + '</a>' : '') + '<a class="btn-o" href="' + waLink('Hello Divyanjali, I saw ' + e.title + ' (' + e.event_code + ') and would like to know more.') + '" target="_blank" rel="noopener">Reach us on WhatsApp</a></div></div></section>' +
     (more.length ? '<section class="alt"><div class="wrap"><div class="sec-head"><div><p class="eyebrow">More events</p><h2>Coming up</h2></div><a class="btn-o" href="#calendar">Full calendar</a></div><div class="cards">' + more.map(card).join('') + '</div></div></section>' : '');
 
-  $('#ctaBtn').addEventListener('click', () => { state.prefill = { type: cta[3], from: e.event_code, msg: 'About: ' + e.title }; });
+  if ($('#ctaBtn')) $('#ctaBtn').addEventListener('click', () => { state.prefill = { type: cta[3], from: e.event_code, msg: 'About: ' + e.title }; });
   const ics = $('#icsBtn'); if (ics) ics.addEventListener('click', () => downloadIcs(e));
   $('#wishJump').addEventListener('click', (ev) => { ev.preventDefault(); $('#wish').scrollIntoView(); $('#w_name').focus({ preventScroll: true }); });
   $('#shareBtn').addEventListener('click', async () => {
-    if (navigator.share) { try { await navigator.share({ title: e.title, text: shareText, url }); return; } catch (err) { if (err && err.name === 'AbortError') return; } }
+    if (navigator.share) { try { await navigator.share({ title: e.title, text: shareText.split('\n')[0], url }); return; } catch (err) { if (err && err.name === 'AbortError') return; } }
     const p = $('#sharePanel'); p.hidden = !p.hidden; $('#shareBtn').setAttribute('aria-expanded', String(!p.hidden));
   });
   $('#copyBtn').addEventListener('click', async () => {
@@ -644,6 +727,7 @@ function renderEvent(code) {
 async function loadWishes(code) {
   let list = [];
   if (state.demo) list = SAMPLE_WISHES;
+  else if (SB()) { try { list = await sb('public_wishes?select=kind,name,city,message&order=created_at.desc&limit=12&event_code=eq.' + encodeURIComponent(code)); } catch (err) { list = []; } }
   else if (CONFIG.SCRIPT_URL) { try { const r = await fetch(CONFIG.SCRIPT_URL + '?action=wishes&e=' + encodeURIComponent(code)); const j = await r.json(); list = j.wishes || []; } catch (err) { list = []; } }
   const wall = $('#wall'); if (!wall) return;
   wall.innerHTML = list.map((w) => '<blockquote><span class="badge tag" style="align-self:flex-start">' + esc(w.kind) + '</span><p>“' + esc(w.message) + '”</p><p class="muted">' + esc(w.name) + (w.city ? ', ' + esc(w.city) : '') + '</p></blockquote>').join('');
@@ -661,7 +745,9 @@ function applyPrefill() {
 async function loadSlots() {
   const box = $('#slotList');
   let res = null;
-  if (CONFIG.SCRIPT_URL) {
+  if (SB()) {
+    try { res = { open: true, slots: (await sb('slots?select=*&order=date,start_time')).map((x) => Object.assign(fromDb(x), { end_time: String(x.end_time || '').slice(0, 5) })) }; } catch (err) { res = null; }
+  } else if (CONFIG.SCRIPT_URL) {
     try {
       const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), 10000);
       const r = await fetch(CONFIG.SCRIPT_URL + '?action=slots', { signal: ctrl.signal });
@@ -736,7 +822,7 @@ function route() {
   const code = codeFromUrl();
   if (code) { renderEvent(code); return; }
   $('#eventView').hidden = true;
-  if (location.hash === '#archive') {
+  if (location.hash === '#archive' && CONFIG.SHOW_PAST) {
     document.title = 'Past events · Divyanjali';
     $('#home').hidden = true; $('#archiveView').hidden = false;
     renderArchive(); window.scrollTo(0, 0); return;
@@ -748,11 +834,20 @@ function route() {
   if (id) { const t = document.getElementById(id); if (t) t.scrollIntoView(); }
 }
 window.addEventListener('hashchange', () => {
-  if (/\/e\//.test(location.pathname) && !location.hash.startsWith('#e-')) { history.replaceState(null, '', '/' + location.hash); }
+  if (/\/e\//.test(location.pathname) && !location.hash.startsWith('#e-')) { history.replaceState(null, '', '/events' + location.hash); }
   route();
 });
 
+function openViewer(img) {
+  const v = $('#viewer');
+  $('#viewerImg').src = img.currentSrc || img.src;
+  $('#viewerImg').alt = img.alt;
+  $('#viewerTitle').textContent = img.alt.replace(/^Poster: /, '');
+  if (!v.open) v.showModal();
+}
+$('#viewer').addEventListener('click', () => $('#viewer').close());
 document.addEventListener('click', (ev) => {
+  const pic = ev.target.closest('.poster img'); if (pic) { openViewer(pic); return; }
   const t = ev.target.closest('button, a'); if (!t) return;
   if (t.matches('[data-close]')) { $('#dlg').close(); return; }
   if (t.dataset.share) { quickShare(t); return; }
@@ -768,6 +863,7 @@ $('#arcQ').addEventListener('input', (ev) => { state.arc.q = ev.target.value; re
 $('#dlg').addEventListener('click', (ev) => { if (ev.target === $('#dlg')) $('#dlg').close(); });
 
 (async function init() {
+  document.querySelectorAll('[data-show]').forEach((el) => { el.hidden = !(el.dataset.show === 'past' ? CONFIG.SHOW_PAST : CONFIG.SHOW_FORMS); });
   $('#season').textContent = CONFIG.SEASON;
   $('#fAddr').textContent = CONFIG.ADDRESS;
   $('#fWa').textContent = 'WhatsApp +' + CONFIG.WHATSAPP;
@@ -782,7 +878,7 @@ $('#dlg').addEventListener('click', (ev) => { if (ev.target === $('#dlg')) $('#d
   state.events = raw.filter((e) => e && e.event_code && e.date).map(normalize).sort((a, b) => a.start - b.start);
   $('#demo').hidden = !state.demo;
   route();
-  watchSlots();
+  if (CONFIG.SHOW_FORMS) watchSlots();
 })();
 </script>
 </body>

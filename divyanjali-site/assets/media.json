@@ -1,0 +1,8 @@
+{
+  "_how": "Add videos here. YouTube: paste the video link in 'link'. Instagram: paste the post or reel link in 'link'. 'cat' is the Gallery filter: Productions, Classes, Arangetrams, Season, 30 Years. Save, and the Gallery page updates.",
+  "youtube": [
+    { "link": "https://youtu.be/7g505MXqnec", "title": "Divyanjali on stage", "cat": "Productions" },
+    { "link": "https://www.youtube.com/watch?v=So5SO_M4zZ8", "title": "Dasavatharam · Ten avatars of Vishnu", "cat": "Productions" }
+  ],
+  "instagram": []
+}

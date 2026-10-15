@@ -1,8 +1,23 @@
 // Shared by the Vercel functions. Same logic as _worker.js (Cloudflare).
-export const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1jf4-uZtCLtY4Im3zvBlnm5gMTmncxx-pIG14BjkDIAmzH8_J1lWOu5ThyC-vf4yt/exec';
+export const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwlZ0KujTvaUagVM4TVpEUeVyp2XH2svG3bRkh-k7ipESLJchbw4Bj6afAUSl-JWfWE/exec';
 export const SITE_NAME = 'Divyanjali';
 
+// When SUPABASE_URL and SUPABASE_ANON_KEY are set in Vercel, events come from Supabase instead of the Google Sheet.
+const SB_URL = (typeof process !== 'undefined' && process.env.SUPABASE_URL) || '';
+const SB_KEY = (typeof process !== 'undefined' && process.env.SUPABASE_ANON_KEY) || '';
+async function supabaseEvents() {
+  const r = await fetch(SB_URL + '/rest/v1/events?select=*&status=eq.Published&order=date,start_time', { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
+  const rows = await r.json();
+  return rows.map((e) => {
+    const o = {}; Object.keys(e).forEach((k) => { o[k] = e[k] == null ? '' : String(e[k]); });
+    o.start_time = o.start_time.slice(0, 5);
+    if (e.poster) o.poster_link = SB_URL + '/storage/v1/object/public/posters/' + encodeURIComponent(e.poster);
+    return o;
+  });
+}
+
 export async function getEvents() {
+  if (SB_URL && SB_KEY) { try { return await supabaseEvents(); } catch (err) { return []; } }
   try {
     const r = await fetch(SCRIPT_URL + '?action=events', { redirect: 'follow' });
     const j = await r.json();
@@ -45,4 +60,10 @@ export function icsFeed(events, origin) {
   });
   lines.push('END:VCALENDAR');
   return lines.join('\r\n') + '\r\n';
+}
+
+// A short key that changes when the poster changes (Drive file id or uploaded file name).
+export function posterKey(u) {
+  const id = driveId(u); if (id) return id.slice(0, 8);
+  return /^https?:\/\//i.test(String(u || '')) ? String(u).split('/').pop().slice(0, 24) : '';
 }
