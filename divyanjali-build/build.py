@@ -992,26 +992,66 @@ def choreographies():
 {cta('Bring a production to your stage', 'Festivals, temples, sabhas and cultural bodies, in India and abroad.', 'Plan a performance', '/book?type=Performance+booking')}
 ''')
 
+PROD_PHOTOS = json.load(open(os.path.join(ROOT, 'prod_photos.json'), encoding='utf-8'))
+
 def production(p):
-    others = [x for x in PRODUCTIONS if x['slug'] and x['slug'] != p['slug']][:3]
-    credits = ''.join(f'<div><span>{e(k)}</span><b>{e(v)}</b></div>' for k, v in p['credits'])
-    video = yt(p['video'], p['title']) if p.get('video') else f'<a class="ig" href="https://www.youtube.com/channel/UCLPvhdH5qXt0R4IyDt1eSHg" target="_blank" rel="noopener" style="aspect-ratio:16/9"><b>Video coming soon · our YouTube channel ›</b></a>'
-    return page('/productions/' + p['slug'], f"{p['title']} · Divyanjali production", (p['story'][:150] + '…'), f'''
+    key = prod_key(p)
+    photos = PROD_PHOTOS.get(key, [])
+    live = [x for x in PRODUCTIONS if x['slug']]
+    i = live.index(p)
+    prev_p, next_p = live[i - 1], live[(i + 1) % len(live)]
+    others = [x for x in live if x['slug'] != p['slug'] and set(x['cats']) & set(p['cats'])][:3] or [x for x in live if x['slug'] != p['slug']][:3]
+    book_url = f"/book?type=Performance+booking&amp;production={e(p['title'])}"
+    if photos:
+        f, w, h = photos[0]
+        hero = f'<img src="/assets/img/{f}" alt="{e(p["title"])} on stage" width="{w}" height="{h}" fetchpriority="high">'
+    else:
+        hero = ''
+    gal = ''.join(f'<figure class="ph pg-i reveal" style="--i:{n % 6}"><img src="/assets/img/{f}" alt="{e(p["title"])}, photo {n + 1}" width="{w}" height="{h}" loading="lazy"></figure>' for n, (f, w, h) in enumerate(photos))
+    video = yt(p['video'], p['title']) if p.get('video') else ''
+    facts = [('Year', p['year'] or 'In the repertoire')] + list(p['credits']) + [('Suits', p['suits']), ('Music', 'Live orchestra or recorded')]
+    ld = {'@context': 'https://schema.org', '@type': 'CreativeWork', 'name': p['title'], 'genre': 'Bharatanatyam dance production',
+          'description': p['story'], 'creator': {'@type': 'Person', 'name': 'Dr. S. Divyasena'}, 'producer': {'@type': 'DanceGroup', 'name': 'Divyanjali'}}
+    if p['year']: ld['dateCreated'] = p['year']
+    if photos: ld['image'] = '/assets/img/' + photos[0][0]
+    return page('/productions/' + p['slug'], f"{p['title']} · Bharatanatyam production by Divyanjali", (p['story'][:150] + '…'), f'''
 {crumbs(('Choreographies', '/choreographies'), (p['title'], None))}
-<div class="prod-hero" style="margin-top:12px">{ph(f"prod-{p['slug']}.jpg", 'poster or stage still · ' + p['title'], '2100×900')}</div>
-<section class="band" style="padding:0"><div class="wrap"><div class="stack" style="gap:8px"><div class="row" style="gap:6px">{''.join(f'<span class="badge tag">{e(c)}</span>' for c in p['cats'])}</div><h1>{e(p['title'])}</h1><p>{e(p['line'])}</p></div>
-  <div class="row"><a class="btn" href="/book?type=Performance+booking&amp;production={e(p['title'])}">Plan this production</a></div></div></section>
-<section><div class="wrap two">
-  <div class="stack">{head('The story', 'What the audience sees')}<p style="font-size:1.08rem">{e(p['story'])}</p></div>
-  <div class="facts"><div><span>Year</span><b>{e(p['year'] or 'Repertoire')}</b></div>{credits}<div><span>Music</span><b>Live or recorded</b></div><div><span>Suits</span><b>{e(p['suits'])}</b></div><div><span>Duration</span><b>{todo('Add')}</b></div></div>
+<header class="pr-hero{' has-img' if hero else ''}">
+  {hero}
+  <div class="wrap pr-hero-in">
+    <div class="pr-tags">{''.join(f'<span>{e(c)}</span>' for c in p['cats'])}</div>
+    <h1>{e(p['title'])}</h1>
+    <p class="pr-line">{e(p['line'])}{' · ' + e(p['year']) if p['year'] else ''}</p>
+    <div class="row"><a class="btn" href="{book_url}">Stage this production</a><button class="btn-o pr-share" type="button" data-share>Share</button><button class="btn-o pr-share" type="button" data-copy>Copy link</button></div>
+  </div>
+</header>
+
+<section><div class="wrap bio-two">
+  <div class="prose">
+    <h2>The story</h2>
+    <p class="pr-story">{e(p['story'])}</p>
+    {f'<p class="muted">From the Souvenir 2026. <a href="/30-years">Read the souvenir</a></p>' if photos else ''}
+  </div>
+  <aside class="facts-card" aria-label="Production details">
+    <h3>Details</h3>
+    <dl>{''.join(f'<dt>{e(k)}</dt><dd>{e(v)}</dd>' for k, v in facts)}<dt>Duration</dt><dd>{todo('Add')}</dd></dl>
+  </aside>
 </div></section>
-<section class="alt"><div class="wrap">{head('Watch', 'On stage')}
-  <div class="vids">{video}</div>
-  <div class="tiles" data-gallery style="margin-top:20px">{''.join(ph(f"prod-{p['slug']}-{i}.jpg", f"{p['title']} still {i}", '1200×900') for i in range(1, 5))}</div></div></section>
-<section><div class="wrap">{head('More productions', 'Keep exploring', '<a class="btn-o" href="/choreographies#all">All productions</a>')}
+
+{f"""<section class="alt"><div class="wrap">{head('On stage', 'Photos')}<p class="muted bio-sub">Tap a photo to see it full size.</p>
+  <div class="pg" data-gallery>{gal}</div></div></section>""" if photos else ''}
+{f"""<section><div class="wrap">{head('Watch', 'On video')}<div class="vids">{video}</div></div></section>""" if video else ''}
+
+<nav class="pr-nav wrap" aria-label="More productions">
+  <a href="/productions/{prev_p['slug']}" class="pr-n prev"><small>‹ Previous</small><b>{e(prev_p['title'])}</b></a>
+  <a href="/choreographies" class="pr-all">All productions</a>
+  <a href="/productions/{next_p['slug']}" class="pr-n next"><small>Next ›</small><b>{e(next_p['title'])}</b></a>
+</nav>
+<section class="alt"><div class="wrap">{head('You may also like', 'Related productions')}
   <div class="tiles">{''.join(prod_card(x) for x in others)}</div></div></section>
-{cta(f"Stage {e(p['title'])} at your festival", 'Tell us the date, venue and audience. We reply on WhatsApp within 24 hours.', 'Plan this production', f"/book?type=Performance+booking&amp;production={e(p['title'])}")}
-''')
+{cta(f"Stage {e(p['title'])} at your festival", 'Tell us the date, venue and audience. We reply on WhatsApp within 24 hours.', 'Stage this production', book_url)}
+<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>
+''', extra_head=(f'<meta property="og:image" content="/assets/img/{photos[0][0]}">\n' if photos else '') + f'<link rel="canonical" href="/productions/{p["slug"]}">\n')
 
 PATH_STEPS = [
     ('Adavus', 'The basic steps and postures', 'Every dancer starts here: the adavus, the building blocks of Bharatanatyam, with the right posture, hands and footwork. The Nrithyaharam CD helps with practice at home.'),

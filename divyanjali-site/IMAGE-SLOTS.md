@@ -38,62 +38,6 @@ Videos and Instagram posts for the Gallery: edit `divyanjali-site/assets/media.j
 | `prod-veeram.jpg` | poster · Veeram | 1200×1500 | /choreographies |
 | `prod-sakthi-prabhavam.jpg` | poster · Sakthi Prabhavam | 1200×1500 | /choreographies |
 | `prod-rukmini-vivaham.jpg` | poster · Rukmini Vivaham | 1200×1500 | /choreographies |
-| `prod-hanumath-margam-1.jpg` | Hanumath Margam still 1 | 1200×900 | /productions/hanumath-margam |
-| `prod-hanumath-margam-2.jpg` | Hanumath Margam still 2 | 1200×900 | /productions/hanumath-margam |
-| `prod-hanumath-margam-3.jpg` | Hanumath Margam still 3 | 1200×900 | /productions/hanumath-margam |
-| `prod-hanumath-margam-4.jpg` | Hanumath Margam still 4 | 1200×900 | /productions/hanumath-margam |
-| `prod-thirumurugaatrupadai-1.jpg` | Thirumurugaatrupadai still 1 | 1200×900 | /productions/thirumurugaatrupadai |
-| `prod-thirumurugaatrupadai-2.jpg` | Thirumurugaatrupadai still 2 | 1200×900 | /productions/thirumurugaatrupadai |
-| `prod-thirumurugaatrupadai-3.jpg` | Thirumurugaatrupadai still 3 | 1200×900 | /productions/thirumurugaatrupadai |
-| `prod-thirumurugaatrupadai-4.jpg` | Thirumurugaatrupadai still 4 | 1200×900 | /productions/thirumurugaatrupadai |
-| `prod-shiva-shakti-margam-1.jpg` | Shiva Shakti Margam still 1 | 1200×900 | /productions/shiva-shakti-margam |
-| `prod-shiva-shakti-margam-2.jpg` | Shiva Shakti Margam still 2 | 1200×900 | /productions/shiva-shakti-margam |
-| `prod-shiva-shakti-margam-3.jpg` | Shiva Shakti Margam still 3 | 1200×900 | /productions/shiva-shakti-margam |
-| `prod-shiva-shakti-margam-4.jpg` | Shiva Shakti Margam still 4 | 1200×900 | /productions/shiva-shakti-margam |
-| `prod-dasavatharam-1.jpg` | Dasavatharam still 1 | 1200×900 | /productions/dasavatharam |
-| `prod-dasavatharam-2.jpg` | Dasavatharam still 2 | 1200×900 | /productions/dasavatharam |
-| `prod-dasavatharam-3.jpg` | Dasavatharam still 3 | 1200×900 | /productions/dasavatharam |
-| `prod-dasavatharam-4.jpg` | Dasavatharam still 4 | 1200×900 | /productions/dasavatharam |
-| `prod-annamayya-navarasa-nrithyamala-1.jpg` | Annamayya Navarasa Nrithyamala still 1 | 1200×900 | /productions/annamayya-navarasa-nrithyamala |
-| `prod-annamayya-navarasa-nrithyamala-2.jpg` | Annamayya Navarasa Nrithyamala still 2 | 1200×900 | /productions/annamayya-navarasa-nrithyamala |
-| `prod-annamayya-navarasa-nrithyamala-3.jpg` | Annamayya Navarasa Nrithyamala still 3 | 1200×900 | /productions/annamayya-navarasa-nrithyamala |
-| `prod-annamayya-navarasa-nrithyamala-4.jpg` | Annamayya Navarasa Nrithyamala still 4 | 1200×900 | /productions/annamayya-navarasa-nrithyamala |
-| `prod-andal-vaibhavam-1.jpg` | Andal Vaibhavam still 1 | 1200×900 | /productions/andal-vaibhavam |
-| `prod-andal-vaibhavam-2.jpg` | Andal Vaibhavam still 2 | 1200×900 | /productions/andal-vaibhavam |
-| `prod-andal-vaibhavam-3.jpg` | Andal Vaibhavam still 3 | 1200×900 | /productions/andal-vaibhavam |
-| `prod-andal-vaibhavam-4.jpg` | Andal Vaibhavam still 4 | 1200×900 | /productions/andal-vaibhavam |
-| `prod-nava-vidha-sambandham-1.jpg` | Nava Vidha Sambandham still 1 | 1200×900 | /productions/nava-vidha-sambandham |
-| `prod-nava-vidha-sambandham-2.jpg` | Nava Vidha Sambandham still 2 | 1200×900 | /productions/nava-vidha-sambandham |
-| `prod-nava-vidha-sambandham-3.jpg` | Nava Vidha Sambandham still 3 | 1200×900 | /productions/nava-vidha-sambandham |
-| `prod-nava-vidha-sambandham-4.jpg` | Nava Vidha Sambandham still 4 | 1200×900 | /productions/nava-vidha-sambandham |
-| `prod-tribute-to-lalgudi-1.jpg` | A Tribute to Lalgudi Sri G. Jayaraman still 1 | 1200×900 | /productions/tribute-to-lalgudi |
-| `prod-tribute-to-lalgudi-2.jpg` | A Tribute to Lalgudi Sri G. Jayaraman still 2 | 1200×900 | /productions/tribute-to-lalgudi |
-| `prod-tribute-to-lalgudi-3.jpg` | A Tribute to Lalgudi Sri G. Jayaraman still 3 | 1200×900 | /productions/tribute-to-lalgudi |
-| `prod-tribute-to-lalgudi-4.jpg` | A Tribute to Lalgudi Sri G. Jayaraman still 4 | 1200×900 | /productions/tribute-to-lalgudi |
-| `prod-krishna-margam-1.jpg` | Krishna Margam still 1 | 1200×900 | /productions/krishna-margam |
-| `prod-krishna-margam-2.jpg` | Krishna Margam still 2 | 1200×900 | /productions/krishna-margam |
-| `prod-krishna-margam-3.jpg` | Krishna Margam still 3 | 1200×900 | /productions/krishna-margam |
-| `prod-krishna-margam-4.jpg` | Krishna Margam still 4 | 1200×900 | /productions/krishna-margam |
-| `prod-laya-thrayam-1.jpg` | Laya Thrayam still 1 | 1200×900 | /productions/laya-thrayam |
-| `prod-laya-thrayam-2.jpg` | Laya Thrayam still 2 | 1200×900 | /productions/laya-thrayam |
-| `prod-laya-thrayam-3.jpg` | Laya Thrayam still 3 | 1200×900 | /productions/laya-thrayam |
-| `prod-laya-thrayam-4.jpg` | Laya Thrayam still 4 | 1200×900 | /productions/laya-thrayam |
-| `prod-pannum-bharathamum-1.jpg` | Pannum Bharathamum still 1 | 1200×900 | /productions/pannum-bharathamum |
-| `prod-pannum-bharathamum-2.jpg` | Pannum Bharathamum still 2 | 1200×900 | /productions/pannum-bharathamum |
-| `prod-pannum-bharathamum-3.jpg` | Pannum Bharathamum still 3 | 1200×900 | /productions/pannum-bharathamum |
-| `prod-pannum-bharathamum-4.jpg` | Pannum Bharathamum still 4 | 1200×900 | /productions/pannum-bharathamum |
-| `prod-jai-hanuman-1.jpg` | Jai Hanuman still 1 | 1200×900 | /productions/jai-hanuman |
-| `prod-jai-hanuman-2.jpg` | Jai Hanuman still 2 | 1200×900 | /productions/jai-hanuman |
-| `prod-jai-hanuman-3.jpg` | Jai Hanuman still 3 | 1200×900 | /productions/jai-hanuman |
-| `prod-jai-hanuman-4.jpg` | Jai Hanuman still 4 | 1200×900 | /productions/jai-hanuman |
-| `prod-thrayee-1.jpg` | Thrayee still 1 | 1200×900 | /productions/thrayee |
-| `prod-thrayee-2.jpg` | Thrayee still 2 | 1200×900 | /productions/thrayee |
-| `prod-thrayee-3.jpg` | Thrayee still 3 | 1200×900 | /productions/thrayee |
-| `prod-thrayee-4.jpg` | Thrayee still 4 | 1200×900 | /productions/thrayee |
-| `prod-puratchi-mandhaar-1.jpg` | Puratchi Mandhaar still 1 | 1200×900 | /productions/puratchi-mandhaar |
-| `prod-puratchi-mandhaar-2.jpg` | Puratchi Mandhaar still 2 | 1200×900 | /productions/puratchi-mandhaar |
-| `prod-puratchi-mandhaar-3.jpg` | Puratchi Mandhaar still 3 | 1200×900 | /productions/puratchi-mandhaar |
-| `prod-puratchi-mandhaar-4.jpg` | Puratchi Mandhaar still 4 | 1200×900 | /productions/puratchi-mandhaar |
 | `gallery-01.jpg` | Productions photo 1 | 1600×1200 | /gallery |
 | `gallery-02.jpg` | Classes photo 1 | 1600×1200 | /gallery |
 | `gallery-03.jpg` | Arangetrams photo 1 | 1600×1200 | /gallery |

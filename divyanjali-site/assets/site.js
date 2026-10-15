@@ -824,4 +824,6 @@ $$('form[data-enquiry]').forEach((f) => {
   }
   $$('[data-settype]').forEach((b) => b.addEventListener('click', () => apply(b.dataset.settype)));
   apply(f.elements['enquiry_type'].value);
+  const pr = new URLSearchParams(location.search).get('production'), sel = f.elements['production'];
+  if (pr && sel && [...sel.options].some((o) => o.value === pr)) sel.value = pr;
 })();
