@@ -686,3 +686,72 @@ $$('form[data-enquiry]').forEach((f) => {
       + '<a class="ig" href="https://www.instagram.com/divyanjalidance/" target="_blank" rel="noopener"><b>Follow @divyanjalidance ›</b></a>';
   }
 })();
+
+/* ----- About: the story one year at a time. Tap a year, use the arrows, swipe, or the arrow keys ----- */
+(function yearRail() {
+  const box = $('[data-yr]'); if (!box) return;
+  const tabs = $$('.yr-rail button', box), panels = $$('.yr-p', box), rail = $('.yr-rail', box);
+  let cur = 0;
+  function go(i, focus) {
+    cur = (i + tabs.length) % tabs.length;
+    tabs.forEach((t, j) => { t.setAttribute('aria-selected', String(j === cur)); t.tabIndex = j === cur ? 0 : -1; });
+    panels.forEach((p, j) => { p.hidden = j !== cur; });
+    const t = tabs[cur];
+    rail.scrollTo({ left: t.offsetLeft - rail.clientWidth / 2 + t.offsetWidth / 2, behavior: reduceMotion ? 'auto' : 'smooth' });
+    if (focus) t.focus({ preventScroll: true });
+  }
+  tabs.forEach((t, i) => t.addEventListener('click', () => go(i)));
+  rail.addEventListener('keydown', (ev) => {
+    if (ev.key === 'ArrowRight') { ev.preventDefault(); go(cur + 1, true); }
+    if (ev.key === 'ArrowLeft') { ev.preventDefault(); go(cur - 1, true); }
+  });
+  $$('[data-yr-step]', box).forEach((b) => b.addEventListener('click', () => go(cur + Number(b.dataset.yrStep))));
+  let x0 = null;
+  panels.forEach((p) => {
+    p.addEventListener('touchstart', (ev) => { x0 = ev.touches[0].clientX; }, { passive: true });
+    p.addEventListener('touchend', (ev) => { if (x0 === null) return; const dx = ev.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 45) go(cur + (dx < 0 ? 1 : -1)); });
+  });
+  go(0);
+})();
+
+/* ----- Haribabu: count a tala with the hands. Beats light up in time, with a soft click on each ----- */
+(function talaCounter() {
+  const box = $('[data-tala]'); if (!box) return;
+  const TALAS = {
+    adi: { gaps: [4, 6], beats: [['Clap', 'ta'], ['Little finger', 'ka'], ['Ring finger', 'di'], ['Middle finger', 'mi'], ['Clap', 'ta'], ['Wave', 'ka'], ['Clap', 'di'], ['Wave', 'mi']] },
+    rupaka: { gaps: [2], beats: [['Clap', 'ta'], ['Wave', 'ka'], ['Clap', 'di'], ['Little finger', 'mi'], ['Ring finger', 'ta'], ['Middle finger', 'ka']] }
+  };
+  const list = $('.tala-beats', box), play = $('.tala-play', box), range = $('input[type=range]', box), out = $('output', box), snd = $('.tala-snd input', box);
+  let tala = 'adi', i = -1, timer = null, ctx = null;
+  function draw() {
+    const t = TALAS[tala];
+    list.classList.toggle('six', t.beats.length === 6);
+    list.innerHTML = t.beats.map((b, j) => '<li class="' + (j === 0 ? 'sam' : '') + (t.gaps.includes(j) ? ' gap' : '') + '"><b>' + (j + 1) + '</b><span>' + esc(b[0]) + '</span><i>' + esc(b[1]) + '</i></li>').join('');
+  }
+  function click(strong) {
+    if (!snd.checked) return;
+    try {
+      ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+      const o = ctx.createOscillator(), g = ctx.createGain(), now = ctx.currentTime;
+      o.frequency.value = strong ? 1250 : 820; o.type = 'triangle';
+      g.gain.setValueAtTime(0.0001, now); g.gain.exponentialRampToValueAtTime(strong ? 0.5 : 0.28, now + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, now + 0.09);
+      o.connect(g).connect(ctx.destination); o.start(now); o.stop(now + 0.1);
+    } catch (err) { /* no sound on this browser; the beats still light up */ }
+  }
+  function tick() {
+    const items = $$('li', list);
+    i = (i + 1) % items.length;
+    items.forEach((li, j) => li.classList.toggle('on', j === i));
+    click(i === 0);
+  }
+  function stop() { clearInterval(timer); timer = null; i = -1; $$('li', list).forEach((li) => li.classList.remove('on')); play.textContent = 'Play'; play.setAttribute('aria-pressed', 'false'); }
+  function start() { if (ctx && ctx.state === 'suspended') ctx.resume(); stop(); tick(); timer = setInterval(tick, 60000 / Number(range.value)); play.textContent = 'Stop'; play.setAttribute('aria-pressed', 'true'); }
+  play.addEventListener('click', () => (timer ? stop() : start()));
+  range.addEventListener('input', () => { out.value = range.value; if (timer) { clearInterval(timer); timer = setInterval(tick, 60000 / Number(range.value)); } });
+  $$('.tala-pick button', box).forEach((b) => b.addEventListener('click', () => {
+    $$('.tala-pick button', box).forEach((x) => x.setAttribute('aria-checked', String(x === b)));
+    tala = b.dataset.t; const was = !!timer; stop(); draw(); if (was) start();
+  }));
+  document.addEventListener('visibilitychange', () => { if (document.hidden && timer) stop(); });
+  draw();
+})();

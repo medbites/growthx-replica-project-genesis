@@ -14,21 +14,9 @@ Videos and Instagram posts for the Gallery: edit `divyanjali-site/assets/media.j
 | `prod-dasavatharam.jpg` | poster · Dasavatharam | 1500×900 | / |
 | `prod-andal-vaibhavam.jpg` | poster · Andal Vaibhavam | 1500×900 | / |
 | `home-natyaiq.jpg` | Natya IQ share card | 1080×1080 | / |
-| `about-hero.jpg` | the school, a class in progress | 1600×1200 | /about |
-| `teach-technique.jpg` | adavu practice | 1200×900 | /about |
-| `teach-laya.jpg` | laya class with mridangam | 1200×900 | /about |
-| `teach-abhinaya.jpg` | abhinaya, expression | 1200×900 | /about |
-| `teach-theory.jpg` | theory class | 1200×900 | /about |
-| `founder-divyasena.jpg` | Dr. S. Divyasena | 1200×1500 | /about |
-| `founder-haribabu.jpg` | Sri B.P. Haribabu | 1200×1500 | /about |
-| `faculty-aiswarya.jpg` | Aiswarya Ramanan | 800×1000 | /about |
-| `faculty-mahati.jpg` | S. Mahati | 800×1000 | /about |
-| `faculty-harini.jpg` | Harini N. | 800×1000 | /about |
-| `faculty-upanisha.jpg` | Upanisha K. | 800×1000 | /about |
 | `book-essence.png` | mock-up · Essence and Essentials of Dance (PNG, transparent background) | 1200×1200 | /divyasena |
 | `book-duta-mahima.png` | mock-up · Duta Mahima (PNG, transparent background) | 1200×1200 | /divyasena |
 | `cd-nrithyaharam.png` | mock-up · Nrithyaharam (PNG, transparent background) | 1200×1200 | /divyasena |
-| `haribabu-portrait.jpg` | Sri B.P. Haribabu with mridangam | 1200×1500 | /haribabu |
 | `flood-before.jpg` | the workspace after the flood | 1200×900 | /30-years |
 | `flood-after.jpg` | the rebuilt library | 1200×900 | /30-years |
 | `prod-pasurapadi-ramayanam.jpg` | poster · Pasurapadi Ramayanam | 1200×1500 | /choreographies |
@@ -110,6 +98,10 @@ Videos and Instagram posts for the Gallery: edit `divyanjali-site/assets/media.j
 | `learn-children.jpg` | children's batch | 1200×900 | /learn |
 | `learn-adults.jpg` | teens and adults batch | 1200×900 | /learn |
 | `learn-online.jpg` | online class on a laptop | 1200×900 | /learn |
+| `founder-divyasena.jpg` | Dr. S. Divyasena | 800×1000 | /learn |
+| `founder-haribabu.jpg` | Sri B.P. Haribabu | 800×1000 | /learn |
+| `faculty-aiswarya.jpg` | Aiswarya Ramanan | 800×1000 | /learn |
+| `faculty-mahati.jpg` | S. Mahati | 800×1000 | /learn |
 | `book-festival.jpg` | festival stage | 1200×900 | /book |
 | `book-temple.jpg` | temple performance | 1200×900 | /book |
 | `book-cultural.jpg` | cultural body event | 1200×900 | /book |

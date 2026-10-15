@@ -58,7 +58,7 @@ def stats(items):
             out += f'<div class="stat reveal">{inner}</div>'
     return f'<div class="stats">{out}</div>'
 
-ICONS = {'person-arms-spread': '<path d="M104,40a24,24,0,1,1,24,24A24,24,0,0,1,104,40ZM212,80H44c-12.87,0-16.71,17.5-5,22.9L96,128,73.13,214.93a12,12,0,0,0,21.75,10.14L128,168l33.12,57.07a12,12,0,0,0,21.75-10.14L160,128l57-25.1C228.69,97.5,224.85,80,212,80Z" opacity="0.2"/><path d="M160,40a32,32,0,1,0-32,32A32,32,0,0,0,160,40ZM128,56a16,16,0,1,1,16-16A16,16,0,0,1,128,56ZM231.5,87.71A19.62,19.62,0,0,0,212,72H44a20,20,0,0,0-8.38,38.16l.13.06,50.75,22.35-21,79.72A20,20,0,0,0,102,228.82l26-44.88,26,44.88a20,20,0,0,0,36.4-16.53l-21-79.72,50.75-22.35.13-.06A19.63,19.63,0,0,0,231.5,87.71Zm-17.8,7.9-56.93,25.07a8,8,0,0,0-4.51,9.36L175.13,217a7,7,0,0,0,.49,1.35,4,4,0,1,1-7.25,3.38c-.11-.22-.22-.43-.34-.63L134.92,164a8,8,0,0,0-13.84,0L88,221.06c-.12.2-.23.41-.34.63a4,4,0,1,1-7.25-3.38,7,7,0,0,0,.49-1.35L103.74,130a8,8,0,0,0-4.51-9.36L42.3,95.61A4,4,0,0,1,44,88H212a4,4,0,0,1,1.73,7.61Z"/>', 'person-simple-tai-chi': '<path d="M152,48a24,24,0,1,1-24-24A24,24,0,0,1,152,48Z" opacity="0.2"/><path d="M128,80A32,32,0,1,0,96,48,32,32,0,0,0,128,80Zm0-48a16,16,0,1,1-16,16A16,16,0,0,1,128,32Zm96,72a8,8,0,0,1-8,8H136v26.72l51.15,21.93A8,8,0,0,1,192,168v48a8,8,0,0,1-16,0V173.28l-46.45-19.91L53.35,222a8,8,0,1,1-10.7-11.9L120,140.44V112H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,104Z"/>', 'monitor-play': '<path d="M208,48H48A16,16,0,0,0,32,64V176a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V64A16,16,0,0,0,208,48ZM112,152V88l48,32Z" opacity="0.2"/><path d="M208,40H48A24,24,0,0,0,24,64V176a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V64A24,24,0,0,0,208,40Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V64a8,8,0,0,1,8-8H208a8,8,0,0,1,8,8Zm-48,48a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,224Zm-3.56-110.66-48-32A8,8,0,0,0,104,88v64a8,8,0,0,0,12.44,6.66l48-32a8,8,0,0,0,0-13.32ZM120,137.05V103l25.58,17Z"/>'}
+ICONS = {'person-arms-spread': '<path d="M104,40a24,24,0,1,1,24,24A24,24,0,0,1,104,40ZM212,80H44c-12.87,0-16.71,17.5-5,22.9L96,128,73.13,214.93a12,12,0,0,0,21.75,10.14L128,168l33.12,57.07a12,12,0,0,0,21.75-10.14L160,128l57-25.1C228.69,97.5,224.85,80,212,80Z" opacity="0.2"/><path d="M160,40a32,32,0,1,0-32,32A32,32,0,0,0,160,40ZM128,56a16,16,0,1,1,16-16A16,16,0,0,1,128,56ZM231.5,87.71A19.62,19.62,0,0,0,212,72H44a20,20,0,0,0-8.38,38.16l.13.06,50.75,22.35-21,79.72A20,20,0,0,0,102,228.82l26-44.88,26,44.88a20,20,0,0,0,36.4-16.53l-21-79.72,50.75-22.35.13-.06A19.63,19.63,0,0,0,231.5,87.71Zm-17.8,7.9-56.93,25.07a8,8,0,0,0-4.51,9.36L175.13,217a7,7,0,0,0,.49,1.35,4,4,0,1,1-7.25,3.38c-.11-.22-.22-.43-.34-.63L134.92,164a8,8,0,0,0-13.84,0L88,221.06c-.12.2-.23.41-.34.63a4,4,0,1,1-7.25-3.38,7,7,0,0,0,.49-1.35L103.74,130a8,8,0,0,0-4.51-9.36L42.3,95.61A4,4,0,0,1,44,88H212a4,4,0,0,1,1.73,7.61Z"/>', 'person-simple-tai-chi': '<path d="M152,48a24,24,0,1,1-24-24A24,24,0,0,1,152,48Z" opacity="0.2"/><path d="M128,80A32,32,0,1,0,96,48,32,32,0,0,0,128,80Zm0-48a16,16,0,1,1-16,16A16,16,0,0,1,128,32Zm96,72a8,8,0,0,1-8,8H136v26.72l51.15,21.93A8,8,0,0,1,192,168v48a8,8,0,0,1-16,0V173.28l-46.45-19.91L53.35,222a8,8,0,1,1-10.7-11.9L120,140.44V112H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,104Z"/>', 'monitor-play': '<path d="M208,48H48A16,16,0,0,0,32,64V176a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V64A16,16,0,0,0,208,48ZM112,152V88l48,32Z" opacity="0.2"/><path d="M208,40H48A24,24,0,0,0,24,64V176a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V64A24,24,0,0,0,208,40Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V64a8,8,0,0,1,8-8H208a8,8,0,0,1,8,8Zm-48,48a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,224Zm-3.56-110.66-48-32A8,8,0,0,0,104,88v64a8,8,0,0,0,12.44,6.66l48-32a8,8,0,0,0,0-13.32ZM120,137.05V103l25.58,17Z"/>', 'mask-happy': '<path d="M216,48v55.77C216,174.6,176.6,232,128,232S40,174.6,40,103.79V48a8,8,0,0,1,10.89-7.47C66,46.41,95.11,55.71,128,55.71s62-9.3,77.11-15.16A8,8,0,0,1,216,48Z" opacity="0.2"/><path d="M217,34.8a15.94,15.94,0,0,0-14.82-1.71C188.15,38.55,159.82,47.71,128,47.71S67.84,38.55,53.79,33.09A16,16,0,0,0,32,48v55.77c0,35.84,9.65,69.65,27.18,95.18,18.16,26.46,42.6,41,68.82,41s50.66-14.57,68.82-41C214.35,173.44,224,139.63,224,103.79V48A16,16,0,0,0,217,34.8Zm-9,69c0,32.64-8.66,63.23-24.37,86.13C168.54,211.9,148.79,224,128,224s-40.54-12.1-55.63-34.08C56.66,167,48,136.43,48,103.79V48c15.11,5.87,45.58,15.71,80,15.71S192.9,53.87,208,48v55.81Zm-18,18.87A8,8,0,1,1,178,133.33c-2.68-3-8.85-5.33-14-5.33s-11.36,2.34-14,5.33A8,8,0,1,1,138,122.66c5.71-6.38,16.14-10.66,26-10.66S184.25,116.28,190,122.66ZM92,128c-5.19,0-11.36,2.34-14,5.33A8,8,0,1,1,66,122.66C71.75,116.28,82.18,112,92,112s20.25,4.28,26,10.66A8,8,0,1,1,106,133.33C103.36,130.34,97.19,128,92,128Zm76.45,45.19a52.9,52.9,0,0,1-80.9,0A8,8,0,1,1,99.72,162.8a36.89,36.89,0,0,0,56.56,0,8,8,0,0,1,12.17,10.39Z"/>', 'book-open-text': '<path d="M232,56V200H160a32,32,0,0,0-32,32V88a32,32,0,0,1,32-32Z" opacity="0.2"/><path d="M232,48H160a40,40,0,0,0-32,16A40,40,0,0,0,96,48H24a8,8,0,0,0-8,8V200a8,8,0,0,0,8,8H96a24,24,0,0,1,24,24,8,8,0,0,0,16,0,24,24,0,0,1,24-24h72a8,8,0,0,0,8-8V56A8,8,0,0,0,232,48ZM96,192H32V64H96a24,24,0,0,1,24,24V200A39.81,39.81,0,0,0,96,192Zm128,0H160a39.81,39.81,0,0,0-24,8V88a24,24,0,0,1,24-24h64ZM160,88h40a8,8,0,0,1,0,16H160a8,8,0,0,1,0-16Zm48,40a8,8,0,0,1-8,8H160a8,8,0,0,1,0-16h40A8,8,0,0,1,208,128Zm0,32a8,8,0,0,1-8,8H160a8,8,0,0,1,0-16h40A8,8,0,0,1,208,160Z"/>', 'metronome': '<path d="M200,216H56a8,8,0,0,1-7.63-10.43l12-37.57H195.66l12,37.57A8,8,0,0,1,200,216Z" opacity="0.2"/><path d="M187.14,114.84l26.78-29.46a8,8,0,0,0-11.84-10.76l-20.55,22.6-17.2-54.07A15.94,15.94,0,0,0,149.08,32H106.91A15.94,15.94,0,0,0,91.66,43.15l-50.91,160A16,16,0,0,0,56,224H200a16,16,0,0,0,15.25-20.85ZM184.72,160H146.08l28.62-31.48ZM106.91,48h42.17l20,62.9L124.46,160H71.27ZM56,208l10.18-32H189.81L200,208Z"/>', 'hand-heart': '<path d="M16,152H48v56H16a8,8,0,0,1-8-8V160A8,8,0,0,1,16,152ZM192.54,40A39.12,39.12,0,0,0,156,64a39.12,39.12,0,0,0-36.54-24C97.67,40,80,58.31,80,80c0,14.56,7,27.71,16.73,40H140a20,20,0,0,1,0,40h4l37.78-8.68C203.82,135.07,232,109.23,232,80,232,58.31,214.33,40,192.54,40Z" opacity="0.2"/><path d="M230.33,141.06a24.34,24.34,0,0,0-18.61-4.77C230.5,117.33,240,98.48,240,80c0-26.47-21.29-48-47.46-48A47.58,47.58,0,0,0,156,48.75,47.58,47.58,0,0,0,119.46,32C93.29,32,72,53.53,72,80c0,11,3.24,21.69,10.06,33a31.87,31.87,0,0,0-14.75,8.4L44.69,144H16A16,16,0,0,0,0,160v40a16,16,0,0,0,16,16H120a7.93,7.93,0,0,0,1.94-.24l64-16a6.94,6.94,0,0,0,1.19-.4L226,182.82l.44-.2a24.6,24.6,0,0,0,3.93-41.56ZM119.46,48A31.15,31.15,0,0,1,148.6,67a8,8,0,0,0,14.8,0,31.15,31.15,0,0,1,29.14-19C209.59,48,224,62.65,224,80c0,19.51-15.79,41.58-45.66,63.9l-11.09,2.55A28,28,0,0,0,140,112H100.68C92.05,100.36,88,90.12,88,80,88,62.65,102.41,48,119.46,48ZM16,160H40v40H16Zm203.43,8.21-38,16.18L119,200H56V155.31l22.63-22.62A15.86,15.86,0,0,1,89.94,128H140a12,12,0,0,1,0,24H112a8,8,0,0,0,0,16h32a8.32,8.32,0,0,0,1.79-.2l67-15.41.31-.08a8.6,8.6,0,0,1,6.3,15.9Z"/>', 'users-three': '<path d="M168,144a40,40,0,1,1-40-40A40,40,0,0,1,168,144ZM64,56A32,32,0,1,0,96,88,32,32,0,0,0,64,56Zm128,0a32,32,0,1,0,32,32A32,32,0,0,0,192,56Z" opacity="0.2"/><path d="M244.8,150.4a8,8,0,0,1-11.2-1.6A51.6,51.6,0,0,0,192,128a8,8,0,0,1,0-16,24,24,0,1,0-23.24-30,8,8,0,1,1-15.5-4A40,40,0,1,1,219,117.51a67.94,67.94,0,0,1,27.43,21.68A8,8,0,0,1,244.8,150.4ZM190.92,212a8,8,0,1,1-13.85,8,57,57,0,0,0-98.15,0,8,8,0,1,1-13.84-8,72.06,72.06,0,0,1,33.74-29.92,48,48,0,1,1,58.36,0A72.06,72.06,0,0,1,190.92,212ZM128,176a32,32,0,1,0-32-32A32,32,0,0,0,128,176ZM72,120a8,8,0,0,0-8-8A24,24,0,1,1,87.24,82a8,8,0,1,0,15.5-4A40,40,0,1,0,37,117.51,67.94,67.94,0,0,0,9.6,139.19a8,8,0,1,0,12.8,9.61A51.6,51.6,0,0,1,64,128,8,8,0,0,0,72,120Z"/>', 'airplane-tilt': '<path d="M209,81l-33,31,32,88-24,24-48-72-24,24v24L88,224,72,184,32,168l24-24H80l24-24L32,72,56,48l88,32,31-33A24,24,0,0,1,209,81Z" opacity="0.2"/><path d="M185.33,114.21l29.14-27.43.17-.16a32,32,0,0,0-45.26-45.26l-.16.17L141.79,70.67l-83-30.2a8,8,0,0,0-8.39,1.86l-24,24a8,8,0,0,0,1.22,12.31l63.89,42.59L76.69,136H56a8,8,0,0,0-5.65,2.34l-24,24A8,8,0,0,0,29,175.42l36.82,14.73,14.7,36.75.06.16a8,8,0,0,0,13.18,2.47l23.87-23.88A8,8,0,0,0,120,200V179.31l14.76-14.76,42.59,63.89a8,8,0,0,0,12.31,1.22l24-24a8,8,0,0,0,1.86-8.39Zm-.07,97.23-42.59-63.89A8,8,0,0,0,136.8,144a7.09,7.09,0,0,0-.79,0,8,8,0,0,0-5.66,2.34l-24,24A8,8,0,0,0,104,176v20.69L90.93,209.76,79.43,181A8,8,0,0,0,75,176.57l-28.74-11.5L59.32,152H80a8,8,0,0,0,5.66-2.34l24-24a8,8,0,0,0-1.22-12.32L44.56,70.74l13.5-13.49,83.22,30.26a8,8,0,0,0,8.56-2l30.94-32.88A16,16,0,0,1,203.4,75.22l-32.87,30.94a8,8,0,0,0-2,8.56l30.26,83.22Z"/>', 'music-notes': '<path d="M208,164a28,28,0,1,1-28-28A28,28,0,0,1,208,164ZM52,168a28,28,0,1,0,28,28A28,28,0,0,0,52,168Z" opacity="0.2"/><path d="M212.92,17.69a8,8,0,0,0-6.86-1.45l-128,32A8,8,0,0,0,72,56V166.08A36,36,0,1,0,88,196V110.25l112-28v51.83A36,36,0,1,0,216,164V24A8,8,0,0,0,212.92,17.69ZM52,216a20,20,0,1,1,20-20A20,20,0,0,1,52,216ZM88,93.75V62.25l112-28v31.5ZM180,184a20,20,0,1,1,20-20A20,20,0,0,1,180,184Z"/>', 'hands-clapping': '<path d="M199,187.76h0A71.67,71.67,0,0,0,190.34,140l-20.2-35a18,18,0,0,0-31.55,17.26L114.71,81A18,18,0,1,0,83.54,99L77.81,89,65.1,67A18,18,0,1,1,96.28,49L102,59a18,18,0,1,1,31.17-18l24.23,42a18,18,0,0,1,31.2-18l21.11,36.57A72,72,0,0,1,199,187.76Z" opacity="0.2"/><path d="M160.22,24V8a8,8,0,0,1,16,0V24a8,8,0,0,1-16,0ZM196.1,41a7.91,7.91,0,0,0,4.17,1.17,8,8,0,0,0,6.84-3.83l8-13.11a8,8,0,0,0-13.68-8.33l-8,13.1A8,8,0,0,0,196.1,41Zm47.51,12.59a8,8,0,0,0-10.08-5.16l-15.06,4.85a8,8,0,0,0,2.46,15.62,8.15,8.15,0,0,0,2.46-.39l15.05-4.85A8,8,0,0,0,243.61,53.55ZM217,97.58a80.22,80.22,0,0,1-10.22,94c-.34,1.73-.72,3.46-1.19,5.18A80.17,80.17,0,0,1,58.77,216L23.5,155a26,26,0,0,1,19.24-38.79l-3-5.2a26,26,0,0,1,19.2-38.78L58.24,71A26,26,0,0,1,95.47,36.53,26.06,26.06,0,0,1,140.3,37l12.26,21.2A26.07,26.07,0,0,1,195.81,61ZM109.07,55l0,0h0l25,43.17a26,26,0,0,1,17.33-10L126.42,45a10,10,0,1,0-17.35,10ZM72.12,63l6.46,11.17a26.05,26.05,0,0,1,17.32-10L89.45,53A10,10,0,1,0,72.12,63Zm111.54,81-20.22-35a10,10,0,0,0-17.74,9.25L158.3,140a8,8,0,0,1-13.87,8l-36.5-63A10,10,0,1,0,90.58,95l26.05,45a8,8,0,0,1-13.87,8L71,93h0l0,0a10,10,0,0,0-17.33,10l35.22,61A8,8,0,0,1,75,172L54.72,137a10,10,0,0,0-17.34,10l35.27,61a64.12,64.12,0,0,0,117.42-15.44A63.52,63.52,0,0,0,183.66,144Zm19.41-38.42L181.93,69A10,10,0,0,0,164.55,79l33,57.05A80.2,80.2,0,0,1,207,161.51,64.23,64.23,0,0,0,203.07,105.58Z"/>', 'certificate': '<path d="M224,56V90.06h0a44,44,0,1,0-56,67.88h0V192H40a8,8,0,0,1-8-8V56a8,8,0,0,1,8-8H216A8,8,0,0,1,224,56Z" opacity="0.2"/><path d="M128,136a8,8,0,0,1-8,8H72a8,8,0,0,1,0-16h48A8,8,0,0,1,128,136Zm-8-40H72a8,8,0,0,0,0,16h48a8,8,0,0,0,0-16Zm112,65.47V224A8,8,0,0,1,220,231l-24-13.74L172,231A8,8,0,0,1,160,224V200H40a16,16,0,0,1-16-16V56A16,16,0,0,1,40,40H216a16,16,0,0,1,16,16V86.53a51.88,51.88,0,0,1,0,74.94ZM160,184V161.47A52,52,0,0,1,216,76V56H40V184Zm56-12a51.88,51.88,0,0,1-40,0v38.22l16-9.16a8,8,0,0,1,7.94,0l16,9.16Zm16-48a36,36,0,1,0-36,36A36,36,0,0,0,232,124Z"/>', 'graduation-cap': '<path d="M216,113.07v53.22a8,8,0,0,1-2,5.31c-11.3,12.59-38.9,36.4-86,36.4s-74.68-23.81-86-36.4a8,8,0,0,1-2-5.31V113.07L128,160Z" opacity="0.2"/><path d="M251.76,88.94l-120-64a8,8,0,0,0-7.52,0l-120,64a8,8,0,0,0,0,14.12L32,117.87v48.42a15.91,15.91,0,0,0,4.06,10.65C49.16,191.53,78.51,216,128,216a130,130,0,0,0,48-8.76V240a8,8,0,0,0,16,0V199.51a115.63,115.63,0,0,0,27.94-22.57A15.91,15.91,0,0,0,224,166.29V117.87l27.76-14.81a8,8,0,0,0,0-14.12ZM128,200c-43.27,0-68.72-21.14-80-33.71V126.4l76.24,40.66a8,8,0,0,0,7.52,0L176,143.47v46.34C163.4,195.69,147.52,200,128,200Zm80-33.75a97.83,97.83,0,0,1-16,14.25V134.93l16-8.53ZM188,118.94l-.22-.13-56-29.87a8,8,0,0,0-7.52,14.12L171,128l-43,22.93L25,96,128,41.07,231,96Z"/>'}
 
 def icon(name):
     """Phosphor duotone icon (MIT), inlined so it needs no extra download."""
@@ -326,54 +326,6 @@ def home():
 {cta('Begin your Bharatanatyam journey', 'Classes for children and adults in Chennai, and live online classes worldwide.', 'Ask about classes', '/learn#enquire', 'Hello Divyanjali, I would like to know about classes.')}
 ''')
 
-def about():
-    return page('/about', 'About Divyanjali · Bharatanatyam since 1994', 'Founded in 1994 by Dr. S. Divyasena, Divyanjali teaches Bharatanatyam with theory, rhythm and expression.', f'''
-{crumbs(('About', None))}
-<section style="padding-top:28px"><div class="wrap hero2">
-  <div class="stack"><p class="eyebrow">About</p><h1>About Divyanjali</h1><p class="lead">Founded in 1994 by Dr. S. Divyasena, Divyanjali teaches Bharatanatyam with theory, rhythm and expression, and treats every student as part of the family.</p><div class="row"><a class="btn" href="/learn">Join a class</a><a class="btn-o" href="/30-years">Our 30 years</a></div></div>
-  {ph('about-hero.jpg', 'the school, a class in progress', '1600×1200')}
-</div></section>
-<section class="alt"><div class="wrap two">
-  <div class="stack">{head('Our story', 'From one class to a trust')}
-    <div class="prose"><p>Divyanjali Dance School was established in 1994 by Dr. S. Divyasena and has since trained dancers of remarkable talent, earning a place among the leading schools for Bharatanatyam in Chennai. The school opened its own workspace in 2004 in the presence of Smt. Chithra Visweswaran and Smt. Nandini Ramani.</p>
-    <p>Its syllabus, drafted by Dr. Divyasena for students of every age, covers both theory and practice and was published in 2006 as the book <i>Essence and Essentials of Dance</i>. Students also receive special training in laya, the rhythm of dance, from Sri B.P. Haribabu, and learn abhinaya, expression, through creative, engaging teaching.</p>
-    <p>Divyanjali was registered as a Trust in 2011 and received grants from the Government of India and the Iyal Isai Nataka Mandram, which made productions like <i>Nava Vidha Sambandham</i> and <i>Andal Vaibhavam</i> possible.</p></div></div>
-  <ol class="tl">
-    <li><b>1994</b><span>School founded in CIT Nagar, Chennai</span></li>
-    <li><b>2004</b><span>Own workspace inaugurated</span></li>
-    <li><b>2006</b><span>Syllabus published: <i>Essence and Essentials of Dance</i></span></li>
-    <li><b>2011</b><span>Registered as a Trust</span></li>
-    <li><b>2015</b><span>Chennai floods, and the way back</span></li>
-    <li><b>2019</b><span>Silver Jubilee · Nrithya Utsav</span></li>
-    <li><b>2024</b><span>30 years</span></li>
-  </ol>
-</div></section>
-<section><div class="wrap">{head('What we teach', 'Four parts of one art')}
-  <div class="tiles">
-    <div class="tile">{ph('teach-technique.jpg', 'adavu practice', '1200×900')}<h3>Bharatanatyam</h3><p class="muted">Adavus, items and the full margam, step by step to arangetram.</p></div>
-    <div class="tile">{ph('teach-laya.jpg', 'laya class with mridangam', '1200×900')}<h3>Laya, rhythm</h3><p class="muted">Tala and rhythm taught as a subject of its own by Sri B.P. Haribabu.</p></div>
-    <div class="tile">{ph('teach-abhinaya.jpg', 'abhinaya, expression', '1200×900')}<h3>Abhinaya</h3><p class="muted">Expression and storytelling, taught creatively for every age.</p></div>
-    <div class="tile">{ph('teach-theory.jpg', 'theory class', '1200×900')}<h3>Theory</h3><p class="muted">Natya Shastra, mudras and rasas, from our own published syllabus.</p></div>
-  </div></div></section>
-<section class="alt"><div class="wrap">{head('The founders', 'Two artists, one school')}
-  <div class="tiles">
-    <a class="tile" href="/divyasena">{ph('founder-divyasena.jpg', 'Dr. S. Divyasena', '1200×1500', 'tall')}<span class="meta">Founder and Managing Trustee</span><h3>Dr. S. Divyasena</h3><p class="muted">Dancer, choreographer, nattuvanar</p></a>
-    <a class="tile" href="/haribabu">{ph('founder-haribabu.jpg', 'Sri B.P. Haribabu', '1200×1500', 'tall')}<span class="meta">Secretary and Trustee</span><h3>Sri B.P. Haribabu</h3><p class="muted">Mridangam, nattuvangam, rhythm</p></a>
-  </div></div></section>
-<section><div class="wrap">{head('Faculty', 'Our teachers')}
-  <div class="people">
-    {''.join(f'<div>{ph(f, n, "800×1000", "tall")}<b>{n}</b><span class="muted">{r}</span></div>' for f, n, r in [('faculty-aiswarya.jpg', 'Aiswarya Ramanan', 'Faculty and Admin'), ('faculty-mahati.jpg', 'S. Mahati', 'Faculty and Admin'), ('faculty-harini.jpg', 'Harini N.', 'Faculty'), ('faculty-upanisha.jpg', 'Upanisha K.', 'Faculty')])}
-  </div>
-  <p class="muted" style="margin-top:20px">Former faculty: Akshaya S., Mohanambal P., S. Sivagami, Shyamala Aadith, Archana Kanthan, Preeti P., Shantha, Swarna Varsha Gurumoorthy, Krithika S., Roopa S., Sharmili N., Vinaya Skandaprasad.</p>
-</div></section>
-{faq_section([
-    ('When was Divyanjali founded?', 'In 1994, by Dr. S. Divyasena, in CIT Nagar, Chennai.'),
-    ('Is Divyanjali a registered trust?', 'Yes. Divyanjali was registered as a Trust in 2011.'),
-    ('Who teaches the classes?', 'Dr. S. Divyasena leads the teaching, with Sri B.P. Haribabu for laya and the Divyanjali faculty listed above.'),
-], alt=True)}
-{cta('Come and watch a class', 'See how we teach before you join.', 'Ask about classes', '/learn#enquire', 'Hello Divyanjali, can I come and watch a class?')}
-''')
-
 BOOKS = [
     dict(key='essence', file='book-essence.png', kind='Book · 2006', title='Essence and Essentials of Dance', short='Essence and Essentials', shape='book',
          lead='The Divyanjali syllabus, in her own words.',
@@ -581,33 +533,216 @@ def divyasena():
 <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>
 ''', extra_head='<meta property="og:image" content="/assets/img/divyasena-portrait.webp">\n<meta property="og:type" content="profile">\n<link rel="canonical" href="/divyasena">\n')
 
-def haribabu():
-    return page('/haribabu', 'Sri B.P. Haribabu · Mridangam and rhythm, Divyanjali', 'Sri B.P. Haribabu: mridangam artist, nattuvanar and rhythm composer, Vaadhya Visharadha, over 85 tours abroad.', f'''
-{crumbs(('About', '/about'), ('Sri B.P. Haribabu', None))}
-<section style="padding-top:28px"><div class="wrap hero2">
-  <div class="stack"><p class="eyebrow">Secretary · Trustee</p><h1>Sri B.P. Haribabu</h1><p class="lead">Mridangam artist, nattuvanar and rhythm composer who built Divyanjali with Dr. S. Divyasena. He teaches laya as a subject of its own.</p>
-  <div class="row"><a class="btn" href="/book?type=Performance+booking">Book him to accompany</a><a class="btn-o" href="/learn">Learn laya</a></div></div>
-  {ph('haribabu-portrait.jpg', 'Sri B.P. Haribabu with mridangam', '1200×1500', 'tall')}
+STORY = [
+    ('1994', 'The school begins', 'Dr. S. Divyasena founds Divyanjali in CIT Nagar, Chennai, to share what she had learnt from natyam with as many young minds as possible.'),
+    ('2004', 'A home of its own', 'Divyanjali opens its own workspace, inaugurated by Smt. Chithra Visweswaran and Smt. Nandini Ramani.'),
+    ('2006', 'The syllabus, in a book', 'The Divyanjali syllabus, theory and practice planned for every age group, is published as <i>Essence and Essentials of Dance</i>.'),
+    ('2011', 'A registered trust', 'Divyanjali becomes a trust. Grants from the Government of India and Tamil Isai Sangam make productions like <i>Nava Vidha Sambandham</i> and <i>Andal Vaibhavam</i> possible.'),
+    ('2015', 'The floods, and the way back', 'The Chennai floods hit the school hard. Students, parents and friends helped Divyanjali dance again. <a href="/30-years">Read the story</a>'),
+    ('2017', 'Kalarpanam', 'Divyanjali starts its own platform for young, deserving artists to perform.'),
+    ('2018', 'Sangeet International Festival', 'Hosted with the All India Dancers Association, with music and dance of many styles.'),
+    ('2019', 'Nrithya Utsav', 'For the Silver Jubilee: festivals, lecture demonstrations, workshops and competitions, month on month, from July 2019 to February 2020.'),
+    ('2024', 'Thirty years', 'Divyanjali completes thirty years. 71 arangetrams so far, including one abroad. <a href="/30-years">Open the Souvenir 2026</a>'),
+]
+TEACH = [
+    ('person-arms-spread', 'Bharatanatyam', 'Adavus, items and the full margam, step by step up to the arangetram.'),
+    ('metronome', 'Laya, rhythm', 'Tala and rhythm as a subject of its own, with Sri B.P. Haribabu.'),
+    ('mask-happy', 'Abhinaya', 'Expression and storytelling, taught by engaging children creatively.'),
+    ('book-open-text', 'Theory', 'From the school\'s own published syllabus, for every age group.'),
+]
+FACULTY_SLUGS = ['upanisha-k', 'akshaya-s', 'krishnapriya', 'sweta-n', 'shabin-bright', 'sukanya']
+EARLIER_FACULTY = ['Aiswarya Ramanan', 'S. Mahati', 'Harini N.', 'Mohanambal P.', 'S. Sivagami', 'Shyamala Aadith', 'Archana Kanthan', 'Preeti P.', 'Shantha',
+                   'Swarna Varsha Gurumoorthy', 'Krithika S.', 'Roopa S.', 'Sharmili N.', 'Vinaya Skandaprasad']
+
+def about():
+    by = {p['slug']: p for p in STUDENTS}
+    fac = [by[s] for s in FACULTY_SLUGS if s in by]
+    return page('/about', 'About Divyanjali · Bharatanatyam school in Chennai since 1994',
+        'Divyanjali, founded in 1994 by Dr. S. Divyasena, teaches Bharatanatyam in Chennai with laya, abhinaya and theory. Our story, what we teach, the trust and our faculty.', f'''
+{crumbs(('About', None))}
+<section class="ab-hero"><div class="wrap ab-hero-in">
+  <div class="ab-copy">
+    <p class="eyebrow">Dance school · since 1994</p>
+    <h1>Divyanjali</h1>
+    <p class="lead">A Bharatanatyam school in Chennai, founded by Dr. S. Divyasena. Thirty years on, it is still the same idea: teach the whole art, and make the school a second home.</p>
+    <ul class="ab-facts"><li><b>1994</b><span>founded</span></li><li><b>2011</b><span>registered trust</span></li><li><b>71</b><span>arangetrams</span></li></ul>
+    <div class="row"><a class="btn" href="/learn">Join a class</a><a class="btn-o" href="/30-years">Our 30 years</a></div>
+  </div>
+  <figure class="ab-photo"><img src="/assets/img/dancers-group.webp" alt="Divyanjali dancers together on stage" width="1161" height="541" fetchpriority="high"></figure>
 </div></section>
-<section class="alt" style="padding-block:40px"><div class="wrap">{stats([(25, '+', 'years accompanying dance'), (85, '+', 'tours abroad since 1993'), (20, '', 'countries')])}</div></section>
-<section><div class="wrap two">
-  <div class="stack">{head('Training', 'Gurus and title')}<div class="prose"><p>A versatile mridangam exponent, Sri B.P. Haribabu trained under the exemplary gurus 'Kalaimamani' Sri V.P. Ramadoss and 'Kalaimamani' Sri Thiruvaroor Bhakthavatchalam at the Tamil Nadu Government Music College. He was conferred the title 'Vaadhya Visharadha' for his mastery of the art.</p>
-  <p>Besides the mridangam, he is equally proficient in pakhawaj, nattuvangam and rhythm composition. A specialist in playing for dance concerts, he has accompanied artists for over 25 years and has worked with major dance companies in the USA.</p></div></div>
-  {yt(HOME_VIDEO, 'Rhythm on stage')}
+
+<section class="alt"><div class="wrap">
+  {head('Our story', 'Thirty years, one year at a time')}
+  <p class="muted yr-hint">Tap a year.</p>
+  <div class="yr" data-yr>
+    <div class="yr-rail" role="tablist" aria-label="Years">{''.join(f'<button type="button" role="tab" aria-selected="{str(i == 0).lower()}" aria-controls="yr-{y}" id="yrt-{y}">{y}</button>' for i, (y, t, d) in enumerate(STORY))}</div>
+    {''.join(f'<article class="yr-p" role="tabpanel" id="yr-{y}" aria-labelledby="yrt-{y}"{"" if i == 0 else " hidden"}><b class="yr-y" aria-hidden="true">{y}</b><div><h3>{t}</h3><p>{d}</p></div></article>' for i, (y, t, d) in enumerate(STORY))}
+    <div class="yr-nav"><button type="button" class="yr-b" data-yr-step="-1" aria-label="Previous year">‹</button><button type="button" class="yr-b" data-yr-step="1" aria-label="Next year">›</button></div>
+  </div>
 </div></section>
-<section class="alt"><div class="wrap">{head('Rhythm work', 'Compositions and productions')}
-  <div class="tiles">
-    <a class="tile" href="/productions/laya-thrayam"><span class="meta">Production · 2012</span><h3>Laya Thrayam</h3><p class="muted">Tala and swara segment with Sri Srikanth Gopalakrishnan</p></a>
-    <div class="tile"><span class="meta">Teaching</span><h3>Laya for dancers</h3><p class="muted">Rhythm taught as its own subject to every Divyanjali student</p></div>
-    <div class="tile"><span class="meta">Accompaniment</span><h3>Mridangam and nattuvangam</h3><p class="muted">For solo recitals, arangetrams and productions</p></div>
-  </div></div></section>
+
+<section><div class="wrap">
+  {head('What we teach', 'Four parts of one art')}
+  <div class="teach">{''.join(f'<div class="tc reveal" style="--i:{i}">{icon(ic)}<h3>{t}</h3><p>{d}</p></div>' for i, (ic, t, d) in enumerate(TEACH))}</div>
+  <blockquote class="ab-q">"Along with natyam my students learn thalam, ithihasam, puranas and moral values, to impart <i>Poorna Vidhya</i>. I always try to make Divyanjali their second home."<cite>Dr. S. Divyasena, <a href="/30-years#p=5">Letter from the Founder</a></cite></blockquote>
+</div></section>
+
+<section class="alt"><div class="wrap">
+  {head('The trust', 'The people behind Divyanjali')}
+  <div class="trust">
+    <a class="tr reveal" href="/divyasena"><img src="/assets/img/divyasena-portrait.webp" alt="Dr. S. Divyasena" width="1053" height="692" loading="lazy" style="object-position:32% 40%"><span class="tr-r">Founder and Managing Trustee</span><b>Dr. S. Divyasena</b><span class="tr-d">Dancer, choreographer, nattuvanar and guru</span><span class="tr-go">Her profile ›</span></a>
+    <a class="tr reveal" href="/haribabu" style="--i:1"><img src="/assets/img/haribabu-portrait.webp" alt="Sri B.P. Haribabu" width="555" height="820" loading="lazy" style="object-position:50% 18%"><span class="tr-r">Secretary and Trustee</span><b>Sri B.P. Haribabu</b><span class="tr-d">Mridangam artist, nattuvanar and rhythm composer</span><span class="tr-go">His profile ›</span></a>
+    <div class="tr reveal" style="--i:2"><img src="/assets/img/lakshmi.webp" alt="Smt. S. Lakshmi" width="300" height="300" loading="lazy" style="object-position:50% 30%"><span class="tr-r">Treasurer and Trustee</span><b>Smt. S. Lakshmi</b><span class="tr-d">Trustee of Divyanjali</span></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  {head('Faculty', 'Our teachers')}
+  <p class="muted bio-sub">Every one of them trained at Divyanjali. Tap a teacher to see their profile.</p>
+  <div class="fac">{''.join(f'<a class="fc reveal" href="/students/{p["slug"]}" style="--i:{i}">{st_face(p)}<b>{e(p["display"])}</b><span>{e(st_tags(p)[1] if len(st_tags(p)) > 1 else "Faculty")}</span></a>' for i, p in enumerate(fac))}</div>
+  <details class="fac-more"><summary>Teachers over the years</summary><p>{', '.join(EARLIER_FACULTY)}.</p></details>
+</div></section>
 {faq_section([
-    ('Can Sri Haribabu accompany our performance?', 'Yes. Send the date and venue through <a href="/book">Book and Enquire</a>.'),
-    ('Does he teach rhythm to dancers?', 'Yes. Laya, rhythm, is taught as a subject of its own at Divyanjali.'),
-    ('What is nattuvangam?', 'Nattuvangam is the art of conducting a Bharatanatyam performance with cymbals, reciting the rhythmic syllables that the dancer follows.'),
+    ('When was Divyanjali founded?', 'In 1994, by Dr. S. Divyasena, in CIT Nagar, Chennai.'),
+    ('Is Divyanjali a registered trust?', 'Yes. Divyanjali was registered as a trust in 2011. Dr. S. Divyasena is the Founder and Managing Trustee, Sri B.P. Haribabu the Secretary-Trustee and Smt. S. Lakshmi the Treasurer-Trustee.'),
+    ('Who teaches the classes?', 'Dr. S. Divyasena leads the teaching, Sri B.P. Haribabu teaches laya, and the Divyanjali faculty, all trained at the school, teach alongside them.'),
+    ('Which dance form does Divyanjali teach?', 'Bharatanatyam, with laya, abhinaya and theory as part of every student\'s training.'),
+], alt=True)}
+{cta('Come and watch a class', 'See how we teach before you join.', 'Ask about classes', '/learn#enquire', 'Hello Divyanjali, can I come and watch a class?')}
+''', extra_head='<meta property="og:image" content="/assets/img/dancers-group.webp">\n<link rel="canonical" href="/about">\n')
+
+def haribabu():
+    facts = [('Instrument', 'Mridangam'), ('Also plays', 'Pakhawaj'), ('Also', 'Nattuvangam and rhythm composition'),
+             ('Title', "'Vaadhya Visharadha'"), ('Trained at', 'Tamil Nadu Government Music College'),
+             ('Gurus', "'Kalaimamani' Sri V.P. Ramadoss and 'Kalaimamani' Sri Thiruvaroor Bhakthavatchalam"),
+             ('Specialist in', 'Bharatanatyam and Kuchipudi concerts'), ('Accompanying', 'For over 25 years'),
+             ('Abroad', 'More than 85 tours to around 20 countries since 1993'), ('Also', 'Has worked with major dance companies in the USA'),
+             ('Divyanjali', 'Secretary and Trustee'), ('Book', 'Essence and Essentials of Rhythm')]
+    gurus = [('Mridangam', "'Kalaimamani' Sri V.P. Ramadoss", 'His guru at the Tamil Nadu Government Music College'),
+             ('Mridangam', "'Kalaimamani' Sri Thiruvaroor Bhakthavatchalam", 'His guru at the Tamil Nadu Government Music College'),
+             ('Title', "'Vaadhya Visharadha'", 'Conferred on him for his mastery of the art')]
+    crafts = [('music-notes', 'Mridangam', 'His main instrument. He accompanies solo recitals, arangetrams and productions.'),
+              ('metronome', 'Pakhawaj', 'The barrel drum of the north, played with the same command.'),
+              ('hands-clapping', 'Nattuvangam', 'Conducting a performance with the cymbals. He taught it to Dr. S. Divyasena.'),
+              ('certificate', 'Rhythm composition', 'Jathis and rhythmic passages composed for dance.')]
+    peers = [('Sri V. V. Sundaram', 'The jathis he composes are intellectually challenging and aesthetically pleasing and a pleasure to see them naturally molded into the performances.', 15),
+             ('Sri Kuldeep M Pai, musician', 'As a singer, I have always admired and relished every stroke of his Mridangam playing!', 26),
+             ('Smt. Savithri Jagannath Rao', 'Shri B P Haribabu is an excellent mridangist and accompaniment for both vocal and Natya.', 25),
+             ('Smt. Anitha Guha, Bharathanjali', 'Vidwan Hari Babu sir who has actually been the Rhythm of your life and Natyam.', 24),
+             ('Smt. Nandini Ramani, veteran Bharatanatyam exponent', 'Haribabu, her life partner and ace Mridangam artist who is the pillar of support to Divya.', 14),
+             ('Dr. P. Ramaa, singer', 'We have been working together since 35 years.', 26)]
+    book_q = [('Dr. Padma Subrahmanyam', 'I am sure the book written by Sri. Haribabu on Rhythm will be a valuable addition to the world of music and dance.', 16),
+              ('Smt. Vasanthalakshmi Narasimhachari', 'True to the title, I am sure the book will be a reflection of your vast experience, both as a much sought-after Mridangam player and a composer in the field of Bharatanatyam.', 22)]
+    tabs = [('profile', 'Profile'), ('gurus', 'Gurus'), ('craft', 'His craft'), ('tala', 'Try a tala'), ('book', 'His book'), ('peers', 'Peers')]
+    ld = {'@context': 'https://schema.org', '@type': 'Person', 'name': 'B. P. Haribabu', 'honorificPrefix': 'Sri',
+          'jobTitle': 'Mridangam artist, nattuvanar and rhythm composer', 'image': '/assets/img/haribabu-portrait.webp',
+          'award': 'Vaadhya Visharadha', 'alumniOf': {'@type': 'CollegeOrUniversity', 'name': 'Tamil Nadu Government Music College'},
+          'worksFor': {'@type': 'DanceGroup', 'name': 'Divyanjali', 'foundingDate': '1994'}, 'spouse': {'@type': 'Person', 'name': 'Dr. S. Divyasena'},
+          'knowsAbout': ['Mridangam', 'Pakhawaj', 'Nattuvangam', 'Rhythm composition', 'Bharatanatyam', 'Kuchipudi']}
+    return page('/haribabu', 'Sri B.P. Haribabu · Mridangam artist, nattuvanar and rhythm composer, Chennai',
+        "Sri B.P. Haribabu: 'Vaadhya Visharadha' mridangam artist, nattuvanar and rhythm composer. Over 25 years accompanying Bharatanatyam and Kuchipudi, more than 85 tours abroad. Secretary-Trustee of Divyanjali.", f'''
+{crumbs(('About', '/about'), ('Sri B.P. Haribabu', None))}
+<article class="bio">
+<header class="bio-hero"><div class="wrap bio-hero-in">
+  <figure class="bio-photo por"><img src="/assets/img/haribabu-portrait.webp" alt="Sri B.P. Haribabu" width="555" height="820" fetchpriority="high"></figure>
+  <div class="bio-id">
+    <p class="cv-role">Vaadhya Visharadha · Secretary-Trustee of Divyanjali</p>
+    <h1>Sri B.P. Haribabu</h1>
+    <p class="bio-line">Mridangam artist, nattuvanar and rhythm composer. He has accompanied Bharatanatyam and Kuchipudi for over 25 years, and teaches laya to every Divyanjali student.</p>
+    <div class="cv-tags"><span>Mridangam · Pakhawaj</span><span>Nattuvangam</span><span>85+ tours abroad</span></div>
+    <div class="cv-acts">
+      <button class="btn" type="button" data-share-menu aria-expanded="false">Share profile</button>
+      <button class="btn-o" type="button" data-print>Download biodata</button>
+      <a class="btn-o" href="/book?type=Performance+booking">Book him to accompany</a>
+    </div>
+    <div class="share-pop" hidden>
+      <button type="button" data-copy>Copy link</button>
+      <a data-wa="Sri B.P. Haribabu, mridangam artist and Secretary-Trustee of Divyanjali" data-wa-url href="#">WhatsApp</a>
+      <a href="#" data-share-x>X (Twitter)</a>
+      <a href="#" data-share-fb>Facebook</a>
+      <button type="button" data-share hidden>More options</button>
+    </div>
+  </div>
+</div></header>
+
+<nav class="bio-tabs" aria-label="On this page"><div class="wrap">{''.join(f'<a href="#{i}">{t}</a>' for i, t in tabs)}</div></nav>
+
+<section id="profile" class="bio-sec"><div class="wrap bio-two">
+  <div class="prose">
+    <h2>Profile</h2>
+    <p><b>Sri B.P. Haribabu</b> is a versatile mridangam exponent from Chennai. He trained under the exemplary gurus 'Kalaimamani' Sri V.P. Ramadoss and 'Kalaimamani' Sri Thiruvaroor Bhakthavatchalam at the Tamil Nadu Government Music College, and was conferred the title 'Vaadhya Visharadha' in recognition of his mastery of the art.</p>
+    <p>Besides the mridangam he is equally proficient in pakhawaj, nattuvangam and rhythm composition. A specialist in playing for Bharatanatyam and Kuchipudi concerts, he is a sought-after mridangam artist who has accompanied many artists for over 25 years. Since 1993 he has travelled widely, with more than 85 tours abroad to around 20 countries, and has worked with major dance companies in the USA.</p>
+    <p>At <a href="/about">Divyanjali</a> he is the Secretary-Trustee and teaches laya, the rhythm of dance, as a subject of its own. He taught nattuvangam to <a href="/divyasena">Dr. S. Divyasena</a>, his wife and artistic partner, and composes the jathis for her productions.</p>
+  </div>
+  <aside class="facts-card" aria-label="Biodata">
+    <h3>Biodata</h3>
+    <dl>{''.join(f'<dt>{e(k)}</dt><dd>{e(v)}</dd>' for k, v in facts)}</dl>
+  </aside>
+</div></section>
+
+<section id="gurus" class="bio-sec alt"><div class="wrap">
+  <h2>Gurus and title</h2>
+  <p class="muted bio-sub">Tap a card to read more.</p>
+  <ol class="lineage">{''.join(f'<li class="reveal" style="--i:{i}"><button type="button" class="lin" aria-expanded="false"><span class="lin-k">{e(k)}</span><b>{e(n)}</b><span class="lin-d">{e(d)}</span></button></li>' for i, (k, n, d) in enumerate(gurus))}</ol>
+</div></section>
+
+<section id="craft" class="bio-sec"><div class="wrap">
+  <h2>His craft</h2>
+  <div class="teach">{''.join(f'<div class="tc reveal" style="--i:{i}">{icon(ic)}<h3>{t}</h3><p>{d}</p></div>' for i, (ic, t, d) in enumerate(crafts))}</div>
+  <h3 class="bio-h3">Rhythm on stage</h3>
+  <ol class="tl">
+    <li><b>1993</b><span>Begins touring abroad: more than 85 tours to around 20 countries since</span></li>
+    <li><b>1994</b><span>Divyanjali begins; he builds it with Dr. S. Divyasena and teaches laya</span></li>
+    <li><b>2012</b><span><a href="/productions/laya-thrayam">Laya Thrayam</a>, a production with rhythm at its heart, premieres in New Delhi. Its tala and swara segment is composed by him and Sri Srikanth Gopalakrishnan</span></li>
+    <li><b>2020</b><span>His book on rhythm is announced at Divyanjali's Silver Jubilee</span></li>
+  </ol>
+</div></section>
+
+<section id="tala" class="bio-sec alt"><div class="wrap">
+  <h2>Try a tala</h2>
+  <p class="bio-sub">Every Divyanjali student learns to keep the tala with their hands. Press play and count along: clap, then the fingers, then clap and wave.</p>
+  <div class="tala" data-tala>
+    <div class="tala-top">
+      <div class="tala-pick" role="radiogroup" aria-label="Tala">
+        <button type="button" role="radio" aria-checked="true" data-t="adi">Adi · 8 beats</button>
+        <button type="button" role="radio" aria-checked="false" data-t="rupaka">Rupakam · 6 beats</button>
+      </div>
+      <label class="tala-sp">Speed <input type="range" min="50" max="140" value="80" aria-label="Beats per minute"><output>80</output></label>
+    </div>
+    <ol class="tala-beats" aria-live="off"></ol>
+    <div class="tala-acts"><button type="button" class="btn tala-play" aria-pressed="false">Play</button><label class="tala-snd"><input type="checkbox" checked> Sound</label></div>
+    <p class="muted tala-note">A simple guide for counting. The real teaching happens in class.</p>
+  </div>
+</div></section>
+
+<section id="book" class="bio-sec"><div class="wrap bio-two">
+  <div>
+    <h2>His book on rhythm</h2>
+    <div class="prose">
+      <p><i>Essence and Essentials of Rhythm</i> is his book on the concepts of rhythm, written to nurture young artists. It is published by Divyanjali, alongside Dr. S. Divyasena's <i>Duta Mahima</i>.</p>
+      <p>Fellow artists looked forward to it when it was announced at the school's Silver Jubilee.</p>
+    </div>
+    <div class="peer-row one">{''.join(f'<figure class="peer reveal" style="--i:{i}"><blockquote>"{e(q)}"</blockquote><figcaption>{e(n)} · <a href="/30-years#p={pg}">souvenir p.{pg}</a></figcaption></figure>' for i, (n, q, pg) in enumerate(book_q))}</div>
+  </div>
+  <div class="hb-book" aria-hidden="true"><div class="hb-cover"><small>B.P. Haribabu</small><b>Essence and Essentials of Rhythm</b><span>Divyanjali</span></div></div>
+</div></section>
+
+<section id="peers" class="bio-sec alt"><div class="wrap">
+  <h2>What fellow artists say</h2>
+  <div class="peer-row">{''.join(f'<figure class="peer reveal" style="--i:{i}"><blockquote>"{e(q)}"</blockquote><figcaption>{e(n)} · <a href="/30-years#p={pg}">souvenir p.{pg}</a></figcaption></figure>' for i, (n, q, pg) in enumerate(peers))}</div>
+  <figure class="bio-duo" style="margin-top:34px"><img src="/assets/img/founders-together.webp" alt="Sri B.P. Haribabu and Dr. S. Divyasena" width="1200" height="993" loading="lazy"><figcaption>With Dr. S. Divyasena, founder of Divyanjali. <a href="/divyasena">Her profile</a></figcaption></figure>
+</div></section>
+</article>
+{faq_section([
+    ('Who is Sri B.P. Haribabu?', "A mridangam artist, nattuvanar and rhythm composer from Chennai, titled 'Vaadhya Visharadha', and the Secretary-Trustee of Divyanjali."),
+    ('Who are his gurus?', "'Kalaimamani' Sri V.P. Ramadoss and 'Kalaimamani' Sri Thiruvaroor Bhakthavatchalam, at the Tamil Nadu Government Music College."),
+    ('Can he accompany our performance or arangetram?', 'Yes. Send the date and venue through <a href="/book?type=Performance+booking">Book and Enquire</a>.'),
+    ('Does he teach rhythm to dancers?', 'Yes. Laya is taught as a subject of its own to every Divyanjali student.'),
+    ('What is nattuvangam?', 'The art of conducting a Bharatanatyam performance with cymbals, reciting the rhythmic syllables that the dancer follows.'),
 ])}
-{cta('Book Sri Haribabu', 'Mridangam and nattuvangam for performances and arangetrams.', 'Send an enquiry', '/book?type=Performance+booking')}
-''')
+{cta('Book Sri Haribabu', 'Mridangam and nattuvangam for performances, arangetrams and productions.', 'Send an enquiry', '/book?type=Performance+booking', 'Hello Divyanjali, I would like to book Sri Haribabu.')}
+<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>
+''', extra_head='<meta property="og:image" content="/assets/img/haribabu-portrait.webp">\n<meta property="og:type" content="profile">\n<link rel="canonical" href="/haribabu">\n')
 
 # ---------------------------------------------------------------- students (from the Souvenir 2026, pages 50 to 55)
 STUDENTS = json.load(open(os.path.join(ROOT, 'students.json'), encoding='utf-8'))
