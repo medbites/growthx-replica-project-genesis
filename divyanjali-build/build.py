@@ -614,22 +614,20 @@ def st_face(p, cls='face'):
 
 def st_card(p, i=0):
     tags = st_tags(p)
-    return (f'<a class="stc reveal" href="/students/{p["slug"]}" data-cat="{"|".join(tags)}" data-name="{e(p["display"].lower())}" style="--i:{i % 6}">'
+    return (f'<a class="stc reveal" href="/students/{p["slug"]}" data-cat="{"Faculty" if p["group"] == "Faculty" else "Students"}" data-name="{e(p["display"].lower())}" style="--i:{i % 6}">'
             f'{st_face(p)}<b>{e(p["display"])}</b><small>{e(tags[0] if tags[0] != "Students" else "Student")}</small>'
             f'<span class="stc-one">{e(p["items"][0][:90])}{"…" if len(p["items"][0]) > 90 else ""}</span></a>')
 
 def accolades():
-    chips = ['All', 'Faculty', 'Students', 'Alumni', 'Doordarshan graded', 'Scholarship', 'Performed abroad', 'Runs a school']
+    chips = ['All', 'Faculty', 'Students']
     return page('/accolades', "Student's Accolades · Divyanjali", 'Faculty, students and alumni of Divyanjali: Doordarshan graded artists, scholarship holders, prize winners and teachers. Each dancer has a page of their own.', f'''
 <section class="acc-hero"><div class="wrap">
   <h1>Student's Accolades</h1>
   <p class="lead">The faculty, students and alumni of Divyanjali, with every award listed in the Souvenir 2026. Tap a dancer to open their page, share it, or save it as a one-page résumé.</p>
-  <div class="acc-groups"><a href="#studentGrid" data-jump="Faculty">Faculty</a><a href="#studentGrid" data-jump="Students">Students</a><a href="#studentGrid" data-jump="Alumni">Alumni</a></div>
 </div></section>
 <section class="alt acc-list"><div class="wrap">
   <div class="acc-tools">
     <div class="chipbar" data-filter="#studentGrid" data-count="#accCount">{''.join(f'<button class="chip" type="button" data-f="{f}" aria-pressed="{str(f == "All").lower()}">{f}</button>' for f in chips)}</div>
-    <label class="acc-search"><span class="sr">Find a dancer</span><input type="search" id="accSearch" placeholder="Find a dancer by name" autocomplete="off"></label>
   </div>
   <p class="muted acc-count" id="accCount">Showing {len(STUDENTS)}</p>
   <div class="stgrid" id="studentGrid">{''.join(st_card(p, i) for i, p in enumerate(STUDENTS))}</div>
