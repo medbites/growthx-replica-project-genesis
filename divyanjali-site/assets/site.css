@@ -666,18 +666,16 @@ a.next:hover{color:#F6EDE6;transform:translateY(-2px)}
 /* ===== Home: dancers moving past, two rows in opposite directions ===== */
 .alumni .al-grid{grid-template-columns:minmax(0,1fr)!important}
 .marq{margin-top:34px;display:flex;flex-direction:column;gap:14px;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
-.mq-row{overflow:hidden}
-.mq-track{display:flex;gap:14px;width:max-content;animation:mq 60s linear infinite}
+.mq-row{overflow:hidden;padding-block:14px 6px}
+.mq-track{display:flex;gap:22px;width:max-content;animation:mq 60s linear infinite}
 .mq-row.rev .mq-track{animation-direction:reverse;animation-duration:70s}
 .marq:hover .mq-track,.marq:focus-within .mq-track{animation-play-state:paused}
 @keyframes mq{to{transform:translateX(-50%)}}
-.mq{flex:none;width:clamp(150px,18vw,200px);display:flex;flex-direction:column;gap:8px;text-decoration:none;color:var(--ink);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
-.mq img{width:100%;height:auto;aspect-ratio:1;object-fit:cover;border-radius:50%;border:4px solid #FFFFFF;box-shadow:0 14px 30px -18px rgba(110,30,30,.55);transition:transform .45s cubic-bezier(.2,.8,.2,1),box-shadow .3s,border-color .3s}
-.mq span{display:flex;flex-direction:column;align-items:center;text-align:center}
-.mq b{font-family:var(--serif);font-size:1.1rem;line-height:1.15}
-.mq small{font-size:.7rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--deep)}
-.mq:hover{transform:translateY(-6px)}
-.mq:hover img{transform:scale(1.06) rotate(-2deg);border-color:var(--saffron);box-shadow:0 22px 40px -18px rgba(178,60,0,.6)}
+.mq{flex:none;width:clamp(130px,15vw,170px);display:flex;flex-direction:column;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.mq img{width:100%;height:auto;aspect-ratio:1;object-fit:cover;border-radius:50%;border:4px solid #FFFFFF;box-shadow:0 0 0 0 rgba(255,102,0,0),0 12px 24px -16px rgba(110,30,30,.55);transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
+.mq b{font-family:var(--serif);font-size:1.05rem;font-weight:600;line-height:1.2;text-align:center;max-width:100%;overflow-wrap:anywhere;transition:color .25s}
+.mq:hover img,.mq:focus-visible img{transform:translateY(-6px);box-shadow:0 0 0 3px var(--saffron),0 18px 30px -16px rgba(178,60,0,.6)}
+.mq:hover b,.mq:focus-visible b{color:var(--deep)}
 @media (prefers-reduced-motion:reduce){.mq-track{animation:none}.mq-row{overflow-x:auto}}
 
 /* ===== Accolades ===== */

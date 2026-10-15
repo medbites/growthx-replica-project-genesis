@@ -206,7 +206,7 @@ def marquee_rows():
     ps = [p for p in STUDENTS if p['photo']]
     half = (len(ps) + 1) // 2
     def row(lst, rev):
-        cards = ''.join(f'<a class="mq" href="/students/{p["slug"]}"><img src="{p["photo"]}" alt="" loading="lazy" width="360" height="360"><span><b>{e(p["display"])}</b><small>{e(st_tags(p)[1] if len(st_tags(p)) > 1 else p["group"])}</small></span></a>' for p in lst)
+        cards = ''.join(f'<a class="mq" href="/students/{p["slug"]}"><img src="{p["photo"]}" alt="" loading="lazy" width="360" height="360"><b>{e(p["display"])}</b></a>' for p in lst)
         return f'<div class="mq-row{" rev" if rev else ""}"><div class="mq-track">{cards}{cards.replace('<a class="mq"', '<a class="mq" aria-hidden="true" tabindex="-1"')}</div></div>'
     return row(ps[:half], False) + row(ps[half:], True)
 
