@@ -941,3 +941,12 @@ a.next:hover{color:#F6EDE6;transform:translateY(-2px)}
 .orb-x{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;border:0;background:var(--cream);color:var(--ink);font-size:1.1rem;cursor:pointer}
 @media (max-width:420px){.orb-n{width:46px;height:46px;margin:-23px 0 0 -23px;font-size:.7rem}.orb-card{padding:14px}.orb-card b{font-size:1.1rem}.orb-card p{font-size:.78rem}}
 @media (prefers-reduced-motion:reduce){.orb-ring,.orb-n.on,.orb-logo.pop{animation:none}.orb-logo,.orb-n,.orb-pop{transition:none}}
+
+/* the dancers above the class cards */
+.cls-head{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-items:end}
+.cls-group{position:relative;margin:0;isolation:isolate}
+.cls-group::before{content:"";position:absolute;left:8%;right:8%;top:14%;bottom:-4%;z-index:-1;border-radius:50%;background:radial-gradient(closest-side,rgba(255,102,0,.22),rgba(255,102,0,0));filter:blur(4px)}
+.cls-group img{width:100%;height:auto;display:block;-webkit-mask-image:linear-gradient(to bottom,#000 70%,transparent 97%);mask-image:linear-gradient(to bottom,#000 70%,transparent 97%);opacity:0;transform:translateY(24px) scale(.97);transition:opacity .9s,transform 1.1s cubic-bezier(.2,.8,.2,1)}
+.classes.seen .cls-group img{opacity:1;transform:none}
+@media (min-width:860px){.cls-head{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:36px}.cls-head .stack{padding-bottom:28px}}
+@media (prefers-reduced-motion:reduce){.cls-group img{opacity:1;transform:none;transition:none}}

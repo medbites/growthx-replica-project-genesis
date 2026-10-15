@@ -325,7 +325,10 @@ def home():
   <div class="bento">{''.join(bento(p, i) for i, p in enumerate(feat))}</div>
 </div></section>
 <section class="alt classes"><div class="wrap">
-  <div class="cls-head"><div class="stack" style="gap:8px"><h2>Find your class</h2><p class="muted">Technique, abhinaya, laya and theory, taught in small batches. Tap a card, then book a trial.</p></div><a class="btn-o" href="/learn">All about classes</a></div>
+  <div class="cls-head">
+    <div class="stack" style="gap:12px"><h2>Find your class</h2><p class="muted">Technique, abhinaya, laya and theory, taught in small batches. Tap a card, then book a trial.</p><a class="btn-o" href="/learn" style="align-self:flex-start">All about classes</a></div>
+    <figure class="cls-group" aria-hidden="false"><img src="/assets/img/dancers-group.webp" alt="Students of Divyanjali in Bharatanatyam poses" width="1241" height="612" loading="lazy"></figure>
+  </div>
   <div class="cards" id="classCards">{cards}</div>
   <div class="cc-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
 </div></section>
