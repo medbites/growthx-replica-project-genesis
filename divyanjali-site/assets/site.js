@@ -399,32 +399,57 @@ $$('[data-share]').forEach((b) => {
   $$('.bio-sec').forEach((sec) => spy.observe(sec));
 })();
 
-/* ----- Home: thirty years around the logo. Years orbit the logo; each opens a card that pops out of it ----- */
-(function thirtyOrbit() {
-  const orb = $('#orb'); if (!orb) return;
-  const pop = $('#orbPop'), logo = $('.orb-logo', orb);
-  const nodes = $$('.orb-n', orb), cards = $$('.orb-card', pop);
-  let cur = -1, timer = null, touched = false;
-  function open(i) {
-    cur = i;
-    orb.classList.add('open'); pop.classList.add('open');
-    logo.classList.remove('pop'); void logo.offsetWidth; logo.classList.add('pop');
-    nodes.forEach((n, j) => n.classList.toggle('on', j === i));
-    cards.forEach((c, j) => { c.hidden = j !== i; });
+/* ----- Choreographies: tap a production, read it in a sheet; arrows or swipe for the next ----- */
+(function prodSheet() {
+  const grid = $('#prodGrid'), sheet = $('#sheet'), raw = $('#prodData'); if (!grid || !sheet || !raw) return;
+  const data = JSON.parse(raw.textContent), body = $('#shBody'), pos = $('#shPos');
+  let cur = 0, lastFocus = null;
+  function render(i, dir) {
+    cur = (i + data.length) % data.length;
+    const p = data[cur];
+    const art = $('.pc[data-i="' + cur + '"] .pc-art', grid);
+    const img = art && $('img', art) ? '<img src="' + esc($('img', art).src) + '" alt="">' : '';
+    body.innerHTML = '<div class="sh-top"><span class="pc-art">' + img + '<span class="pc-t">' + esc(p.t) + '</span></span><div>'
+      + (p.y ? '<small>' + esc(p.y) + '</small>' : '') + '<h2>' + esc(p.t) + '</h2><div class="sh-tags">' + p.c.map((c) => '<span>' + esc(c) + '</span>').join('') + '</div></div></div>'
+      + '<p class="sh-line">' + esc(p.l) + '</p>'
+      + (p.s ? '<p class="sh-story">' + esc(p.s) + '</p>' : '<p class="sh-story muted">The full story of this production is coming soon. Ask us about it on WhatsApp.</p>')
+      + (p.cr.length ? '<dl class="sh-cr">' + p.cr.map((c) => '<dt>' + esc(c[0]) + '</dt><dd>' + esc(c[1]) + '</dd>').join('') + '</dl>' : '')
+      + (p.su ? '<p class="sh-suits"><b>Suits:</b> ' + esc(p.su) + '</p>' : '')
+      + '<div class="sh-acts">' + (p.u ? '<a class="btn" href="' + p.u + '">Full story and video</a>' : '')
+      + '<a class="btn' + (p.u ? '-o' : '') + '" href="/book?type=Performance+booking&production=' + encodeURIComponent(p.t) + '">Book this production</a>'
+      + '<a class="btn-o" href="' + waLink('Hello Divyanjali, I would like to know about the production ' + p.t + '.') + '" target="_blank" rel="noopener">WhatsApp</a></div>';
+    body.scrollTop = 0;
+    body.classList.remove('slide-l', 'slide-r'); void body.offsetWidth; if (dir) body.classList.add(dir > 0 ? 'slide-r' : 'slide-l');
+    pos.textContent = (cur + 1) + ' of ' + data.length;
+    history.replaceState(null, '', '#' + p.k);
   }
-  function close() { orb.classList.remove('open'); pop.classList.remove('open'); nodes.forEach((n) => n.classList.remove('on')); cur = -1; }
-  const stop = () => { touched = true; clearInterval(timer); };
-  nodes.forEach((n, i) => n.addEventListener('click', () => { stop(); if (cur === i) close(); else open(i); }));
-  $('.orb-x', pop).addEventListener('click', () => { stop(); close(); });
-  $('.orb-logo', orb).addEventListener('click', () => { stop(); open((cur + 1) % nodes.length); });
-  [orb, pop].forEach((el) => { el.addEventListener('mouseenter', () => clearInterval(timer)); el.addEventListener('mouseleave', () => { if (!touched && cur >= 0) start(); }); });
-  document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape' && orb.classList.contains('open')) { stop(); close(); } });
-  function start() { clearInterval(timer); if (reduceMotion || touched) return; timer = setInterval(() => open((cur + 1) % nodes.length), 4200); }
-  if ('IntersectionObserver' in window) new IntersectionObserver(([en]) => {
-    if (en.isIntersecting) { orb.classList.add('in'); if (!touched) setTimeout(() => { if (!touched) { open(Math.max(cur, 0)); start(); } }, 1200); }
-    else clearInterval(timer);
-  }, { threshold: 0.4 }).observe(orb);
-  else { orb.classList.add('in'); open(0); }
+  function open(i) { lastFocus = document.activeElement; sheet.hidden = false; document.body.style.overflow = 'hidden'; render(i); $('.sheet-x', sheet).focus({ preventScroll: true }); }
+  function close() { sheet.hidden = true; document.body.style.overflow = ''; history.replaceState(null, '', location.pathname); if (lastFocus) lastFocus.focus({ preventScroll: true }); }
+  grid.addEventListener('click', (ev) => { const c = ev.target.closest('.pc'); if (c) open(Number(c.dataset.i)); });
+  sheet.addEventListener('click', (ev) => {
+    if (ev.target.closest('[data-close]')) return close();
+    const st = ev.target.closest('[data-step]'); if (st) render(cur + Number(st.dataset.step), Number(st.dataset.step));
+  });
+  document.addEventListener('keydown', (ev) => {
+    if (sheet.hidden) return;
+    if (ev.key === 'Escape') close();
+    if (ev.key === 'ArrowRight') render(cur + 1, 1);
+    if (ev.key === 'ArrowLeft') render(cur - 1, -1);
+  });
+  // swipe sideways for the next production, pull down from the top to close
+  let x0 = null, y0 = null;
+  const inner = $('.sheet-in', sheet);
+  inner.addEventListener('touchstart', (ev) => { x0 = ev.touches[0].clientX; y0 = ev.touches[0].clientY; }, { passive: true });
+  inner.addEventListener('touchend', (ev) => {
+    if (x0 === null) return;
+    const dx = ev.changedTouches[0].clientX - x0, dy = ev.changedTouches[0].clientY - y0; x0 = null;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) render(cur + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+    else if (dy > 90 && body.scrollTop <= 0) close();
+  }, { passive: true });
+  // a link to /choreographies#hanumath-margam opens that production
+  const fromHash = () => { const h = location.hash.slice(1); const i = h ? data.findIndex((p) => p.k === h) : -1; if (i >= 0) { if (sheet.hidden) open(i); else render(i); } };
+  fromHash();
+  addEventListener('hashchange', fromHash);
 })();
 
 /* ----- WhatsApp links with a ready message ----- */

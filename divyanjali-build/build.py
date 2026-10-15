@@ -210,37 +210,6 @@ def marquee_rows():
         return f'<div class="mq-row{" rev" if rev else ""}"><div class="mq-track">{cards}{cards.replace('<a class="mq"', '<a class="mq" aria-hidden="true" tabindex="-1"')}</div></div>'
     return row(ps[:half], False) + row(ps[half:], True)
 
-THIRTY = [('1994', 'Divyanjali begins', 'Dr. S. Divyasena starts teaching Bharatanatyam in CIT Nagar, Chennai.', '/30-years#p=7'),
-          ('2004', 'A home of its own', 'The workspace is inaugurated by Smt. Chithra Visweswaran and Smt. Nandini Ramani.', '/30-years#p=7'),
-          ('2006', 'The syllabus, in print', 'Essence and Essentials of Dance sets down what every age group learns.', '/30-years#p=7'),
-          ('2011', 'A registered trust', 'Grants from the Government of India and Tamil Isai Sangam fund new productions.', '/30-years#p=7'),
-          ('2015', 'The flood, and the comeback', 'Seven feet of water took the library and instruments. Friends helped rebuild, and Andal Vaibhavam played 13 stages that year.', '/30-years#p=8'),
-          ('2017', 'Kalarpanam', 'A stage of its own for young and upcoming artists.', '/30-years#p=59'),
-          ('2019', 'Silver Jubilee', 'Nrithya Utsav: festivals, lecture demonstrations and competitions from July 2019 to February 2020.', '/30-years#p=58'),
-          ('2026', 'Hanumath Margam', 'World premiere at the 50th Cleveland Thyagaraja Festival, and the Souvenir 2026.', '/productions/hanumath-margam')]
-
-def thirty_orbit():
-    n = len(THIRTY)
-    nodes = ''.join(f'<button type="button" class="orb-n" style="--a:{round(-90 + i * 360 / n)}deg" data-i="{i}" aria-label="{y}: {e(t)}"><span>{y}</span></button>' for i, (y, t, d, h) in enumerate(THIRTY))
-    cards = ''.join(f'<div class="orb-card" data-i="{i}" hidden><small>{y}</small><b>{e(t)}</b><p>{e(d)}</p><a href="{h}">{"See the production" if h.startswith("/productions") else "Read it in the souvenir"} ›</a></div>' for i, (y, t, d, h) in enumerate(THIRTY))
-    return f'''<section class="orb-sec" id="thirty"><div class="wrap orb-grid">
-  <div class="orb-copy">
-    <p class="kicker" style="color:#FFB585">1994 to 2024 and beyond</p>
-    <h2>Thirty years of a divine offering</h2>
-    <p class="muted">Tap a year around the logo to open that chapter. The full story is in the souvenir.</p>
-    <div class="row"><a class="btn" href="/30-years">Open the souvenir</a><a class="btn-o" href="/accolades">Meet the dancers</a></div>
-  </div>
-  <div class="orb-side">
-  <div class="orb" id="orb">
-    <div class="orb-ring" aria-hidden="true"></div>
-    <img class="orb-logo" src="/assets/logo-30-mark.png" alt="Divyanjali 30 years" width="640" height="640" loading="lazy">
-    {nodes}
-  </div>
-  <div class="orb-pop" id="orbPop" aria-live="polite">{cards}<button type="button" class="orb-x" aria-label="Close">×</button></div>
-  </div>
-</div></section>
-'''
-
 def home():
     feat = [p for p in PRODUCTIONS if p['slug'] in ('hanumath-margam', 'andal-vaibhavam', 'thirumurugaatrupadai', 'dasavatharam')]
     def bento(p, i):
@@ -312,7 +281,6 @@ def home():
     <div class="thumbs" id="thumbs"></div>
   </div>
 </div></section>
-{thirty_orbit()}
 <section class="alt"><div class="wrap">
   <div class="sec-head"><div><h2>Two gurus, one stage</h2></div></div>
   <div class="duo">
@@ -767,29 +735,41 @@ def thirty():
 {cta('Be part of the next chapter', 'Join a class, or bring a production to your stage.', 'Join a class', '/learn')}
 ''')
 
+def prod_key(p):
+    return p['slug'] or re.sub('[^a-z]+', '-', p['title'].lower()).strip('-')
+
 def choreographies():
-    dated = sorted([p for p in PRODUCTIONS if p['year']], key=lambda p: p['year'])
-    years = {}
-    for p in dated: years.setdefault(p['year'], []).append(p)
-    def yearcard(y):
-        items = ''.join(f'<p><b>{e(p["title"])}</b> · {e(p["line"])}</p>' for p in years[y])
-        if y == '2015': items += '<p><b>Chennai floods</b> · the studio under seven feet of water</p>'
-        return e(f'<span class="meta">{y}</span>{items}')
-    track = ''.join(f'<button type="button" data-y="{y}" data-html="{yearcard(y)}" aria-pressed="{str(y == "2015").lower()}">{y}</button>' for y in years)
-    first = html.unescape(yearcard('2015'))
+    order = sorted([p for p in PRODUCTIONS if p['year']], key=lambda p: p['year'], reverse=True) + [p for p in PRODUCTIONS if not p['year']]
+    data = [{'k': prod_key(p), 't': p['title'], 'y': p['year'], 'c': p['cats'], 'l': p['line'], 's': p.get('story', ''),
+             'cr': p.get('credits', []), 'su': p.get('suits', ''), 'u': '/productions/' + p['slug'] if p['slug'] else ''} for p in order]
+    def card(i, p):
+        k = prod_key(p)
+        SLOTS.append((PAGE[0], f'prod-{k}.jpg', 'poster · ' + p['title'], '1200×1500'))
+        yr = '<small>' + p['year'] + '</small>' if p['year'] else ''
+        return (f'<button type="button" class="pc reveal" data-i="{i}" style="--i:{i % 6}" aria-haspopup="dialog">'
+                f'<span class="pc-art ph" data-src="/assets/img/prod-{k}.jpg" data-alt="{e(p["title"])}"><span class="pc-t">{e(p["title"])}</span></span>'
+                f'<span class="pc-b">{yr}<b>{e(p["title"])}</b><span>{e(p["line"])}</span></span></button>')
+    blob = json.dumps(data, ensure_ascii=False).replace('</', '<\\/')
     return page('/choreographies', 'Enchanting Choreographies · Divyanjali productions', 'Bharatanatyam productions by Dr. S. Divyasena from Tamil, Sanskrit and Telugu literature, presented across India and abroad.', f'''
 {crumbs(('Choreographies', None))}
-<section style="padding-top:28px"><div class="wrap hero2">
-  <div class="stack"><p class="eyebrow">Productions</p><h1>Enchanting Choreographies</h1><p class="lead">Bharatanatyam productions from Tamil, Sanskrit and Telugu literature, presented across India and abroad.</p><div class="row"><a class="btn" href="/book?type=Performance+booking">Plan a performance</a><a class="btn-o" href="#all">Browse all</a></div></div>
-  {yt('https://www.youtube.com/watch?v=So5SO_M4zZ8', 'Showreel · Dasavatharam')}
+<section class="ch-intro"><div class="wrap">
+  <h1>Enchanting Choreographies</h1>
+  <p class="lead">Bharatanatyam productions conceived and choreographed by Dr. S. Divyasena, from Tamil, Sanskrit and Telugu literature, the epics and the great composers. Staged across India and abroad, from Chennai sabhas to the Cleveland Thyagaraja Festival. Tap a production to read its story.</p>
+  <a class="btn" href="/book?type=Performance+booking">Plan a performance</a>
 </div></section>
-<section class="alt" style="padding-block:40px"><div class="wrap">{stats([(len(PRODUCTIONS), '', 'productions'), (len(dated), '', 'dated, 2012–2026'), (13, '', 'stages, Andal Vaibhavam'), (2, '', 'government grants'), (7, '', 'countries')])}</div></section>
-<section><div class="wrap">{head('Year track', 'The journey, year by year')}
-  <div class="track" data-track="#trackCard">{track}</div>
-  <div class="trackcard" id="trackCard">{first}</div></div></section>
-<section class="alt" id="all"><div class="wrap">{head('All productions', 'Choose a theme', '<span class="muted" id="prodCount">Showing ' + str(len(PRODUCTIONS)) + '</span>')}
-  <div class="chipbar" data-filter="#prodGrid" data-count="#prodCount" style="margin-bottom:20px">{''.join(f'<button class="chip" type="button" data-f="{f}" aria-pressed="{str(f == "All").lower()}">{f}</button>' for f in ['All'] + THEMES)}</div>
-  <div class="tiles" id="prodGrid">{''.join(prod_card(p) for p in PRODUCTIONS)}</div></div></section>
+<section class="ch-list" id="all"><div class="wrap">
+  <div class="pcs" id="prodGrid">{''.join(card(i, p) for i, p in enumerate(order))}</div>
+</div></section>
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-bg" data-close></div>
+  <div class="sheet-in" role="dialog" aria-modal="true" aria-label="Production">
+    <div class="sheet-grab" aria-hidden="true"></div>
+    <button type="button" class="sheet-x" data-close aria-label="Close">×</button>
+    <div class="sheet-body" id="shBody"></div>
+    <div class="sheet-nav"><button type="button" data-step="-1">‹ Previous</button><span id="shPos"></span><button type="button" data-step="1">Next ›</button></div>
+  </div>
+</div>
+<script type="application/json" id="prodData">{blob}</script>
 <section><div class="wrap">{head('On tour', 'Where we have danced')}
   <div class="mapgrid">
     <div><b>India</b><span class="muted">Chennai sabhas, Margazhi Season, New Delhi, 13 stages for Andal Vaibhavam</span></div>
