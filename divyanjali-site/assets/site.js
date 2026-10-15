@@ -372,6 +372,61 @@ $$('[data-share]').forEach((b) => {
   addEventListener('hashchange', () => { const h = location.hash.match(/p=(\d+)/); if (h) go(Number(h[1])); });
 })();
 
+/* ----- Artist profile: share menu, tap-to-open cards, section tabs that follow the scroll ----- */
+(function artistProfile() {
+  const menu = $('[data-share-menu]'), pop = $('.share-pop');
+  if (menu && pop) {
+    const url = encodeURIComponent(location.href.split('#')[0]), title = encodeURIComponent(document.title);
+    const x = $('[data-share-x]', pop), fbk = $('[data-share-fb]', pop);
+    if (x) { x.href = 'https://twitter.com/intent/tweet?url=' + url + '&text=' + title; x.target = '_blank'; x.rel = 'noopener'; }
+    if (fbk) { fbk.href = 'https://www.facebook.com/sharer/sharer.php?u=' + url; fbk.target = '_blank'; fbk.rel = 'noopener'; }
+    const close = () => { pop.hidden = true; menu.setAttribute('aria-expanded', 'false'); };
+    menu.addEventListener('click', (ev) => { ev.stopPropagation(); pop.hidden = !pop.hidden; menu.setAttribute('aria-expanded', String(!pop.hidden)); });
+    document.addEventListener('click', (ev) => { if (!pop.hidden && !pop.contains(ev.target)) close(); });
+    document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') close(); });
+  }
+  $$('.lin, .ab').forEach((b) => b.addEventListener('click', () => b.setAttribute('aria-expanded', String(b.getAttribute('aria-expanded') !== 'true'))));
+  const tabs = $('.bio-tabs'); if (!tabs || !('IntersectionObserver' in window)) return;
+  const links = $$('a', tabs), strip = $('.wrap', tabs);
+  const spy = new IntersectionObserver((ens) => ens.forEach((en) => {
+    if (!en.isIntersecting) return;
+    links.forEach((a) => {
+      const on = a.getAttribute('href') === '#' + en.target.id;
+      a.classList.toggle('on', on);
+      if (on) strip.scrollTo({ left: a.offsetLeft - 16, behavior: reduceMotion ? 'auto' : 'smooth' });
+    });
+  }), { rootMargin: '-45% 0px -50% 0px' });
+  $$('.bio-sec').forEach((sec) => spy.observe(sec));
+})();
+
+/* ----- Home: thirty years around the logo. Years orbit the logo; each opens a card that pops out of it ----- */
+(function thirtyOrbit() {
+  const orb = $('#orb'); if (!orb) return;
+  const pop = $('#orbPop'), logo = $('.orb-logo', orb);
+  const nodes = $$('.orb-n', orb), cards = $$('.orb-card', pop);
+  let cur = -1, timer = null, touched = false;
+  function open(i) {
+    cur = i;
+    orb.classList.add('open'); pop.classList.add('open');
+    logo.classList.remove('pop'); void logo.offsetWidth; logo.classList.add('pop');
+    nodes.forEach((n, j) => n.classList.toggle('on', j === i));
+    cards.forEach((c, j) => { c.hidden = j !== i; });
+  }
+  function close() { orb.classList.remove('open'); pop.classList.remove('open'); nodes.forEach((n) => n.classList.remove('on')); cur = -1; }
+  const stop = () => { touched = true; clearInterval(timer); };
+  nodes.forEach((n, i) => n.addEventListener('click', () => { stop(); if (cur === i) close(); else open(i); }));
+  $('.orb-x', pop).addEventListener('click', () => { stop(); close(); });
+  $('.orb-logo', orb).addEventListener('click', () => { stop(); open((cur + 1) % nodes.length); });
+  [orb, pop].forEach((el) => { el.addEventListener('mouseenter', () => clearInterval(timer)); el.addEventListener('mouseleave', () => { if (!touched && cur >= 0) start(); }); });
+  document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape' && orb.classList.contains('open')) { stop(); close(); } });
+  function start() { clearInterval(timer); if (reduceMotion || touched) return; timer = setInterval(() => open((cur + 1) % nodes.length), 4200); }
+  if ('IntersectionObserver' in window) new IntersectionObserver(([en]) => {
+    if (en.isIntersecting) { orb.classList.add('in'); if (!touched) setTimeout(() => { if (!touched) { open(Math.max(cur, 0)); start(); } }, 1200); }
+    else clearInterval(timer);
+  }, { threshold: 0.4 }).observe(orb);
+  else { orb.classList.add('in'); open(0); }
+})();
+
 /* ----- WhatsApp links with a ready message ----- */
 $$('[data-wa]').forEach((a) => { a.href = waLink((a.dataset.wa || 'Hello Divyanjali') + (a.hasAttribute('data-wa-url') ? '\n' + location.href.split('#')[0] : '')); a.target = '_blank'; a.rel = 'noopener'; });
 

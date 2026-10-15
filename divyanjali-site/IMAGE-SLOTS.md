@@ -25,7 +25,6 @@ Videos and Instagram posts for the Gallery: edit `divyanjali-site/assets/media.j
 | `faculty-mahati.jpg` | S. Mahati | 800×1000 | /about |
 | `faculty-harini.jpg` | Harini N. | 800×1000 | /about |
 | `faculty-upanisha.jpg` | Upanisha K. | 800×1000 | /about |
-| `divyasena-portrait.jpg` | Dr. S. Divyasena, portrait | 1200×1500 | /divyasena |
 | `haribabu-portrait.jpg` | Sri B.P. Haribabu with mridangam | 1200×1500 | /haribabu |
 | `flood-before.jpg` | the workspace after the flood | 1200×900 | /30-years |
 | `flood-after.jpg` | the rebuilt library | 1200×900 | /30-years |

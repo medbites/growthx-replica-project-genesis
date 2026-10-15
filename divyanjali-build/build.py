@@ -210,6 +210,37 @@ def marquee_rows():
         return f'<div class="mq-row{" rev" if rev else ""}"><div class="mq-track">{cards}{cards.replace('<a class="mq"', '<a class="mq" aria-hidden="true" tabindex="-1"')}</div></div>'
     return row(ps[:half], False) + row(ps[half:], True)
 
+THIRTY = [('1994', 'Divyanjali begins', 'Dr. S. Divyasena starts teaching Bharatanatyam in CIT Nagar, Chennai.', '/30-years#p=7'),
+          ('2004', 'A home of its own', 'The workspace is inaugurated by Smt. Chithra Visweswaran and Smt. Nandini Ramani.', '/30-years#p=7'),
+          ('2006', 'The syllabus, in print', 'Essence and Essentials of Dance sets down what every age group learns.', '/30-years#p=7'),
+          ('2011', 'A registered trust', 'Grants from the Government of India and Tamil Isai Sangam fund new productions.', '/30-years#p=7'),
+          ('2015', 'The flood, and the comeback', 'Seven feet of water took the library and instruments. Friends helped rebuild, and Andal Vaibhavam played 13 stages that year.', '/30-years#p=8'),
+          ('2017', 'Kalarpanam', 'A stage of its own for young and upcoming artists.', '/30-years#p=59'),
+          ('2019', 'Silver Jubilee', 'Nrithya Utsav: festivals, lecture demonstrations and competitions from July 2019 to February 2020.', '/30-years#p=58'),
+          ('2026', 'Hanumath Margam', 'World premiere at the 50th Cleveland Thyagaraja Festival, and the Souvenir 2026.', '/productions/hanumath-margam')]
+
+def thirty_orbit():
+    n = len(THIRTY)
+    nodes = ''.join(f'<button type="button" class="orb-n" style="--a:{round(-90 + i * 360 / n)}deg" data-i="{i}" aria-label="{y}: {e(t)}"><span>{y}</span></button>' for i, (y, t, d, h) in enumerate(THIRTY))
+    cards = ''.join(f'<div class="orb-card" data-i="{i}" hidden><small>{y}</small><b>{e(t)}</b><p>{e(d)}</p><a href="{h}">{"See the production" if h.startswith("/productions") else "Read it in the souvenir"} ›</a></div>' for i, (y, t, d, h) in enumerate(THIRTY))
+    return f'''<section class="orb-sec" id="thirty"><div class="wrap orb-grid">
+  <div class="orb-copy">
+    <p class="kicker" style="color:#FFB585">1994 to 2024 and beyond</p>
+    <h2>Thirty years of a divine offering</h2>
+    <p class="muted">Tap a year around the logo to open that chapter. The full story is in the souvenir.</p>
+    <div class="row"><a class="btn" href="/30-years">Open the souvenir</a><a class="btn-o" href="/accolades">Meet the dancers</a></div>
+  </div>
+  <div class="orb-side">
+  <div class="orb" id="orb">
+    <div class="orb-ring" aria-hidden="true"></div>
+    <img class="orb-logo" src="/assets/logo-30-mark.png" alt="Divyanjali 30 years" width="640" height="640" loading="lazy">
+    {nodes}
+  </div>
+  <div class="orb-pop" id="orbPop" aria-live="polite">{cards}<button type="button" class="orb-x" aria-label="Close">×</button></div>
+  </div>
+</div></section>
+'''
+
 def home():
     feat = [p for p in PRODUCTIONS if p['slug'] in ('hanumath-margam', 'andal-vaibhavam', 'thirumurugaatrupadai', 'dasavatharam')]
     def bento(p, i):
@@ -281,6 +312,7 @@ def home():
     <div class="thumbs" id="thumbs"></div>
   </div>
 </div></section>
+{thirty_orbit()}
 <section class="alt"><div class="wrap">
   <div class="sec-head"><div><h2>Two gurus, one stage</h2></div></div>
   <div class="duo">
@@ -372,42 +404,157 @@ def about():
 ''')
 
 def divyasena():
-    return page('/divyasena', 'Dr. S. Divyasena · Bharatanatyam guru, Divyanjali', 'Natyacharya Dr. S. Divyasena: dancer, choreographer and nattuvanar, founder of Divyanjali, Doordarshan A grade artist.', f'''
+    facts = [('Art form', 'Bharatanatyam'), ('Roles', 'Dancer, choreographer, nattuvanar, guru'), ('Arangetram', '1985'),
+             ('Founded', 'Divyanjali, Chennai, 1994'), ('Doordarshan', "'A' grade artist"),
+             ('Education', 'Bachelor of Music · Master\'s in Kuchipudi · Doctorate in Bharatanatyam'),
+             ('University', 'Sri Chandrasekharendra Saraswathi Viswa Mahavidyalaya'), ('Doctoral guide', 'Dr. Ambika Kameshwar'),
+             ('Trust', 'Founder and Managing Trustee, Divyanjali (registered 2011)'), ('Service', "Secretary, 'Prayathnam', a forum for young classical dance teachers"),
+             ('Arangetrams', '71 conducted by Divyanjali, including one abroad'), ('Performed in', 'India, USA, Thailand, Singapore, UAE, UK, Australia, Sri Lanka')]
+    gurus = [('1985', 'Smt. Saroja Rani', 'First steps in Bharatanatyam, and her arangetram in 1985'),
+             ('Bharatanatyam', "'Yuva Kala Bharathi' Sri J. Suryanarayana Murthy", 'Rigorous advanced training'),
+             ('Abhinaya', "'Padma Bhushan' Smt. Kalanidhi Narayanan", 'Meticulous training in abhinaya'),
+             ('Kuchipudi', "'Padma Bhushan' Dr. Vempati Chinna Satyam", 'Initiation at the Kuchipudi Arts Academy (her own training)'),
+             ('Kuchipudi', 'Sri Udayakanth and Smt. Renuka', 'Initial years of Kuchipudi'),
+             ('Kuchipudi', 'Sri Jaikishore Mosalikanti', 'Advanced training, ongoing'),
+             ('Nattuvangam', 'Sri B.P. Haribabu', 'The art of wielding the cymbals')]
+    abroad = [('USA', 'Cleveland Thyagaraja Festival · Nrithya Nataka Mala tour · Hanumath Margam premiere, 2026'), ('Thailand', 'Navarathri Festival, Bangkok'),
+              ('Singapore', 'Navarathri Festival'), ('UAE', 'Performances in Dubai'), ('UK', 'Performances'), ('Australia', 'Melbourne, from 2013, with Nadanalaya'), ('Sri Lanka', 'Performances')]
+    media = [('Jaya TV', 'Judge, Takadimi Tha dance show · interview'), ('Raj TV', "Judge, Aaseervath 'Abhinaya'"), ('Sun TV', 'Dance performances'),
+             ('Makkal TV', 'Dance performances'), ('Podhigai', 'Dance performances'), ('Star Vijay', 'Divyanjali on air'), ('Kavasam web TV · Rasa web channel', 'Online performances')]
+    works = [('Book · 2006', 'Essence and Essentials of Dance', "Divyanjali's full syllabus, theory and practice, written for every age group"),
+             ('Book', 'Duta Mahima', 'Authored by Dr. S. Divyasena'),
+             ('Audio CD', 'Nrithyaharam', 'The adavus of Bharatanatyam, compiled so students can practise on their own')]
+    peers = [('Sri V. V. Sundaram', 'Her abhinaya is never very overt but gives the essence of the rasa while leaving some to the imagination of the audience.', 15),
+             ('Smt. Nandini Ramani, veteran Bharatanatyam exponent', 'Divyasena is a very talented performer and teacher whose hard work and commitment have brought her good recognition and respect in the Bharatanatyam scene.', 14),
+             ('Dr. Ambika Kameshwar, RASA', 'She trains her disciples in a focused and disciplined manner and brings out the best in them as well.', 19),
+             ('Smt. Hema Rajagopalan, Natya Dance Theatre, Chicago', 'Divyasena has always worked very hard to maintain the integrity of the art form while being creative.', 21),
+             ('Smt. Savithri Jagannath Rao', 'She has a brilliant approach in Layam. She is a very patient, brilliant and kind teacher.', 25)]
+    prods = [p for p in PRODUCTIONS if p['slug']]
+    tabs = [('profile', 'Profile'), ('lineage', 'Gurus'), ('education', 'Education'), ('work', 'Work'), ('stage', 'On stage'), ('media', 'Media'), ('words', 'In her words'), ('peers', 'Peers')]
+    ld = {'@context': 'https://schema.org', '@type': 'Person', 'name': 'Dr. S. Divyasena', 'honorificPrefix': 'Natyacharya Dr.',
+          'jobTitle': 'Bharatanatyam dancer, choreographer, nattuvanar and teacher', 'image': '/assets/img/divyasena-portrait.webp',
+          'worksFor': {'@type': 'DanceGroup', 'name': 'Divyanjali', 'foundingDate': '1994', 'address': {'@type': 'PostalAddress', 'addressLocality': 'Chennai', 'addressCountry': 'IN'}},
+          'alumniOf': {'@type': 'CollegeOrUniversity', 'name': 'Sri Chandrasekharendra Saraswathi Viswa Mahavidyalaya'},
+          'hasCredential': ['Doctorate in Bharatanatyam', "Master's in Kuchipudi", 'Bachelor of Music', "Doordarshan 'A' grade artist"],
+          'knowsAbout': ['Bharatanatyam', 'Abhinaya', 'Nattuvangam', 'Choreography', 'Kuchipudi'], 'spouse': {'@type': 'Person', 'name': 'B. P. Haribabu'},
+          'sameAs': ['https://www.instagram.com/divyanjalidance/', 'https://www.youtube.com/channel/UCLPvhdH5qXt0R4IyDt1eSHg', 'https://www.facebook.com/divyanjali.dance/']}
+    return page('/divyasena', 'Dr. S. Divyasena · Bharatanatyam dancer, choreographer and guru, Chennai',
+        "Natyacharya Dr. S. Divyasena: Bharatanatyam dancer, choreographer and nattuvanar, founder of Divyanjali (1994), Doordarshan 'A' grade artist with a doctorate in Bharatanatyam. Full biography, gurus, productions and media.", f'''
 {crumbs(('About', '/about'), ('Dr. S. Divyasena', None))}
-<section style="padding-top:28px"><div class="wrap hero2">
-  {ph('divyasena-portrait.jpg', 'Dr. S. Divyasena, portrait', '1200×1500', 'tall')}
-  <div class="stack"><p class="eyebrow">Founder · Natyacharya</p><h1>Dr. S. Divyasena</h1><p class="lead">Dancer, choreographer and nattuvanar. Founder of Divyanjali in 1994. Doctorate in Bharatanatyam. Doordarshan A grade artist. Honoured as Nrithya Kala Sagaram.</p>
-  <div class="row"><a class="btn" href="/book?type=Performance+booking">Invite her to perform</a><a class="btn-o" href="/learn">Learn with her</a></div></div>
+<article class="bio">
+<header class="bio-hero"><div class="wrap bio-hero-in">
+  <figure class="bio-photo"><img src="/assets/img/divyasena-portrait.webp" alt="Dr. S. Divyasena in an abhinaya pose" width="1053" height="692" fetchpriority="high"></figure>
+  <div class="bio-id">
+    <p class="cv-role">Natyacharya · Founder of Divyanjali</p>
+    <h1>Dr. S. Divyasena</h1>
+    <p class="bio-line">Bharatanatyam dancer, choreographer, nattuvanar and guru. She founded Divyanjali in Chennai in 1994 and has shaped it for over thirty years.</p>
+    <div class="cv-tags"><span>Doctorate in Bharatanatyam</span><span>Doordarshan 'A' grade</span><span>Secretary, Prayathnam</span></div>
+    <div class="cv-acts">
+      <button class="btn" type="button" data-share-menu aria-expanded="false">Share profile</button>
+      <button class="btn-o" type="button" data-print>Download biodata</button>
+      <a class="btn-o" href="/book?type=Performance+booking">Invite to perform</a>
+    </div>
+    <div class="share-pop" hidden>
+      <button type="button" data-copy>Copy link</button>
+      <a data-wa="Dr. S. Divyasena, Bharatanatyam guru and founder of Divyanjali" data-wa-url href="#">WhatsApp</a>
+      <a href="#" data-share-x>X (Twitter)</a>
+      <a href="#" data-share-fb>Facebook</a>
+      <button type="button" data-share hidden>More options</button>
+    </div>
+  </div>
+</div></header>
+
+<nav class="bio-tabs" aria-label="On this page"><div class="wrap">{''.join(f'<a href="#{i}">{t}</a>' for i, t in tabs)}</div></nav>
+
+<section id="profile" class="bio-sec"><div class="wrap bio-two">
+  <div class="prose">
+    <h2>Profile</h2>
+    <p><b>Dr. S. Divyasena</b> is a versatile and accomplished Bharatanatyam artist, choreographer and teacher from Chennai. She trained in the preliminaries of Bharatanatyam under Smt. Saroja Rani and made her stage debut with her arangetram in 1985. She continued her rigorous training under 'Yuva Kala Bharathi' Sri J. Suryanarayana Murthy, and trained meticulously in abhinaya under 'Padma Bhushan' Smt. Kalanidhi Narayanan.</p>
+    <p>Alongside Bharatanatyam she trained in Kuchipudi for her own growth as an artist: her initiation came at the Kuchipudi Arts Academy, led by the legendary 'Padma Bhushan' Dr. Vempati Chinna Satyam, with her first years under Sri Udayakanth and Smt. Renuka, and her advanced training under Sri Jaikishore Mosalikanti. She learnt nattuvangam, the art of wielding the cymbals, from Sri B.P. Haribabu.</p>
+    <p>She is an 'A' grade artist of Doordarshan. She holds a Bachelor's in Music, a Master's in Kuchipudi and a Doctorate in Bharatanatyam from Sri Chandrasekharendra Saraswathi Viswa Mahavidyalaya, under the guidance of Dr. Ambika Kameshwar. She is also the secretary of 'Prayathnam', a forum for young classical dance teachers.</p>
+    <p>In 1994 she founded <a href="/about">Divyanjali</a>. Its syllabus, written by her and published as <i>Essence and Essentials of Dance</i> in 2006, covers theory and practice for every age group. Students also learn thalam, ithihasam, puranas and moral values, which she calls "Poorna Vidhya". Divyanjali has conducted 71 arangetrams, including one she conducted abroad. At Divyanjali she teaches Bharatanatyam.</p>
+  </div>
+  <aside class="facts-card" aria-label="Biodata">
+    <h3>Biodata</h3>
+    <dl>{''.join(f'<dt>{e(k)}</dt><dd>{e(v)}</dd>' for k, v in facts)}</dl>
+  </aside>
 </div></section>
-<section class="alt"><div class="wrap two">
-  <div class="stack">{head('Training', 'Her gurus')}
-  <div class="prose"><p>Dr. S. Divyasena trained in the preliminaries of Bharatanatyam under Smt. Saroja Rani and made her stage debut with her arangetram in 1985. She continued her rigorous training under 'Yuva Kala Bharathi' Sri J. Suryanarayana Murthy, and trained in abhinaya under 'Padma Bhushan' Late Smt. Kalanidhi Narayanan.</p>
-  <p>As part of her own learning she has also trained in Kuchipudi, at the Kuchipudi Arts Academy founded by 'Padma Bhushan' Dr. Vempati Chinna Satyam, and later under Sri Jai Kishore Mosalikanti. She learnt nattuvangam, the art of wielding the cymbals, from Sri B.P. Haribabu. At Divyanjali, she teaches Bharatanatyam.</p></div></div>
-  <ol class="tl"><li><b>1985</b><span>Arangetram</span></li><li><b>Gurus</b><span>Smt. Saroja Rani · Sri J. Suryanarayana Murthy · Smt. Kalanidhi Narayanan (abhinaya)</span></li><li><b>Nattuvangam</b><span>Sri B.P. Haribabu</span></li><li><b>1994</b><span>Founded Divyanjali</span></li></ol>
+
+<section id="lineage" class="bio-sec alt"><div class="wrap">
+  <h2>Gurus and lineage</h2>
+  <p class="muted bio-sub">Tap a guru to see what she learnt from them.</p>
+  <ol class="lineage">{''.join(f'<li class="reveal" style="--i:{i}"><button type="button" class="lin" aria-expanded="false"><span class="lin-k">{e(k)}</span><b>{e(n)}</b><span class="lin-d">{e(d)}</span></button></li>' for i, (k, n, d) in enumerate(gurus))}</ol>
 </div></section>
-<section><div class="wrap">{head('Education and honours', 'Scholar and artist')}
-  <div class="tiles">
-    <div class="tile"><span class="meta">Doctorate</span><h3>Bharatanatyam</h3><p class="muted">Sri Chandrasekharendra Saraswathi Viswa Mahavidyalaya, under the guidance of Dr. Ambika Kameshwar</p></div>
-    <div class="tile"><span class="meta">Master's</span><h3>Kuchipudi</h3><p class="muted">Postgraduate study, part of her own training</p></div>
-    <div class="tile"><span class="meta">Bachelor's</span><h3>Music</h3><p class="muted">Carnatic music</p></div>
-    <div class="tile"><span class="meta">Doordarshan</span><h3>A grade artist</h3><p class="muted">National broadcaster grading</p></div>
-    <div class="tile"><span class="meta">Title</span><h3>Nrithya Kala Sagaram</h3><p class="muted">{todo('Given by, year')}</p></div>
-    <div class="tile"><span class="meta">Service</span><h3>Prayathnam</h3><p class="muted">Secretary of the forum for young classical dance teachers</p></div>
-  </div></div></section>
-<section class="alt"><div class="wrap">{head('On stage and screen', 'Productions and television', '<a class="btn-o" href="/choreographies">See the productions</a>')}
-  <div class="vids">{yt('https://www.youtube.com/watch?v=So5SO_M4zZ8', 'Dasavatharam')}{yt(HOME_VIDEO, 'Divyanjali on stage')}</div>
-  <div class="tiles" style="margin-top:24px">
-    <div class="tile"><span class="meta">Jaya TV</span><h3>Judge and interview</h3><p class="muted">Judge for the dance show Takadimi Tha, and an interview</p></div>
-    <div class="tile"><span class="meta">Raj TV</span><h3>Judge</h3><p class="muted">Aaseervath 'Abhinaya'</p></div>
-    <div class="tile"><span class="meta">Sun TV · Makkal TV · Podhigai</span><h3>Performances</h3><p class="muted">Televised dance performances</p></div>
-  </div></div></section>
+
+<section id="education" class="bio-sec"><div class="wrap">
+  <h2>Education</h2>
+  <div class="edu">
+    <div class="edu-c reveal"><small>Doctorate</small><b>Bharatanatyam</b><span>Sri Chandrasekharendra Saraswathi Viswa Mahavidyalaya, guided by Dr. Ambika Kameshwar</span></div>
+    <div class="edu-c reveal"><small>Master's</small><b>Kuchipudi</b><span>Postgraduate study, part of her own training</span></div>
+    <div class="edu-c reveal"><small>Bachelor's</small><b>Music</b><span>Carnatic music</span></div>
+    <div class="edu-c reveal"><small>Doordarshan</small><b>'A' grade artist</b><span>Graded by the national broadcaster</span></div>
+  </div>
+</div></section>
+
+<section id="work" class="bio-sec alt"><div class="wrap">
+  <h2>Founder, teacher and author</h2>
+  <ol class="tl">
+    <li><b>1994</b><span>Founded Divyanjali in CIT Nagar, Chennai</span></li>
+    <li><b>2004</b><span>Divyanjali's own workspace, inaugurated by Smt. Chithra Visweswaran and Smt. Nandini Ramani</span></li>
+    <li><b>2006</b><span>Published the syllabus as <i>Essence and Essentials of Dance</i></span></li>
+    <li><b>2011</b><span>Divyanjali registered as a trust, with herself as Founder and Managing Trustee; grants from the Government of India and Tamil Isai Sangam followed</span></li>
+    <li><b>2015</b><span>Rebuilt the school after the Chennai floods</span></li>
+    <li><b>2017</b><span>Started Kalarpanam, a platform for young artists</span></li>
+    <li><b>2018</b><span>Sangeet International Festival, with the All India Dancers Association</span></li>
+    <li><b>2019–20</b><span>Nrithya Utsav, a season of festivals, lecture demonstrations and competitions for the Silver Jubilee</span></li>
+    <li><b>2024</b><span>Thirty years of Divyanjali · <a href="/30-years">read the Souvenir 2026</a></span></li>
+  </ol>
+  <h3 class="bio-h3">Publications and resources</h3>
+  <div class="edu">{''.join(f'<div class="edu-c reveal"><small>{e(k)}</small><b>{e(t)}</b><span>{e(d)}</span></div>' for k, t, d in works)}</div>
+</div></section>
+
+<section id="stage" class="bio-sec"><div class="wrap">
+  <h2>Choreographer and performer</h2>
+  <p class="bio-sub">She has composed and presented group productions across India and abroad. <i>Andal Vaibhavam</i> was staged on 13 stages in a single year, and <i>Hanumath Margam</i> premiered at the 50th Cleveland Thyagaraja Festival in 2026.</p>
+  <div class="prod-chips">{''.join(f'<a href="/productions/{p["slug"]}">{e(p["title"])}{"<small>" + p["year"] + "</small>" if p["year"] else ""}</a>' for p in prods)}<a href="/choreographies" class="all">All productions ›</a></div>
+  <h3 class="bio-h3">Performances abroad</h3>
+  <div class="abroad">{''.join(f'<button type="button" class="ab" aria-expanded="false"><b>{e(c)}</b><span>{e(d)}</span></button>' for c, d in abroad)}</div>
+  <div class="vids" style="margin-top:26px">{yt('https://www.youtube.com/watch?v=So5SO_M4zZ8', 'Dasavatharam')}{yt(HOME_VIDEO, 'Divyanjali on stage', 12)}</div>
+</div></section>
+
+<section id="media" class="bio-sec alt"><div class="wrap">
+  <h2>Media and television</h2>
+  <div class="media-grid">{''.join(f'<div class="mg reveal"><b>{e(c)}</b><span>{e(d)}</span></div>' for c, d in media)}</div>
+</div></section>
+
+<section id="words" class="bio-sec"><div class="wrap bio-two">
+  <div>
+    <h2>In her words</h2>
+    <blockquote class="her-q">"Not all the fingers are the same. Every dancer has a unique talent. I strive hard to make all my students realise their uniqueness and potential."</blockquote>
+    <div class="prose">
+      <p>"Every day has been a new learning experience with the art. I started teaching with the motive of sharing what I had learned from natyam with as many young minds as possible."</p>
+      <p>"As a teacher, the most joyous moment was when my students pursued the art form and were appreciated. Watching the world of natyam flourish in my students' minds and souls makes me the happiest person."</p>
+      <p class="muted">From her Letter from the Founder, Souvenir 2026. <a href="/30-years#p=5">Read the full letter</a></p>
+    </div>
+  </div>
+  <figure class="bio-duo"><img src="/assets/img/founders-together.webp" alt="Sri B.P. Haribabu and Dr. S. Divyasena" width="1200" height="993" loading="lazy"><figcaption>With Sri B.P. Haribabu, mridangam artist and Secretary-Trustee of Divyanjali. <a href="/haribabu">His profile</a></figcaption></figure>
+</div></section>
+
+<section id="peers" class="bio-sec alt"><div class="wrap">
+  <h2>What fellow artists say</h2>
+  <div class="peer-row">{''.join(f'<figure class="peer reveal" style="--i:{i}"><blockquote>"{e(q)}"</blockquote><figcaption>{e(n)} · <a href="/30-years#p={pg}">souvenir p.{pg}</a></figcaption></figure>' for i, (n, q, pg) in enumerate(peers))}</div>
+</div></section>
+</article>
 {faq_section([
-    ('Where did Dr. Divyasena train?', 'Under Smt. Saroja Rani, Sri J. Suryanarayana Murthy and, for abhinaya, Smt. Kalanidhi Narayanan. She holds a doctorate in Bharatanatyam.'),
-    ('Does Divyanjali teach Kuchipudi?', 'No. Dr. Divyasena trained in Kuchipudi as part of her own learning, and it informs her work, but Divyanjali teaches Bharatanatyam.'),
-    ('Can we invite her for a workshop or lecture demonstration?', 'Yes. Send the details through <a href="/book?type=Workshop+or+lecture+demonstration">Book and Enquire</a>.'),
+    ('Who is Dr. S. Divyasena?', "A Bharatanatyam dancer, choreographer, nattuvanar and teacher from Chennai, the founder of Divyanjali (1994), a Doordarshan 'A' grade artist with a doctorate in Bharatanatyam."),
+    ('Who are her gurus?', 'Smt. Saroja Rani, Sri J. Suryanarayana Murthy and, for abhinaya, Smt. Kalanidhi Narayanan. She also trained in Kuchipudi under the academy of Dr. Vempati Chinna Satyam and Sri Jaikishore Mosalikanti, and in nattuvangam under Sri B.P. Haribabu.'),
+    ('What is her doctorate in?', 'Bharatanatyam, from Sri Chandrasekharendra Saraswathi Viswa Mahavidyalaya, under the guidance of Dr. Ambika Kameshwar.'),
+    ('Does Divyanjali teach Kuchipudi?', 'No. Kuchipudi is part of her own training and informs her work; Divyanjali teaches Bharatanatyam.'),
+    ('Can we invite her for a performance, workshop or lecture demonstration?', 'Yes. Send the details through <a href="/book?type=Workshop+or+lecture+demonstration">Book and Enquire</a>.'),
 ])}
-{cta('Invite Dr. Divyasena', 'For performances, workshops and lecture demonstrations.', 'Send an enquiry', '/book?type=Workshop+or+lecture+demonstration')}
-''')
+{cta('Invite Dr. Divyasena', 'For performances, workshops, lecture demonstrations and productions.', 'Send an enquiry', '/book?type=Workshop+or+lecture+demonstration', 'Hello Divyanjali, I would like to invite Dr. Divyasena.')}
+<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>
+''', extra_head='<meta property="og:image" content="/assets/img/divyasena-portrait.webp">\n<meta property="og:type" content="profile">\n<link rel="canonical" href="/divyasena">\n')
 
 def haribabu():
     return page('/haribabu', 'Sri B.P. Haribabu · Mridangam and rhythm, Divyanjali', 'Sri B.P. Haribabu: mridangam artist, nattuvanar and rhythm composer, Vaadhya Visharadha, over 85 tours abroad.', f'''
