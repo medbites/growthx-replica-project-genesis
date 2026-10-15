@@ -65,22 +65,44 @@ def icon(name):
     return f'<svg class="ic" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">{ICONS[name]}</svg>'
 
 # ---------------------------------------------------------------- layout
-NAV = [('About', '/about'), ('30 Years', '/30-years'), ('Accolades', '/accolades'), ('Choreographies', '/choreographies'), ('Learn', '/learn'), ('Calendar', '/events')]
-ABOUT = [('Dance school', '/about', 'Divyanjali since 1994'), ('Dr. S. Divyasena', '/divyasena', 'Founder and guru'), ('Sri B.P. Haribabu', '/haribabu', 'Mridangam and rhythm')]
-MENU = [('Home', '/'), ('About', ABOUT), ('30 Years', '/30-years'),
-        ("Student's Accolades", '/accolades'), ('Choreographies', '/choreographies'), ('Learn', '/learn'), ('Events calendar', '/events'),
-        ('Gallery and Videos', '/gallery'), ('Natya IQ', '/natya-iq'), ('Media Room', '/media'), ('Store', '/store'), ('Book and Enquire', '/book')]
+NAV = [
+    ('About', '/about', [('Dance school', '/about', 'Divyanjali since 1994'), ('Dr. S. Divyasena', '/divyasena', 'Founder and guru'),
+                         ('Sri B.P. Haribabu', '/haribabu', 'Mridangam and rhythm'), ('Media Room', '/media', 'Press kit, facts and photos')]),
+    ('30 Years', '/30-years', [('The souvenir book', '/30-years#souvenir', 'Page through Souvenir 2026'), ('Messages', '/30-years#messages', 'From fellow artists'),
+                               ('Timeline', '/30-years#timeline', '1994 to 2024, year by year'), ('The 2015 flood', '/30-years#flood', 'And the way back')]),
+    ('Accolades', '/accolades', [('All dancers', '/accolades', 'Every profile in one place'), ('Faculty', '/accolades#faculty', 'Our teachers'),
+                                 ('Students', '/accolades#students', 'Students and alumni')]),
+    ('Choreographies', '/choreographies', [('All productions', '/choreographies', 'Every production, newest first'), ('Hanumath Margam', '/productions/hanumath-margam', 'World premiere, 2026'),
+                                           ('Andal Vaibhavam', '/productions/andal-vaibhavam', 'Staged on 13 stages in a year'), ('Thirumurugaatrupadai', '/productions/thirumurugaatrupadai', 'A Sangam-era poem, staged'),
+                                           ('Gallery', '/gallery', 'Photos and videos')]),
+    ('Learn', '/learn', [('Find your class', '/learn#finder', 'Three taps to the right batch'), ('The path', '/learn#path', 'From adavus to arangetram'),
+                         ('Batches and timings', '/learn#batches', 'Days, times and places'), ('Natya IQ', '/natya-iq', 'Games to practise theory'), ('Store', '/store', 'Books, the CD and more')]),
+    ('Calendar', '/events', None),
+]
+CHEVRON = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>'
 
 def header(path):
-    cur = lambda h: ' aria-current="page"' if h == path or (h != '/' and path.startswith(h + '/')) or (h == '/accolades' and path.startswith('/students/')) else ''
-    about_on = ' aria-current="page"' if path in [h for _, h, _ in ABOUT] else ''
-    sub = ''.join(f'<a href="{h}"{cur(h)}><b>{t}</b><small>{d}</small></a>' for t, h, d in ABOUT)
-    def nav_item(t, h):
-        if h == '/about':
-            return f'<div class="dd hide-m"><a class="dd-t" href="/about"{about_on} aria-haspopup="true">About<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a><div class="dd-p">{sub}</div></div>'
-        return f'<a class="{"navcal" if h == "/events" else "hide-m"}" href="{h}"{cur(h)}>{t}</a>'
-    nav = ''.join(nav_item(t, h) for t, h in NAV)
-    menu = ''.join(f'<p class="menu-g">{t}</p>' + ''.join(f'<a class="menu-sub" href="{h2}"{cur(h2)}>{t2}</a>' for t2, h2, _ in h) if isinstance(h, list) else f'<a href="{h}"{cur(h)}>{t}</a>' for t, h in MENU)
+    def on(h):
+        h = h.split('#')[0]
+        return h == path or (h != '/' and path.startswith(h + '/')) or (h == '/accolades' and path.startswith('/students/')) or (h == '/choreographies' and path.startswith('/productions/'))
+    cur = lambda h: ' aria-current="page"' if '#' not in h and on(h) else ''
+    group_on = lambda t, h, kids: on(h) or any(on(k) for _, k, _ in (kids or []))
+    nav = ''
+    for i, (t, h, kids) in enumerate(NAV):
+        if not kids:
+            nav += f'<a class="navcal" href="{h}"{cur(h)}>{t}</a>'
+            continue
+        sub = ''.join(f'<a href="{kh}"{cur(kh)}><b>{kt}</b><small>{kd}</small></a>' for kt, kh, kd in kids)
+        mark = ' aria-current="page"' if group_on(t, h, kids) else ''
+        nav += f'<div class="dd hide-m{" r" if i >= len(NAV) - 3 else ""}"><a class="dd-t" href="{h}"{mark} aria-haspopup="true">{t}{CHEVRON}</a><div class="dd-p">{sub}</div></div>'
+    menu = f'<a href="/"{cur("/")}>Home</a>'
+    for t, h, kids in NAV:
+        if not kids:
+            menu += f'<a href="{h}"{cur(h)}>Events calendar</a>'
+            continue
+        menu += (f'<details class="mg"{" open" if group_on(t, h, kids) else ""}><summary>{t}{CHEVRON}</summary>'
+                 + ''.join(f'<a class="menu-sub" href="{kh}"{cur(kh)}>{kt}</a>' for kt, kh, _ in kids) + '</details>')
+    menu += '<a class="menu-cta" href="/book">Book and Enquire</a>'
     return f'''<header class="top">
   <div class="wrap">
     <a class="logo" href="/" aria-label="Divyanjali home"><img src="/assets/logo-mark.webp" alt="" width="46" height="45"><b>Divyanjali</b></a>
@@ -891,12 +913,12 @@ def thirty():
 </div></section>
 {flipbook()}
 <section class="alt" style="padding-block:40px"><div class="wrap">{stats([(1994, '', 'founded'), (71, '', 'arangetrams'), (300, '+', 'dancers trained'), (150, '+', 'books in the rebuilt library')])}</div></section>
-<section><div class="wrap">
+<section id="messages"><div class="wrap">
   <div class="sec-head"><div><h2>Messages from fellow artists</h2></div></div>
   <div class="msgs">{msgs}</div>
   <p class="muted" style="margin-top:14px">More messages follow on pages 17 to 38 of the souvenir.</p>
 </div></section>
-<section class="alt"><div class="wrap">{head('Timeline', 'The years, one by one')}
+<section class="alt" id="timeline"><div class="wrap">{head('Timeline', 'The years, one by one')}
   <ol class="tl">
     <li><b>1994</b><span>First classes in CIT Nagar, Chennai</span></li>
     <li><b>2004</b><span>Own workspace inaugurated by Smt. Chithra Visweswaran and Smt. Nandini Ramani</span></li>
@@ -910,7 +932,7 @@ def thirty():
     <li><b>2024</b><span>30 years · Souvenir 2026</span></li>
     <li><b>2026</b><span>Hanumath Margam premieres at the 50th Cleveland Thyagaraja Festival</span></li>
   </ol></div></section>
-<section><div class="wrap two">
+<section id="flood"><div class="wrap two">
   <div class="stack">{head('2015', 'The flood, and the way back')}<div class="prose"><p>In the 2015 Chennai floods the workspace stood under seven feet of water. Choreographies in digital format, library books and musical instruments, the school's treasures, were lost.</p>
   <p>Divyanjali did not lose hope. It came back with the help of many institutions and legends: Smt. Chithra Visweswaran through ABHAI, the Music Academy, Narada Gana Sabha, Sri Nellai Kannan, Sri C.V. Chandrasekar, the core members of Prayathnam, Smt. Vasanthalakshmi Narasimhachari and Sri Jaikishore Mosalikanti, and others who asked not to be named. Today the library holds over 150 books, contributed by Smt. Nandini Ramani.</p></div></div>
   <div class="tiles" data-gallery>{ph('flood-before.jpg', 'the workspace after the flood', '1200×900')}{ph('flood-after.jpg', 'the rebuilt library', '1200×900')}</div>
@@ -1098,7 +1120,7 @@ def learn():
   </div>
 </div></section>
 
-<section><div class="wrap">
+<section id="path"><div class="wrap">
   {head('The path', 'From first steps to arangetram')}
   <p class="muted bio-sub">Tap a step.</p>
   <div class="lp" data-steps>
@@ -1118,7 +1140,7 @@ def learn():
   </div>
 </div></section>
 
-<section><div class="wrap">{head('Batches', 'Days and timings')}
+<section id="batches"><div class="wrap">{head('Batches', 'Days and timings')}
   <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Batch</th><th>Days</th><th>Time</th><th>Where</th></tr></thead><tbody>
     <tr><td>Children</td><td>{todo('Days')}</td><td>{todo('Time')}</td><td>CIT Nagar</td></tr>
     <tr><td>Teens and adults</td><td>{todo('Days')}</td><td>{todo('Time')}</td><td>CIT Nagar</td></tr>

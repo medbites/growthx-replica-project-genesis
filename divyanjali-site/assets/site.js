@@ -274,7 +274,7 @@ $$('[data-share]').forEach((b) => {
   const N = Number(fb.dataset.pages), book = $('#fbBook'), range = $('#fbRange'), num = $('#fbNum'), thumbs = $('#fbThumbs'), textBox = $('#fbText');
   const src = (n) => '/assets/souvenir/' + String(n).padStart(2, '0') + '.webp';
   const img = (n) => n ? '<img src="' + src(n) + '" alt="Souvenir page ' + n + '" draggable="false">' : '';
-  let spread = false, page = 1, busy = false, texts = null;
+  let spread = false, page = 1, busy = false, texts = null, userTurned = false;
   // A spread shows [left, right]: the cover sits alone on the right, the back cover alone on the left.
   const view = (p) => { if (!spread) return [p]; if (p <= 1) return [0, 1]; const l = p % 2 === 0 ? p : p - 1; return [l, l + 1 <= N ? l + 1 : 0]; };
   const first = (v) => v.find((x) => x) || 1;
@@ -291,7 +291,7 @@ $$('[data-share]').forEach((b) => {
     $$('button', thumbs).forEach((b) => b.classList.toggle('on', shown.includes(Number(b.dataset.goto))));
     const on = $('button.on', thumbs);
     if (on) { const r = on.getBoundingClientRect(), sr = thumbs.getBoundingClientRect(); if (r.left < sr.left || r.right > sr.right) thumbs.scrollTo({ left: thumbs.scrollLeft + r.left - sr.left - sr.width / 2 + r.width / 2, behavior: 'smooth' }); }
-    history.replaceState(null, '', '#p=' + shown[0]);
+    if (!location.hash || /^#p=/.test(location.hash) || userTurned) history.replaceState(null, '', '#p=' + shown[0]);
     if (!textBox.hidden) showText();
     // fetch the next pages early so the turn is instant
     [shown[shown.length - 1] + 1, shown[shown.length - 1] + 2, shown[0] - 1].forEach((n) => { if (n >= 1 && n <= N) new Image().src = src(n); });
@@ -321,7 +321,7 @@ $$('[data-share]').forEach((b) => {
     if (spread) requestAnimationFrame(() => requestAnimationFrame(() => { leaf.style.transform = dir > 0 ? 'rotateY(-180deg)' : 'rotateY(180deg)'; }));
     setTimeout(() => { page = target; busy = false; paint(); }, spread ? 760 : 820);
   }
-  const step = (d) => { const v = view(page).filter(Boolean); go(d > 0 ? v[v.length - 1] + 1 : v[0] - 1); };
+  const step = (d) => { userTurned = true; const v = view(page).filter(Boolean); go(d > 0 ? v[v.length - 1] + 1 : v[0] - 1); };
   async function showText() {
     if (!texts) { try { texts = await (await fetch('/assets/souvenir/text.json')).json(); } catch (err) { texts = []; } }
     const v = view(page).filter(Boolean);
@@ -344,7 +344,7 @@ $$('[data-share]').forEach((b) => {
     if (pg) { const r = pg.getBoundingClientRect(); step(ev.clientX > r.left + r.width / 2 ? 1 : -1); }
   });
   document.addEventListener('click', (ev) => {
-    const g = ev.target.closest('[data-goto]'); if (g) { ev.preventDefault(); go(Number(g.dataset.goto)); if (!g.closest('.fb-thumbs')) fb.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' }); return; }
+    const g = ev.target.closest('[data-goto]'); if (g) { ev.preventDefault(); userTurned = true; go(Number(g.dataset.goto)); if (!g.closest('.fb-thumbs')) fb.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' }); return; }
     const t = ev.target.closest('.fb-tools [data-fb]'); if (!t) return;
     const a = t.dataset.fb;
     if (a === 'text') { const on = textBox.hidden; textBox.hidden = !on; t.setAttribute('aria-pressed', String(on)); if (on) showText(); }
@@ -353,7 +353,7 @@ $$('[data-share]').forEach((b) => {
     if (a === 'share') copyText(location.origin + location.pathname + '#p=' + view(page).filter(Boolean)[0]);
   });
   modal.addEventListener('close', () => { $('.mbody', modal).style.display = ''; });
-  range.addEventListener('input', () => go(Number(range.value)));
+  range.addEventListener('input', () => { userTurned = true; go(Number(range.value)); });
   fb.addEventListener('keydown', (ev) => { if (ev.key === 'ArrowRight') { ev.preventDefault(); step(1); } if (ev.key === 'ArrowLeft') { ev.preventDefault(); step(-1); } });
   let x0 = null;
   book.addEventListener('touchstart', (ev) => { x0 = ev.touches[0].clientX; }, { passive: true });
@@ -830,3 +830,20 @@ $$('form[data-enquiry]').forEach((f) => {
 
 /* ----- Media room: copy the quick facts in one tap ----- */
 $$('[data-copy-text]').forEach((b) => b.addEventListener('click', () => copyText(b.dataset.copyText, 'Facts copied')));
+
+/* ----- Accolades: /accolades#faculty or #students opens with that filter on ----- */
+(function filterFromHash() {
+  const run = () => {
+    const want = decodeURIComponent(location.hash.slice(1)).toLowerCase(); if (!want) return;
+    const chip = $$('[data-filter] [data-f]').find((c) => c.dataset.f.toLowerCase() === want);
+    if (chip) chip.click();
+  };
+  run(); window.addEventListener('hashchange', run);
+})();
+
+/* ----- Links to a section (from the menus) land on it, even after photos above it have loaded ----- */
+addEventListener('load', () => {
+  const id = decodeURIComponent(location.hash.slice(1));
+  const el = id && !id.includes('=') && document.getElementById(id);
+  if (el) el.scrollIntoView({ block: 'start' });
+});
