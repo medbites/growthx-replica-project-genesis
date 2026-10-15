@@ -1242,3 +1242,26 @@ a.ct:hover{border-color:var(--saffron);transform:translateY(-2px);color:var(--in
 .pr-all{font-weight:600;font-size:.85rem;text-align:center}
 @media (max-width:600px){.pr-nav{grid-template-columns:1fr 1fr}.pr-all{grid-column:1/-1;order:3}}
 @media print{.pr-hero{min-height:0!important;color:#000;background:none}.pr-hero>img,.pr-hero::after,.pr-nav{display:none}.pr-hero h1{color:#000}}
+
+/* ===== Gallery and Media room ===== */
+.gl-hero{padding-block:clamp(20px,4vw,44px) clamp(16px,3vw,28px)}
+.gl-hero .wrap{display:flex;flex-direction:column;gap:14px}
+.gl-sec{padding-top:8px}
+.gl-chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:6px;margin-bottom:16px}
+.gl-chips::-webkit-scrollbar{display:none}
+.gl-chips .chip{flex:none}
+.gl-grid .pg-i{position:relative}
+.gl-grid .pg-i figcaption{position:absolute;left:0;right:0;bottom:0;padding:24px 12px 10px;font-size:.78rem;font-weight:600;color:#fff;background:linear-gradient(to top,rgba(0,0,0,.7),transparent);opacity:0;transform:translateY(6px);transition:opacity .3s,transform .3s;pointer-events:none}
+@media (hover:hover){.gl-grid .pg-i:hover figcaption{opacity:1;transform:none}}
+@media (hover:none){.gl-grid .pg-i figcaption{opacity:1;transform:none}}
+.gl-grid .pg-i.off{display:none}
+.mf{display:grid;grid-template-columns:minmax(0,9rem) minmax(0,1fr);gap:8px 14px;margin:0 0 18px;padding:18px;border-radius:16px;background:var(--bg);border:1px solid var(--line)}
+.mf dt{font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--deep);padding-top:3px}
+.mf dd{margin:0;font-size:.94rem}
+@media (max-width:520px){.mf{grid-template-columns:minmax(0,1fr)}.mf dd{margin-bottom:6px}}
+.kit{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.mp{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:12px}
+.mp-i{margin:0;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--bg)}
+.mp-i img{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover}
+.mp-i figcaption{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;font-size:.88rem}
+.mp-i a{font-weight:600;font-size:.82rem;flex:none}

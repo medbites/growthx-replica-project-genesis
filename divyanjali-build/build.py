@@ -1222,31 +1222,79 @@ def book():
 ], alt=True)}
 ''', extra_head='<link rel="canonical" href="/book">\n')
 
+def gallery_items():
+    titles = {prod_key(p): p['title'] for p in PRODUCTIONS}
+    items = []
+    for key, photos in PROD_PHOTOS.items():
+        for n, (f, w, h) in enumerate(photos):
+            items.append((key, titles.get(key, key), f, w, h, n))
+    order = {prod_key(p): i for i, p in enumerate(PRODUCTIONS)}
+    items.sort(key=lambda x: (x[5], order.get(x[0], 99)))
+    return items
+
 def gallery():
-    photos = [('Productions', 'Productions'), ('Classes', 'Classes'), ('Arangetrams', 'Arangetrams'), ('Season', 'Season'), ('30 Years', '30 Years')]
-    tiles = ''.join(f'<div data-cat="{c}">{ph(f"gallery-{i + 1:02d}.jpg", f"{c} photo {i // 5 + 1}", "1600×1200")}</div>' for i, (c, _) in enumerate(photos * 4))
-    return page('/gallery', 'Gallery and Videos · Divyanjali', 'Photos and videos of Divyanjali productions, classes, arangetrams and the Dance Season.', f'''
-{crumbs(('Gallery and Videos', None))}
-<section style="padding-top:28px"><div class="wrap stack"><p class="eyebrow">Gallery</p><h1>Gallery and Videos</h1><p class="lead">Tap a photo to open it full size. Videos play right here.</p>
-  <div class="chipbar" data-filter="#mediaAll">{''.join(f'<button class="chip" type="button" data-f="{f}" aria-pressed="{str(f == "All").lower()}">{f}</button>' for f in ['All', 'Productions', 'Classes', 'Arangetrams', 'Season', '30 Years', 'Videos'])}</div></div></section>
-<div id="mediaAll">
-<section class="alt" style="padding-top:32px"><div class="wrap">{head('Videos', 'Watch')}<div class="vids" id="ytList"></div></div></section>
-<section><div class="wrap">{head('Photos', 'From our stage')}<div class="tiles" data-gallery>{tiles}</div></div></section>
-</div>
-<section class="alt"><div class="wrap">{head('Instagram', 'Reels and posts', '<a class="btn-o" href="https://www.instagram.com/divyanjalidance/" target="_blank" rel="noopener">Follow on Instagram</a>')}<div class="tiles" id="igList"></div></div></section>
-''')
+    items = gallery_items()
+    with_photos = [p for p in PRODUCTIONS if prod_key(p) in PROD_PHOTOS]
+    family = [('dancers-group.webp', 'Divyanjali dancers together', 1161, 541), ('founders-together.webp', 'Sri B.P. Haribabu and Dr. S. Divyasena', 1200, 993),
+              ('divyasena-portrait.webp', 'Dr. S. Divyasena', 1053, 692)]
+    tiles = ''.join(f'<figure class="ph pg-i" data-cat="{e(t)}"><img src="/assets/img/{f}" alt="{e(t)}" width="{w}" height="{h}" loading="lazy"><figcaption>{e(t)}</figcaption></figure>' for key, t, f, w, h, n in items)
+    tiles += ''.join(f'<figure class="ph pg-i" data-cat="Divyanjali family"><img src="/assets/img/{f}" alt="{e(t)}" width="{w}" height="{h}" loading="lazy"><figcaption>{e(t)}</figcaption></figure>' for f, t, w, h in family)
+    chips = ['All'] + [p['title'] for p in with_photos] + ['Divyanjali family']
+    return page('/gallery', 'Gallery · Divyanjali Bharatanatyam productions in photos and video', f'Photos from {len(with_photos)} Divyanjali productions, from the Souvenir 2026, and videos of the dancers on stage.', f'''
+{crumbs(('Gallery', None))}
+<section class="gl-hero"><div class="wrap">
+  <p class="eyebrow">Gallery</p>
+  <h1>Thirty years on stage</h1>
+  <p class="lead">{len(items)} stage photos from {len(with_photos)} productions, with videos below. Tap a photo to see it full size; use the arrows or swipe for the next.</p>
+</div></section>
+<section class="gl-sec"><div class="wrap">
+  <div class="chipbar gl-chips" data-filter="#glGrid">{''.join(f'<button class="chip" type="button" data-f="{e(c)}" aria-pressed="{str(c == "All").lower()}">{e(c)}</button>' for c in chips)}</div>
+  <div class="pg gl-grid" id="glGrid" data-gallery>{tiles}</div>
+  <p class="muted" style="margin-top:14px">Photos from the Divyanjali Souvenir 2026. More photos from classes, arangetrams and the Dance Season are coming.</p>
+</div></section>
+<section class="alt"><div class="wrap">{head('Videos', 'Watch on stage', '<a class="btn-o" href="https://www.youtube.com/channel/UCLPvhdH5qXt0R4IyDt1eSHg" target="_blank" rel="noopener">YouTube channel</a>')}<div class="vids" id="ytList"></div></div></section>
+<section><div class="wrap">{head('Instagram', 'Reels and posts', '<a class="btn-o" href="https://www.instagram.com/divyanjalidance/" target="_blank" rel="noopener">Follow on Instagram</a>')}<div class="tiles" id="igList"></div></div></section>
+''', extra_head=f'<meta property="og:image" content="/assets/img/{items[0][2]}">\n<link rel="canonical" href="/gallery">\n' if items else '')
 
 def media():
-    kit = [('Fact sheet', 'PDF · one page'), ('Bios', 'Short and long · both founders'), ('Photos', 'High resolution, with credits'), ('Logos', 'Official and 30-year'), ('Souvenir 2026', '30-year celebration booklet · PDF')]
-    return page('/media', 'Media Room · Divyanjali', 'Press kit, photos, logos and media contact for Divyanjali, Chennai.', f'''
+    facts = [('Name', 'Divyanjali School of Classical Dance'), ('Founded', '1994, Chennai, by Dr. S. Divyasena'), ('Status', 'Registered trust (2011)'),
+             ('Art form', 'Bharatanatyam'), ('Founder', "Natyacharya Dr. S. Divyasena, Doordarshan 'A' grade artist, doctorate in Bharatanatyam"),
+             ('Secretary', "Sri B.P. Haribabu, mridangam artist, 'Vaadhya Visharadha'"), ('Arangetrams', '71, including one abroad'),
+             ('Performed in', 'India, USA, Thailand, Singapore, UAE, UK, Australia, Sri Lanka'), ('Recent', 'Hanumath Margam premiered at the 50th Cleveland Thyagaraja Festival, 2026'),
+             ('Online', 'Instagram @divyanjalidance · YouTube: Divyanjali')]
+    fact_text = '\n'.join(f'{k}: {v}' for k, v in facts)
+    picks = [x for x in gallery_items() if x[5] == 0][:6]
+    kit = [('book-open-text', 'Souvenir 2026', '30 years of Divyanjali, 68 pages, PDF', '/assets/souvenir/Divyanjali-Souvenir-2026.pdf', True),
+           ('certificate', 'Dr. S. Divyasena biodata', 'Open her profile and tap Download biodata', '/divyasena', False),
+           ('metronome', 'Sri B.P. Haribabu biodata', 'Open his profile and tap Download biodata', '/haribabu', False),
+           ('hand-heart', 'Logo', 'Official Divyanjali logo', '/assets/logo-full.webp', True)]
+    return page('/media', 'Media Room · Divyanjali press kit, facts and photos', 'Press kit for Divyanjali, Chennai: quick facts to copy, biodatas, the Souvenir 2026, logos, approved photos and media contact.', f'''
 {crumbs(('Media Room', None))}
-<section style="padding-top:28px"><div class="wrap stack"><p class="eyebrow">Press</p><h1>Media Room</h1><p class="lead">For journalists, presenters and festival curators: facts, photos and contacts in one place.</p></div></section>
-<section class="alt"><div class="wrap">{head('Press kit', 'Downloads')}
-  <div class="tiles">{''.join(f'<div class="tile"><span class="meta">{e(b)}</span><h3>{e(t)}</h3><a class="btn-o" href="/assets/logo-full.webp" download style="align-self:flex-start">Download</a></div>' if t == 'Logos' else f'<div class="tile"><span class="meta">{e(b)}</span><h3>{e(t)}</h3><span class="muted">{todo("file to upload")}</span></div>' for t, b in kit)}</div></div></section>
-<section><div class="wrap">{head('In the press', 'Coverage')}
+<section class="gl-hero"><div class="wrap">
+  <p class="eyebrow">Press</p>
+  <h1>Media Room</h1>
+  <p class="lead">For journalists, presenters and festival curators: facts to copy, biodatas, photos and contacts in one place.</p>
+</div></section>
+<section class="alt"><div class="wrap bio-two">
+  <div>
+    <h2>Quick facts</h2>
+    <p class="muted bio-sub">Copy them straight into a programme note or article.</p>
+    <dl class="mf">{''.join(f'<dt>{e(k)}</dt><dd>{e(v)}</dd>' for k, v in facts)}</dl>
+    <button class="btn" type="button" data-copy-text="{e(fact_text)}">Copy all facts</button>
+  </div>
+  <div>
+    <h2>Press kit</h2>
+    <div class="kit">{''.join(f'<a class="ct" href="{u}"{" download" if dl else ""}>{icon(ic)}<span><small>{"Download" if dl else "Open"}</small><b>{e(t)}</b><em>{e(d)}</em></span></a>' for ic, t, d, u, dl in kit)}</div>
+  </div>
+</div></section>
+<section><div class="wrap">{head('Approved photos', 'For print and web', '<a class="btn-o" href="/gallery">All photos</a>')}
+  <p class="muted bio-sub">Free to use with the credit "Divyanjali". Tap a photo to open it, or download it.</p>
+  <div class="mp">{''.join(f'<figure class="mp-i"><img src="/assets/img/{f}" alt="{e(t)}" width="{w}" height="{h}" loading="lazy"><figcaption><b>{e(t)}</b><a href="/assets/img/{f}" download>Download</a></figcaption></figure>' for key, t, f, w, h, n in picks)}</div>
+</div></section>
+<section class="alt"><div class="wrap">{head('In the press', 'Coverage')}
   <ol class="tl"><li><b>The Hindu</b><span>Pannum Bharathamum · {todo('date and link')}</span></li><li><b>Mylapore Times</b><span>Divyanjali productions and events · <a href="https://www.mylaporetimes.com/tag/divyasena/" target="_blank" rel="noopener">Read</a></span></li><li><b>Narthaki</b><span>Reviews of Divyanjali performances · <a href="https://narthaki.com/info/rev08/rev596.html" target="_blank" rel="noopener">Read</a></span></li></ol></div></section>
-<section class="alt"><div class="wrap stack"><p class="eyebrow">Media contact</p><h2>{todo('Contact name')}</h2><p>{todo('Phone')} · {todo('Email')}</p><p class="muted">We answer media requests within one working day.</p></div></section>
-''')
+<section><div class="wrap stack"><p class="eyebrow">Media contact</p><h2>{todo('Contact name')}</h2><p>{todo('Phone')} · {todo('Email')}</p><p class="muted">We answer media requests within one working day.</p><div class="row"><a class="btn-o" data-wa="Hello Divyanjali, I am writing from the press." href="#">WhatsApp us</a></div></div></section>
+''', extra_head='<link rel="canonical" href="/media">\n')
 
 def store():
     items = [('store-nrithyaharam.jpg', 'Nrithyaharam', 'Audio CD of the adavus of Bharatanatyam · Dr. S. Divyasena'), ('store-essence.jpg', 'Essence and Essentials of Dance', 'The Divyanjali syllabus as a book · Dr. S. Divyasena'), ('store-duta-mahima.jpg', 'Duta Mahima', 'Book · Dr. S. Divyasena')]

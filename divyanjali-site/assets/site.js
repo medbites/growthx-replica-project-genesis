@@ -78,7 +78,7 @@ document.addEventListener('click', (ev) => {
   const pic = ev.target.closest('.ph > img');
   if (pic && !pic.closest('.deck')) {
     const scope = pic.closest('[data-gallery]') || document;
-    gallery = $$('.ph > img', scope).filter((i) => i.complete && i.naturalWidth);
+    gallery = $$('.ph > img', scope).filter((i) => i.complete && i.naturalWidth && !i.closest('.off'));
     showPhoto(Math.max(0, gallery.indexOf(pic)));
     return;
   }
@@ -245,9 +245,9 @@ function toast(msg) {
   let t = $('.toast'); if (!t) { t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
   t.textContent = msg; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 1800);
 }
-async function copyText(text) {
-  try { await navigator.clipboard.writeText(text); toast('Link copied'); }
-  catch (err) { const i = Object.assign(document.createElement('input'), { value: text }); document.body.appendChild(i); i.select(); document.execCommand('copy'); i.remove(); toast('Link copied'); }
+async function copyText(text, msg = 'Link copied') {
+  try { await navigator.clipboard.writeText(text); toast(msg); }
+  catch (err) { const i = Object.assign(document.createElement('textarea'), { value: text }); document.body.appendChild(i); i.select(); document.execCommand('copy'); i.remove(); toast(msg); }
 }
 
 /* ----- A dancer's page: copy link, share, save as PDF ----- */
@@ -827,3 +827,6 @@ $$('form[data-enquiry]').forEach((f) => {
   const pr = new URLSearchParams(location.search).get('production'), sel = f.elements['production'];
   if (pr && sel && [...sel.options].some((o) => o.value === pr)) sel.value = pr;
 })();
+
+/* ----- Media room: copy the quick facts in one tap ----- */
+$$('[data-copy-text]').forEach((b) => b.addEventListener('click', () => copyText(b.dataset.copyText, 'Facts copied')));

@@ -38,26 +38,6 @@ Videos and Instagram posts for the Gallery: edit `divyanjali-site/assets/media.j
 | `prod-veeram.jpg` | poster · Veeram | 1200×1500 | /choreographies |
 | `prod-sakthi-prabhavam.jpg` | poster · Sakthi Prabhavam | 1200×1500 | /choreographies |
 | `prod-rukmini-vivaham.jpg` | poster · Rukmini Vivaham | 1200×1500 | /choreographies |
-| `gallery-01.jpg` | Productions photo 1 | 1600×1200 | /gallery |
-| `gallery-02.jpg` | Classes photo 1 | 1600×1200 | /gallery |
-| `gallery-03.jpg` | Arangetrams photo 1 | 1600×1200 | /gallery |
-| `gallery-04.jpg` | Season photo 1 | 1600×1200 | /gallery |
-| `gallery-05.jpg` | 30 Years photo 1 | 1600×1200 | /gallery |
-| `gallery-06.jpg` | Productions photo 2 | 1600×1200 | /gallery |
-| `gallery-07.jpg` | Classes photo 2 | 1600×1200 | /gallery |
-| `gallery-08.jpg` | Arangetrams photo 2 | 1600×1200 | /gallery |
-| `gallery-09.jpg` | Season photo 2 | 1600×1200 | /gallery |
-| `gallery-10.jpg` | 30 Years photo 2 | 1600×1200 | /gallery |
-| `gallery-11.jpg` | Productions photo 3 | 1600×1200 | /gallery |
-| `gallery-12.jpg` | Classes photo 3 | 1600×1200 | /gallery |
-| `gallery-13.jpg` | Arangetrams photo 3 | 1600×1200 | /gallery |
-| `gallery-14.jpg` | Season photo 3 | 1600×1200 | /gallery |
-| `gallery-15.jpg` | 30 Years photo 3 | 1600×1200 | /gallery |
-| `gallery-16.jpg` | Productions photo 4 | 1600×1200 | /gallery |
-| `gallery-17.jpg` | Classes photo 4 | 1600×1200 | /gallery |
-| `gallery-18.jpg` | Arangetrams photo 4 | 1600×1200 | /gallery |
-| `gallery-19.jpg` | Season photo 4 | 1600×1200 | /gallery |
-| `gallery-20.jpg` | 30 Years photo 4 | 1600×1200 | /gallery |
 | `store-nrithyaharam.jpg` | cover · Nrithyaharam | 1000×1000 | /store |
 | `store-essence.jpg` | cover · Essence and Essentials of Dance | 1000×1000 | /store |
 | `store-duta-mahima.jpg` | cover · Duta Mahima | 1000×1000 | /store |
