@@ -241,136 +241,146 @@ $$('form[data-enquiry]').forEach((f) => {
   });
 });
 
-/* ----- Home: the season calendar, from the same Google Sheet as /events ----- */
+/* ----- Home: the season in one place. A highlight card for one event, a small month, and every event as a thumbnail ----- */
 (async function homeCalendar() {
-  const cal = $('#homeCal'); if (!cal) return;
+  const box = $('#homeCal'); if (!box) return;
   const tz = { timeZone: 'Asia/Kolkata' };
   const fmt = (x, o) => new Intl.DateTimeFormat('en-IN', Object.assign({}, tz, o)).format(x);
+  const time = (x) => fmt(x, { hour: 'numeric', minute: '2-digit', hour12: true }).toUpperCase();
   const dayKey = (x) => fmt(x, { year: 'numeric', month: '2-digit', day: '2-digit' }).split('/').reverse().join('-');
-  const durMin = (s) => { s = String(s || '').toLowerCase(); const h = s.match(/(\d+(?:\.\d+)?)\s*h/), m = s.match(/(\d+)\s*m/); return ((h ? parseFloat(h[1]) * 60 : 0) + (m ? parseInt(m[1], 10) : 0)) || 120; };
+  const durMin = (v) => { v = String(v || '').toLowerCase(); const h = v.match(/(\d+(?:\.\d+)?)\s*h/), m = v.match(/(\d+)\s*m/); return ((h ? parseFloat(h[1]) * 60 : 0) + (m ? parseInt(m[1], 10) : 0)) || 120; };
   const cache = (v) => { try { if (v === undefined) return JSON.parse(localStorage.getItem('dv_events') || 'null'); localStorage.setItem('dv_events', JSON.stringify(v)); } catch (err) { return null; } };
-  const reduce = reduceMotion;
-
-  // Show what we saw last time straight away, then refresh from the sheet.
-  let raw = cache();
-  const fresh = (async () => {
-    try {
-      const ctrl = new AbortController(); setTimeout(() => ctrl.abort(), 9000);
-      const j = await (await fetch(CONFIG.SCRIPT_URL + '?action=events', { signal: ctrl.signal })).json();
-      if (j && Array.isArray(j.events)) { cache(j.events); return j.events; }
-    } catch (err) { /* keep the cached list */ }
-    return null;
-  })();
-
+  const modeCls = (m) => m === 'Online' ? 'm-ol' : m === 'Hybrid' ? 'm-hy' : 'm-ip';
+  const where = (x) => x.mode === 'Online' ? 'Live online' : (x.venue_name || 'Chennai');
+  const driveId = (u) => (String(u || '').match(/\/d\/([\w-]{20,})/) || String(u || '').match(/[?&]id=([\w-]{20,})/) || [])[1];
+  const posterSrc = (x) => { const id = driveId(x.poster_link); if (id) return '/img/' + encodeURIComponent(x.event_code) + '?p=' + id.slice(0, 8); return /^https?:/.test(x.poster_link || '') ? x.poster_link : ''; };
+  const img = (x) => { const src = posterSrc(x); return src ? '<img src="' + esc(src) + '" alt="" loading="lazy" onerror="this.parentNode.classList.add(\'nophoto\');this.remove()">' : ''; };
+  const stamp = (d) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const gcal = (x) => 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(x.title + ' · Divyanjali') + '&dates=' + stamp(x.start) + '/' + stamp(x.end) + '&details=' + encodeURIComponent((x.why_attend || '') + '\n\n' + location.origin + '/e/' + x.event_code) + '&location=' + encodeURIComponent(x.mode === 'Online' ? 'Online' : [x.venue_name, x.venue_address].filter(Boolean).join(', '));
   const now = new Date();
-  let evs = [], month = null, sel = null;
   const prep = (list) => (list || []).map((x) => {
     const start = new Date(x.date + 'T' + String(x.start_time || '00:00').slice(0, 5) + ':00+05:30');
     return Object.assign({}, x, { start, end: new Date(start.getTime() + durMin(x.duration) * 60000), mode: x.mode || 'In person', type: x.type || 'Performance' });
   }).filter((x) => x.event_code && !isNaN(x.start) && x.end > now).sort((a, b) => a.start - b.start);
-  const driveId = (u) => (String(u || '').match(/\/d\/([\w-]{20,})/) || String(u || '').match(/[?&]id=([\w-]{20,})/) || [])[1];
-  const posterSrc = (x) => { const id = driveId(x.poster_link); if (id) return '/img/' + encodeURIComponent(x.event_code) + '?p=' + id.slice(0, 8); return /^https?:/.test(x.poster_link || '') ? x.poster_link : ''; };
-  const where = (x) => x.mode === 'Online' ? 'Live online' : (x.venue_name || 'Chennai');
-  const stamp = (d) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-  const gcal = (x) => 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(x.title + ' · Divyanjali') + '&dates=' + stamp(x.start) + '/' + stamp(x.end) + '&details=' + encodeURIComponent((x.why_attend || '') + '\n\n' + location.origin + '/e/' + x.event_code) + '&location=' + encodeURIComponent(x.mode === 'Online' ? 'Online' : [x.venue_name, x.venue_address].filter(Boolean).join(', '));
-  const img = (x, cls) => { const s = posterSrc(x); return s ? '<img' + (cls ? ' class="' + cls + '"' : '') + ' src="' + esc(s) + '" alt="" loading="lazy" onerror="this.parentNode.classList.add(\'nophoto\');this.remove()">' : ''; };
 
-  /* next performance, with a live countdown */
-  let tick = null;
-  function nextUp() {
-    const box = $('#nextUp'); const x = evs[0];
-    clearInterval(tick);
-    if (!x) { box.outerHTML = '<a class="next" id="nextUp" href="#follow"><span class="next-date"><b>★</b><small>Soon</small></span><span class="next-i"><small>Next on stage</small><b>New dates are on their way</b><span>Subscribe and they reach your calendar first.</span></span></a>'; return; }
-    box.outerHTML = '<a class="next" id="nextUp" href="/e/' + encodeURIComponent(x.event_code) + '"><span class="next-date"><b>' + fmt(x.start, { day: 'numeric' }) + '</b><small>' + fmt(x.start, { month: 'short' }) + '</small></span><span class="next-i"><small>Next on stage · ' + esc(x.type) + '</small><b>' + esc(x.title) + '</b><span>' + fmt(x.start, { weekday: 'long' }) + ', ' + fmt(x.start, { hour: 'numeric', minute: '2-digit', hour12: true }).toUpperCase() + ' · ' + esc(where(x)) + '</span><span class="cd" id="cd"></span></span></a>';
-    const cd = $('#cd');
+  let evs = [], idx = 0, month = null, tick = null;
+  const monthOf = (x) => [Number(fmt(x.start, { year: 'numeric' })), Number(fmt(x.start, { month: 'numeric' })) - 1];
+
+  /* the countdown, used in the landing card and the highlight card */
+  function countdown(el, x, short) {
     const draw = () => {
       let s = Math.max(0, Math.floor((x.start - Date.now()) / 1000));
-      if (!s) { cd.innerHTML = '<span><b>On now</b>or about to begin</span>'; return; }
+      if (!s) { el.innerHTML = short ? 'On now' : '<span><b>On now</b>or about to begin</span>'; return; }
       const d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60); s %= 60;
-      cd.innerHTML = [[d, 'days'], [h, 'hrs'], [m, 'min']].concat(reduce ? [] : [[s, 'sec']]).map(([n, l]) => '<span><b>' + String(n).padStart(2, '0') + '</b>' + l + '</span>').join('');
+      el.innerHTML = short
+        ? 'Starts in <b>' + (d ? d + 'd ' : '') + h + 'h ' + String(m).padStart(2, '0') + 'm</b>'
+        : [[d, 'days'], [h, 'hrs'], [m, 'min']].concat(reduceMotion ? [] : [[s, 'sec']]).map(([n, l]) => '<span><b>' + String(n).padStart(2, '0') + '</b>' + l + '</span>').join('');
     };
-    draw(); tick = setInterval(draw, reduce ? 60000 : 1000);
+    draw(); return setInterval(draw, reduceMotion || short ? 30000 : 1000);
   }
 
-  /* month grid */
+  /* landing: next on stage */
+  let tickUp = null;
+  function nextUp() {
+    const el = $('#nextUp'); if (!el) return; const x = evs[0];
+    clearInterval(tickUp);
+    if (!x) { el.outerHTML = '<a class="next" id="nextUp" href="#season"><span class="next-date"><b>★</b><small>Soon</small></span><span class="next-i"><small>Next on stage</small><b>New dates are on their way</b><span>Subscribe and they reach your calendar first.</span></span></a>'; return; }
+    el.outerHTML = '<a class="next" id="nextUp" href="/e/' + encodeURIComponent(x.event_code) + '"><span class="next-date"><b>' + fmt(x.start, { day: 'numeric' }) + '</b><small>' + fmt(x.start, { month: 'short' }) + '</small></span><span class="next-i"><small>Next on stage · ' + esc(x.type) + '</small><b>' + esc(x.title) + '</b><span>' + fmt(x.start, { weekday: 'long' }) + ', ' + time(x.start) + ' · ' + esc(where(x)) + '</span><span class="cd" id="cd"></span></span></a>';
+    tickUp = countdown($('#cd'), x, false);
+  }
+
+  /* highlight card */
+  function feature(i, dir) {
+    const el = $('#feat');
+    clearInterval(tick);
+    if (!evs.length) { el.innerHTML = '<div class="feat-empty"><b>The new season is being planned.</b><span class="muted">Subscribe above and new dates reach your calendar as soon as we add them.</span></div>'; return; }
+    idx = (i + evs.length) % evs.length;
+    const x = evs[idx];
+    el.innerHTML = '<a class="feat-p' + (posterSrc(x) ? '' : ' nophoto') + '" href="/e/' + encodeURIComponent(x.event_code) + '" aria-label="' + esc(x.title) + '">' + img(x) + '<span class="feat-d"><b>' + fmt(x.start, { day: 'numeric' }) + '</b><small>' + fmt(x.start, { month: 'short' }) + '</small></span></a>'
+      + '<div class="feat-b"><span class="badge ' + modeCls(x.mode) + '">' + esc(x.type) + ' · ' + esc(x.mode) + '</span>'
+      + '<h3>' + esc(x.title) + '</h3>'
+      + '<p class="feat-when">' + fmt(x.start, { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' + time(x.start) + '<br>' + esc(x.mode === 'Online' ? 'Live online' : [x.venue_name, x.venue_address].filter(Boolean).join(', ')) + '</p>'
+      + (x.why_attend ? '<p class="feat-why">' + esc(x.why_attend) + '</p>' : '')
+      + '<p class="feat-cd" id="featCd"></p></div>'
+      + '<div class="feat-f"><div class="feat-acts"><a class="btn" href="/e/' + encodeURIComponent(x.event_code) + '">Details</a><a class="btn-o" href="' + gcal(x) + '" target="_blank" rel="noopener">Add to calendar</a><a class="feat-share" href="' + waLink(x.title + ' · ' + fmt(x.start, { day: 'numeric', month: 'short' }) + '\n' + location.origin + '/e/' + x.event_code) + '" target="_blank" rel="noopener">Share</a></div>'
+      + '<div class="feat-nav"><button type="button" class="cal-arr" data-step="-1" aria-label="Previous event">‹</button><span>' + (idx + 1) + ' of ' + evs.length + '</span><button type="button" class="cal-arr" data-step="1" aria-label="Next event">›</button></div></div>';
+    el.classList.remove('in-l', 'in-r'); void el.offsetWidth; if (dir) el.classList.add(dir > 0 ? 'in-r' : 'in-l');
+    tick = countdown($('#featCd'), x, true);
+    month = monthOf(x);
+    grid();
+    const strip = $('#thumbs');
+    $$('.th', box).forEach((t, j) => {
+      t.setAttribute('aria-current', String(j === idx));
+      // scroll only the thumbnail row, never the page
+      if (j !== idx) return;
+      const r = t.getBoundingClientRect(), sr = strip.getBoundingClientRect();
+      if (r.left < sr.left || r.right > sr.right) strip.scrollTo({ left: strip.scrollLeft + r.left - sr.left, behavior: reduceMotion || !dir ? 'auto' : 'smooth' });
+    });
+  }
+
+  /* small month */
   function grid() {
     const [y, m] = month;
     const first = new Date(Date.UTC(y, m, 1)), days = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
-    const byDay = {}; evs.forEach((x) => { (byDay[dayKey(x.start)] = byDay[dayKey(x.start)] || []).push(x); });
-    const today = dayKey(now);
+    const byDay = {}; evs.forEach((x, j) => { (byDay[dayKey(x.start)] = byDay[dayKey(x.start)] || []).push(j); });
+    const today = dayKey(now), selKey = evs[idx] ? dayKey(evs[idx].start) : '';
     $('#calMonth').textContent = new Intl.DateTimeFormat('en-IN', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(first);
-    let h = '<span class="cal-d out"></span>'.repeat(first.getUTCDay());
+    let h = '<span class="cal-d out"></span>'.repeat(first.getUTCDay()), count = 0;
     for (let d = 1; d <= days; d++) {
       const k = y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0'), list = byDay[k] || [];
-      const cls = 'cal-d' + (k < today ? ' past' : '') + (k === today ? ' today' : '') + (list.length ? ' has' : '') + (k === sel ? ' sel' : '');
+      count += list.length;
+      const cls = 'cal-d' + (k < today ? ' past' : '') + (k === today ? ' today' : '') + (list.length ? ' has' : '') + (k === selKey ? ' sel' : '');
       h += list.length
-        ? '<button type="button" class="' + cls + '" data-day="' + k + '" aria-label="' + d + ': ' + list.length + ' event' + (list.length > 1 ? 's' : '') + '" aria-pressed="' + (k === sel) + '">' + d + '<i class="' + (list.length > 1 ? 'two' : '') + '"></i></button>'
+        ? '<button type="button" class="' + cls + '" data-ev="' + list[0] + '" aria-label="' + d + ': ' + list.length + ' event' + (list.length > 1 ? 's' : '') + '">' + d + (list.length > 1 ? '<i>' + list.length + '</i>' : '') + '</button>'
         : '<span class="' + cls + '">' + d + '</span>';
     }
     $('#calDays').innerHTML = h;
-    const lastEv = evs[evs.length - 1];
-    $('[data-cal="-1"]', cal).disabled = y < now.getFullYear() || (y === now.getFullYear() && m <= now.getMonth());
-    $('[data-cal="1"]', cal).disabled = !lastEv || (y * 12 + m) >= (lastEv.start.getUTCFullYear() * 12 + lastEv.start.getUTCMonth()) + 2;
-    list();
-  }
-  function list() {
-    const [y, m] = month;
-    const inMonth = evs.filter((x) => { const k = dayKey(x.start); return sel ? k === sel : k.startsWith(y + '-' + String(m + 1).padStart(2, '0')); });
-    const note = sel
-      ? '<div class="cal-note"><span>' + fmt(new Date(sel + 'T12:00:00+05:30'), { weekday: 'long', day: 'numeric', month: 'long' }) + '</span><button type="button" data-allmonth>Whole month</button></div>'
-      : '<div class="cal-note"><span>' + (inMonth.length ? inMonth.length + ' event' + (inMonth.length > 1 ? 's' : '') + ' this month' : '') + '</span></div>';
-    const later = evs.find((x) => x.start > new Date(Date.UTC(y, m + 1, 1)));
-    $('#calList').innerHTML = note + (inMonth.length
-      ? inMonth.map((x, i) => '<button type="button" class="cal-ev" data-ev="' + esc(x.event_code) + '" style="animation-delay:' + (i * 50) + 'ms"><span class="dd"><b>' + fmt(x.start, { day: 'numeric' }) + '</b><small>' + fmt(x.start, { weekday: 'short' }) + '</small></span><span class="ti"><b>' + esc(x.title) + '</b><span>' + fmt(x.start, { hour: 'numeric', minute: '2-digit', hour12: true }).toUpperCase() + ' · ' + esc(x.type) + ' · ' + esc(where(x)) + '</span></span><span class="badge ' + (x.mode === 'Online' ? 'm-ol' : x.mode === 'Hybrid' ? 'm-hy' : 'm-ip') + '">' + esc(x.mode) + '</span></button>').join('')
-      : '<div class="cal-empty">' + (evs.length ? 'No performances this month.' + (later ? ' <button type="button" class="cal-arr" style="display:inline-grid;width:auto;height:auto;border:0;font-size:.9rem;color:var(--deep);font-weight:600" data-jump="' + later.event_code + '">Next one: ' + fmt(later.start, { day: 'numeric', month: 'short' }) + ' ›</button>' : '') : 'The new season is being planned. Subscribe below and dates reach your calendar as soon as we add them.') + '</div>');
+    const nxt = evs.find((x) => x.start > new Date(Date.UTC(y, m + 1, 1)));
+    $('#calNote').innerHTML = count ? count + ' event' + (count > 1 ? 's' : '') + ' this month · tap a date' : (nxt ? 'Nothing this month. <button type="button" data-ev="' + evs.indexOf(nxt) + '">Next: ' + fmt(nxt.start, { day: 'numeric', month: 'short' }) + ' ›</button>' : 'Nothing this month.');
+    $('[data-cal="-1"]', box).disabled = y * 12 + m <= now.getFullYear() * 12 + now.getMonth();
+    const last = evs[evs.length - 1];
+    $('[data-cal="1"]', box).disabled = !last || y * 12 + m >= monthOf(last)[0] * 12 + monthOf(last)[1] + 1;
   }
 
-  /* quick view: details, add to calendar, share, previous and next */
-  function quick(code) {
-    const i = evs.findIndex((x) => x.event_code === code); if (i < 0) return;
-    const x = evs[i], url = location.origin + '/e/' + x.event_code;
-    const rows = [['When', fmt(x.start, { weekday: 'long', day: 'numeric', month: 'long' }) + ', ' + fmt(x.start, { hour: 'numeric', minute: '2-digit', hour12: true }).toUpperCase()], ['Where', x.mode === 'Online' ? 'Live online' : [x.venue_name, x.venue_address].filter(Boolean).join(', ')], ['Artist', x.lead_artist], ['Entry', x.entry]].filter((r) => r[1]);
-    gallery = [];
-    openModal('<div class="qv"><div class="qv-p' + (posterSrc(x) ? '' : ' nophoto') + '"><b>' + esc(x.title) + '</b>' + img(x) + '</div><div class="qv-b"><span class="badge ' + (x.mode === 'Online' ? 'm-ol' : x.mode === 'Hybrid' ? 'm-hy' : 'm-ip') + '" style="align-self:flex-start">' + esc(x.type) + ' · ' + esc(x.mode) + '</span><h3>' + esc(x.title) + '</h3>' + (x.why_attend ? '<p class="muted" style="margin:0">' + esc(x.why_attend) + '</p>' : '') + '<dl>' + rows.map((r) => '<dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd>').join('') + '</dl><div class="qv-acts"><a class="btn" href="/e/' + encodeURIComponent(x.event_code) + '">Event page</a><a class="btn-o" href="' + gcal(x) + '" target="_blank" rel="noopener">Add to calendar</a><a class="btn-o" href="' + waLink(x.title + ' · ' + fmt(x.start, { day: 'numeric', month: 'short' })) + '%0A' + encodeURIComponent(url) + '" target="_blank" rel="noopener">Share</a></div><div class="qv-nav"><button type="button" data-qv="' + esc(evs[(i - 1 + evs.length) % evs.length].event_code) + '"' + (evs.length < 2 ? ' hidden' : '') + '>‹ Previous</button><span>' + (i + 1) + ' of ' + evs.length + '</span><button type="button" data-qv="' + esc(evs[(i + 1) % evs.length].event_code) + '"' + (evs.length < 2 ? ' hidden' : '') + '>Next ›</button></div></div></div>', 'Divyanjali calendar', false);
+  /* every event as a thumbnail */
+  function thumbs() {
+    const t = $('#thumbs');
+    t.hidden = evs.length < 2;
+    t.innerHTML = evs.map((x, j) => '<button type="button" class="th" data-ev="' + j + '"><span class="th-p' + (posterSrc(x) ? '' : ' nophoto') + '">' + img(x) + '</span><span class="th-t"><small>' + fmt(x.start, { day: 'numeric', month: 'short' }) + ' · ' + time(x.start) + '</small><b>' + esc(x.title) + '</b></span></button>').join('');
   }
 
-  /* posters of the whole season, side by side */
-  function strip() {
-    const box = $('#seasonStrip');
-    box.closest('section').hidden = !evs.length;
-    box.innerHTML = evs.map((x) => '<button type="button" class="strip-card' + (posterSrc(x) ? '' : ' nophoto') + '" data-ev="' + esc(x.event_code) + '">' + img(x) + '<span class="sd"><b>' + fmt(x.start, { day: 'numeric' }) + '</b><small>' + fmt(x.start, { month: 'short' }) + '</small></span><span class="st">' + esc(x.title) + '</span><span class="sm">' + esc(x.type) + ' · ' + esc(where(x)) + '</span></button>').join('');
-  }
+  function render(list) { evs = prep(list); nextUp(); thumbs(); feature(Math.min(idx, Math.max(0, evs.length - 1))); if (!evs.length) { month = [now.getFullYear(), now.getMonth()]; grid(); } }
 
-  function render(list) {
-    evs = prep(list);
-    const first = evs[0] ? evs[0].start : now;
-    if (!month) month = [Number(fmt(first, { year: 'numeric' })), Number(fmt(first, { month: 'numeric' })) - 1];
-    nextUp(); grid(); strip();
-  }
-
-  cal.addEventListener('click', (ev) => {
+  box.addEventListener('click', (ev) => {
+    const st = ev.target.closest('[data-step]'); if (st) return feature(idx + Number(st.dataset.step), Number(st.dataset.step));
+    const e1 = ev.target.closest('[data-ev]'); if (e1) { const j = Number(e1.dataset.ev); return feature(j, j >= idx ? 1 : -1); }
     const arr = ev.target.closest('[data-cal]');
-    if (arr) { const t = month[0] * 12 + month[1] + Number(arr.dataset.cal); month = [Math.floor(t / 12), t % 12]; sel = null; grid(); return; }
-    const d = ev.target.closest('[data-day]');
-    if (d) { sel = sel === d.dataset.day ? null : d.dataset.day; grid(); return; }
-    if (ev.target.closest('[data-allmonth]')) { sel = null; grid(); return; }
-    const j = ev.target.closest('[data-jump]');
-    if (j) { const x = evs.find((v) => v.event_code === j.dataset.jump); month = [x.start.getUTCFullYear(), x.start.getUTCMonth()]; sel = dayKey(x.start); grid(); return; }
-    const e1 = ev.target.closest('[data-ev]'); if (e1) quick(e1.dataset.ev);
+    if (arr) {
+      const t = month[0] * 12 + month[1] + Number(arr.dataset.cal), nm = [Math.floor(t / 12), t % 12];
+      const j = evs.findIndex((x) => { const k = monthOf(x); return k[0] === nm[0] && k[1] === nm[1]; });
+      if (j >= 0) feature(j, Number(arr.dataset.cal)); else { month = nm; grid(); }
+    }
   });
-  $('#seasonStrip').addEventListener('click', (ev) => { const c = ev.target.closest('[data-ev]'); if (c) quick(c.dataset.ev); });
-  modal.addEventListener('click', (ev) => { const b = ev.target.closest('[data-qv]'); if (b) { ev.stopPropagation(); quick(b.dataset.qv); } }, true);
-  $$('[data-strip]').forEach((b) => b.addEventListener('click', () => { const s = $('#seasonStrip'); s.scrollBy({ left: Number(b.dataset.strip) * s.clientWidth * 0.8, behavior: reduce ? 'auto' : 'smooth' }); }));
+  box.addEventListener('keydown', (ev) => { if (ev.key === 'ArrowRight' || ev.key === 'ArrowLeft') { if (ev.target.closest('.cal-days')) return; ev.preventDefault(); feature(idx + (ev.key === 'ArrowRight' ? 1 : -1), ev.key === 'ArrowRight' ? 1 : -1); } });
+  // swipe the highlight card on phones
+  let x0 = null;
+  $('#feat').addEventListener('touchstart', (ev) => { x0 = ev.touches[0].clientX; }, { passive: true });
+  $('#feat').addEventListener('touchend', (ev) => { if (x0 === null) return; const dx = ev.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 45) feature(idx + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1); }, { passive: true });
 
-  // Subscribe buttons point at this site's own feed, so they work on any domain.
+  // Subscribe links point at this site's own feed, so they work on any domain.
   const feed = location.host + '/calendar.ics';
   if ($('#subG')) $('#subG').href = 'https://calendar.google.com/calendar/r?cid=' + encodeURIComponent('webcal://' + feed);
   if ($('#subA')) $('#subA').href = 'webcal://' + feed;
 
+  // Show the last list straight away, then refresh from the sheet.
+  const raw = cache();
   if (raw) render(raw);
-  const got = await fresh;
-  if (got) render(got);
-  else if (!raw) render([]);
+  try {
+    const ctrl = new AbortController(); setTimeout(() => ctrl.abort(), 9000);
+    const j = await (await fetch(CONFIG.SCRIPT_URL + '?action=events', { signal: ctrl.signal })).json();
+    if (j && Array.isArray(j.events)) { cache(j.events); render(j.events); return; }
+  } catch (err) { /* keep what we have */ }
+  if (!raw) render([]);
 })();
 
 /* ----- Gallery videos and Instagram posts, from assets/media.json (easy to edit, no rebuild) ----- */

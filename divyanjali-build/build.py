@@ -220,34 +220,25 @@ def home():
   <a class="vh-down" href="#season" aria-label="Scroll to the calendar"><span></span></a>
 </section>
 <section class="alt numbers"><div class="wrap">{stats([(30, '', 'years of teaching', '/30-years', 'Our story since 1994'), (71, '', 'arangetrams', '/accolades', 'Meet the students'), (300, '+', 'dancers trained', '/learn', 'Join a batch'), (len(PRODUCTIONS), '', 'productions', '/choreographies', 'Explore the works')])}</div></section>
-<section class="hc" id="season">
-  <div class="wrap hc-grid">
-    <div class="hc-copy">
-      <h2>Every performance of the season, <em>on one calendar.</em></h2>
-      <p class="lead">Recitals, workshops and arangetrams by the gurus and their students. Tap a date to see what is on, then add it to your phone in one tap.</p>
-      <p class="hc-sub"><a href="#follow">Subscribe to the calendar</a> · <a href="/events">Past and upcoming events</a></p>
-    </div>
-    <div class="cal" id="homeCal" aria-label="Season calendar">
+<section class="ss" id="season"><div class="wrap">
+  <div class="ss-head">
+    <h2>The season</h2>
+    <p class="ss-sub">Subscribe: <a id="subG" href="/events" target="_blank" rel="noopener">Google</a> · <a id="subA" href="/calendar.ics">Apple and Outlook</a> · <a data-wa="Hello Divyanjali, please add me to your events list on WhatsApp." href="#">WhatsApp</a><span class="ss-sep"> · </span><a class="ss-all" href="/events">Full calendar ›</a></p>
+  </div>
+  <div class="ss-box" id="homeCal">
+    <article class="feat" id="feat" aria-live="polite"><div class="feat-skel"></div></article>
+    <div class="mini" aria-label="Month calendar">
       <div class="cal-top">
         <button class="cal-arr" type="button" data-cal="-1" aria-label="Previous month">‹</button>
-        <h2 class="cal-m" id="calMonth">Season calendar</h2>
+        <h3 class="cal-m" id="calMonth">Calendar</h3>
         <button class="cal-arr" type="button" data-cal="1" aria-label="Next month">›</button>
       </div>
-      <div class="cal-dow" aria-hidden="true"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
-      <div class="cal-days" id="calDays" role="grid"></div>
-      <div class="cal-list" id="calList"><div class="cal-skel"></div><div class="cal-skel"></div></div>
-      <div class="cal-foot"><a class="btn" href="/events">Open full calendar</a><a class="btn-o" href="#follow">Subscribe</a></div>
+      <div class="cal-dow" aria-hidden="true"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+      <div class="cal-days" id="calDays"></div>
+      <p class="mini-note" id="calNote"></p>
     </div>
+    <div class="thumbs" id="thumbs"></div>
   </div>
-</section>
-<section class="strip-sec">
-  <div class="wrap sec-head"><div><h2>The season, poster by poster</h2></div>
-    <div class="strip-nav"><button class="cal-arr" type="button" data-strip="-1" aria-label="Scroll back">‹</button><button class="cal-arr" type="button" data-strip="1" aria-label="Scroll on">›</button></div></div>
-  <div class="strip" id="seasonStrip"><div class="strip-card skel"></div><div class="strip-card skel"></div><div class="strip-card skel"></div></div>
-</section>
-<section class="follow" id="follow"><div class="wrap follow-in">
-  <div class="stack" style="gap:8px"><h2>Never miss a performance</h2><p class="muted">Subscribe once. New dates from Divyanjali appear in your own calendar, with venue and timing, as soon as we add them.</p></div>
-  <div class="row"><a class="btn" id="subG" href="/events#subscribe" target="_blank" rel="noopener">Google Calendar</a><a class="btn-o" id="subA" href="/calendar.ics">Apple and Outlook</a><a class="btn-o" data-wa="Hello Divyanjali, please add me to your events list on WhatsApp." href="#">WhatsApp updates</a></div>
 </div></section>
 <section class="alt"><div class="wrap">
   <div class="sec-head"><div><h2>Two gurus, one stage</h2></div></div>
