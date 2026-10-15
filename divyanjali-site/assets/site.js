@@ -103,20 +103,96 @@ document.addEventListener('click', (ev) => {
   }
 });
 
-/* ----- Numbers count up once, when they come into view ----- */
+/* ----- Numbers count up when they come into view, and again on hover ----- */
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function countUp(el) {
+  const end = parseInt(el.dataset.count, 10), plus = el.dataset.plus || '';
+  if (reduceMotion) { el.textContent = end + plus; return; }
+  const t0 = performance.now();
+  const step = (t) => { const k = Math.min(1, (t - t0) / 1200); el.textContent = Math.round(end * (1 - Math.pow(1 - k, 3))) + plus; if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
 const io = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => {
   entries.forEach((en) => {
     if (!en.isIntersecting) return;
     const el = en.target; io.unobserve(el);
     if (el.classList.contains('reveal')) { el.classList.add('in'); return; }
-    const end = parseInt(el.dataset.count, 10), plus = el.dataset.plus || '';
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = end + plus; return; }
-    const t0 = performance.now();
-    const step = (t) => { const k = Math.min(1, (t - t0) / 1200); el.textContent = Math.round(end * (1 - Math.pow(1 - k, 3))) + plus; if (k < 1) requestAnimationFrame(step); };
-    requestAnimationFrame(step);
+    countUp(el);
   });
 }, { rootMargin: '0px 0px -10% 0px' }) : null;
 $$('[data-count], .reveal').forEach((el) => { if (io) io.observe(el); else el.classList.add('in'); });
+$$('a.stat').forEach((a) => {
+  let last = 0;
+  a.addEventListener('mouseenter', () => { const b = $('[data-count]', a); if (b && Date.now() - last > 1500) { last = Date.now(); countUp(b); } });
+});
+
+/* ----- Landing video: plays muted in the background; pause and sound buttons talk to the YouTube player ----- */
+(function landingVideo() {
+  const vh = $('.vh[data-vh]'); if (!vh) return;
+  const id = vh.dataset.vh, media = $('.vh-media', vh), poster = $('.vh-poster', vh);
+  poster.style.backgroundImage = 'url(https://i.ytimg.com/vi/' + id + '/maxresdefault.jpg), url(https://i.ytimg.com/vi/' + id + '/hqdefault.jpg)';
+  const saveData = navigator.connection && navigator.connection.saveData;
+  const btnPlay = $('[data-vh-play]', vh), btnMute = $('[data-vh-mute]', vh), hint = $('.vh-hint', vh);
+  let frame = null, userPaused = false, ready = false;
+  const cmd = (func, args) => { if (frame && frame.contentWindow) frame.contentWindow.postMessage(JSON.stringify({ event: 'command', func, args: args || [] }), '*'); };
+  function load(autoplay) {
+    if (frame) return;
+    frame = document.createElement('iframe');
+    frame.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=' + (autoplay ? 1 : 0) + '&mute=1&controls=0&disablekb=1&fs=0&loop=1&playlist=' + id + '&modestbranding=1&playsinline=1&rel=0&iv_load_policy=3&enablejsapi=1&start=' + (vh.dataset.start || 0) + '&origin=' + encodeURIComponent(location.origin);
+    frame.title = 'Divyanjali on stage (background video)';
+    frame.allow = 'autoplay; encrypted-media; picture-in-picture';
+    frame.tabIndex = -1;
+    frame.addEventListener('load', () => { frame.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 'vh' }), '*'); });
+    media.appendChild(frame);
+    setTimeout(() => { if (!userPaused) vh.classList.add('playing'); }, 4500);   // fallback if the player never reports back
+  }
+  window.addEventListener('message', (ev) => {
+    if (!frame || ev.source !== frame.contentWindow) return;
+    let d; try { d = typeof ev.data === 'string' ? JSON.parse(ev.data) : ev.data; } catch (err) { return; }
+    const st = d && d.info && d.info.playerState;
+    if (st === 1) { ready = true; setTimeout(() => vh.classList.add('playing'), 500); }   // wait out the YouTube title card
+  });
+  function setPaused(p) {
+    vh.classList.toggle('paused', p);
+    btnPlay.setAttribute('aria-label', p ? 'Play video' : 'Pause video');
+  }
+  btnPlay.addEventListener('click', () => {
+    if (!frame) { load(true); userPaused = false; setPaused(false); return; }
+    userPaused = !vh.classList.contains('paused');
+    cmd(userPaused ? 'pauseVideo' : 'playVideo'); setPaused(userPaused);
+  });
+  btnMute.addEventListener('click', () => {
+    if (!frame) load(true);
+    const on = !vh.classList.contains('sound');
+    vh.classList.toggle('sound', on);
+    btnMute.setAttribute('aria-label', on ? 'Turn sound off' : 'Turn sound on');
+    if (on) { cmd('unMute'); cmd('setVolume', [100]); if (vh.classList.contains('paused')) { userPaused = false; cmd('playVideo'); setPaused(false); } }
+    else cmd('mute');
+    hint.textContent = on ? 'Sound on' : 'Sound off · tap to listen';
+  });
+  // Autoplay unless the visitor asked for less motion or less data. Then the still frame stays, with a play button.
+  if (reduceMotion || saveData) { setPaused(true); hint.textContent = 'Tap play to watch'; }
+  else load(true);
+  // Pause when scrolled away, carry on when back (unless the visitor paused it).
+  if ('IntersectionObserver' in window) new IntersectionObserver(([en]) => {
+    if (!frame || userPaused) return;
+    cmd(en.isIntersecting ? 'playVideo' : 'pauseVideo');
+  }, { threshold: 0.15 }).observe(vh);
+  // Gentle depth on scroll: the words lift and fade, the video drifts slower.
+  if (!reduceMotion) {
+    const inner = $('.vh-in', vh); let ticking = false;
+    addEventListener('scroll', () => {
+      if (ticking) return; ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        const y = Math.min(scrollY, vh.offsetHeight);
+        inner.style.transform = 'translateY(' + (-y * 0.18) + 'px)';
+        inner.style.opacity = String(1 - y / vh.offsetHeight * 1.1);
+        media.style.transform = 'translateY(' + (y * 0.3) + 'px)';
+      });
+    }, { passive: true });
+  }
+})();
 
 /* ----- WhatsApp links with a ready message ----- */
 $$('[data-wa]').forEach((a) => { a.href = waLink(a.dataset.wa || 'Hello Divyanjali'); a.target = '_blank'; a.rel = 'noopener'; });
@@ -162,7 +238,7 @@ $$('form[data-enquiry]').forEach((f) => {
   const dayKey = (x) => fmt(x, { year: 'numeric', month: '2-digit', day: '2-digit' }).split('/').reverse().join('-');
   const durMin = (s) => { s = String(s || '').toLowerCase(); const h = s.match(/(\d+(?:\.\d+)?)\s*h/), m = s.match(/(\d+)\s*m/); return ((h ? parseFloat(h[1]) * 60 : 0) + (m ? parseInt(m[1], 10) : 0)) || 120; };
   const cache = (v) => { try { if (v === undefined) return JSON.parse(localStorage.getItem('dv_events') || 'null'); localStorage.setItem('dv_events', JSON.stringify(v)); } catch (err) { return null; } };
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduce = reduceMotion;
 
   // Show what we saw last time straight away, then refresh from the sheet.
   let raw = cache();

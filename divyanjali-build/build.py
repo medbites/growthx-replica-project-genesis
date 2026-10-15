@@ -47,7 +47,16 @@ def crumbs(*parts):
     return '<div class="wrap crumbs">' + ' / '.join(links) + '</div>'
 
 def stats(items):
-    return '<div class="stats">' + ''.join(f'<div class="stat reveal"><b data-count="{n}" data-plus="{p}">{n}{p}</b><span>{e(l)}</span></div>' for n, p, l in items) + '</div>'
+    """(number, suffix, label) or (number, suffix, label, link, hint). With a link the number becomes tappable."""
+    out = ''
+    for it in items:
+        n, p, l = it[:3]
+        inner = f'<b data-count="{n}" data-plus="{p}">{n}{p}</b><span>{e(l)}</span>'
+        if len(it) > 3:
+            out += f'<a class="stat reveal" href="{it[3]}">{inner}<small>{e(it[4])} <i aria-hidden="true">→</i></small></a>'
+        else:
+            out += f'<div class="stat reveal">{inner}</div>'
+    return f'<div class="stats">{out}</div>'
 
 # ---------------------------------------------------------------- layout
 NAV = [('About', '/about'), ('Choreographies', '/choreographies'), ('Learn', '/learn'), ('Natya IQ', '/natya-iq'), ('Calendar', '/events')]
@@ -191,15 +200,32 @@ def home():
     rows = ''.join(f'<a class="crow reveal" href="/learn#paths"><span class="cn">{n}</span><span class="ct"><b>{t}</b><span class="muted">{d}</span></span>{ph(f, t + " class", "800×600")}<span class="ca" aria-hidden="true">→</span></a>' for n, t, d, f in classes)
     return page('/', 'Divyanjali · Bharatanatyam school in Chennai since 1994',
         'Divyanjali, the Bharatanatyam school of Dr. S. Divyasena and Sri B.P. Haribabu in CIT Nagar, Chennai. See the season calendar of performances, workshops and arangetrams.', f'''
-<section class="hc">
+<section class="vh" data-vh="7g505MXqnec" data-start="12" aria-label="Divyanjali on stage">
+  <div class="vh-media" aria-hidden="true"><div class="vh-poster"></div></div>
+  <div class="vh-shade" aria-hidden="true"></div>
+  <div class="wrap vh-in">
+    <p class="vh-kicker">Divyanjali · Bharatanatyam since 1994 · Chennai</p>
+    <h1 class="vh-title">{''.join(f'<span style="--i:{i}">{w}</span> ' for i, w in enumerate(['The', 'dancer', 'is', 'the'])) + '<em style="--i:4">dance.</em>'}</h1>
+    <p class="vh-lead">Natyacharya Dr. S. Divyasena and Sri B.P. Haribabu. Thirty years of classes, productions and arangetrams, from CIT Nagar to stages around the world.</p>
+    <div class="row vh-cta"><a class="btn vh-btn" href="#season">See the season</a><a class="btn-o vh-btn-o" href="/learn">Learn with us</a></div>
+  </div>
+  <div class="wrap vh-bar">
+    <div class="vh-ctrl">
+      <button class="vh-b" type="button" data-vh-play aria-label="Pause video"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg></button>
+      <button class="vh-b" type="button" data-vh-mute aria-label="Turn sound on"><svg class="i-muted" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="2"/></svg><svg class="i-sound" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
+      <span class="vh-hint" aria-live="polite">Sound off · tap to listen</span>
+    </div>
+    <a class="next" id="nextUp" href="#season"><span class="next-skel"></span></a>
+  </div>
+  <a class="vh-down" href="#season" aria-label="Scroll to the calendar"><span></span></a>
+</section>
+<section class="alt numbers"><div class="wrap">{stats([(30, '', 'years of teaching', '/30-years', 'Our story since 1994'), (71, '', 'arangetrams', '/accolades', 'Meet the students'), (300, '+', 'dancers trained', '/learn', 'Join a batch'), (len(PRODUCTIONS), '', 'productions', '/choreographies', 'Explore the works')])}</div></section>
+<section class="hc" id="season">
   <div class="wrap hc-grid">
     <div class="hc-copy">
-      <p class="kicker">Divyanjali · Bharatanatyam since 1994 · Chennai</p>
-      <h1>Every performance of the season, <em>on one calendar.</em></h1>
-      <p class="lead">Recitals, workshops and arangetrams by Dr. S. Divyasena, Sri B.P. Haribabu and their students. Tap a date to see what is on, then add it to your phone in one tap.</p>
-      <div class="next" id="nextUp" aria-live="polite">
-        <div class="next-skel"><span></span><span></span><span></span></div>
-      </div>
+      <h2>Every performance of the season, <em>on one calendar.</em></h2>
+      <p class="lead">Recitals, workshops and arangetrams by the gurus and their students. Tap a date to see what is on, then add it to your phone in one tap.</p>
+      <p class="hc-sub"><a href="#follow">Subscribe to the calendar</a> · <a href="/events">Past and upcoming events</a></p>
     </div>
     <div class="cal" id="homeCal" aria-label="Season calendar">
       <div class="cal-top">
@@ -222,14 +248,6 @@ def home():
 <section class="follow" id="follow"><div class="wrap follow-in">
   <div class="stack" style="gap:8px"><h2>Never miss a performance</h2><p class="muted">Subscribe once. New dates from Divyanjali appear in your own calendar, with venue and timing, as soon as we add them.</p></div>
   <div class="row"><a class="btn" id="subG" href="/events#subscribe" target="_blank" rel="noopener">Google Calendar</a><a class="btn-o" id="subA" href="/calendar.ics">Apple and Outlook</a><a class="btn-o" data-wa="Hello Divyanjali, please add me to your events list on WhatsApp." href="#">WhatsApp updates</a></div>
-</div></section>
-<section class="stage"><div class="wrap stage-grid">
-  <div class="stage-v">{yt(HOME_VIDEO, 'Watch Divyanjali on stage', 12)}</div>
-  <div class="stack stage-c">
-    <h2>The dancer is the dance.</h2>
-    <p class="muted">Thirty years of classes, productions and arangetrams, from CIT Nagar to stages in some twenty countries.</p>
-    {stats([(30, '', 'years of teaching'), (71, '', 'arangetrams'), (300, '+', 'dancers trained'), (len(PRODUCTIONS), '', 'productions')])}
-  </div>
 </div></section>
 <section class="alt"><div class="wrap">
   <div class="sec-head"><div><h2>Two gurus, one stage</h2></div></div>
