@@ -66,14 +66,21 @@ def icon(name):
 
 # ---------------------------------------------------------------- layout
 NAV = [('About', '/about'), ('Choreographies', '/choreographies'), ('Learn', '/learn'), ('Natya IQ', '/natya-iq'), ('Calendar', '/events')]
-MENU = [('Home', '/'), ('About Divyanjali', '/about'), ('Dr. S. Divyasena', '/divyasena'), ('Sri B.P. Haribabu', '/haribabu'), ('30 Years', '/30-years'),
+ABOUT = [('Dance school', '/about', 'Divyanjali since 1994'), ('Dr. S. Divyasena', '/divyasena', 'Founder and guru'), ('Sri B.P. Haribabu', '/haribabu', 'Mridangam and rhythm')]
+MENU = [('Home', '/'), ('About', ABOUT), ('30 Years', '/30-years'),
         ("Student's Accolades", '/accolades'), ('Choreographies', '/choreographies'), ('Learn', '/learn'), ('Events calendar', '/events'),
         ('Gallery and Videos', '/gallery'), ('Natya IQ', '/natya-iq'), ('Media Room', '/media'), ('Store', '/store'), ('Book and Enquire', '/book')]
 
 def header(path):
     cur = lambda h: ' aria-current="page"' if h == path or (h != '/' and path.startswith(h + '/')) else ''
-    nav = ''.join(f'<a class="{"navcal" if h == "/events" else "hide-m"}" href="{h}"{cur(h)}>{t}</a>' for t, h in NAV)
-    menu = ''.join(f'<a href="{h}"{cur(h)}>{t}</a>' for t, h in MENU)
+    about_on = ' aria-current="page"' if path in [h for _, h, _ in ABOUT] else ''
+    sub = ''.join(f'<a href="{h}"{cur(h)}><b>{t}</b><small>{d}</small></a>' for t, h, d in ABOUT)
+    def nav_item(t, h):
+        if h == '/about':
+            return f'<div class="dd hide-m"><a class="dd-t" href="/about"{about_on} aria-haspopup="true">About<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a><div class="dd-p">{sub}</div></div>'
+        return f'<a class="{"navcal" if h == "/events" else "hide-m"}" href="{h}"{cur(h)}>{t}</a>'
+    nav = ''.join(nav_item(t, h) for t, h in NAV)
+    menu = ''.join(f'<p class="menu-g">{t}</p>' + ''.join(f'<a class="menu-sub" href="{h2}"{cur(h2)}>{t2}</a>' for t2, h2, _ in h) if isinstance(h, list) else f'<a href="{h}"{cur(h)}>{t}</a>' for t, h in MENU)
     return f'''<header class="top">
   <div class="wrap">
     <a class="logo" href="/" aria-label="Divyanjali home"><img src="/assets/logo-mark.webp" alt="" width="46" height="45"><b>Divyanjali</b></a>
@@ -206,10 +213,23 @@ def home():
                 ['Complete beginners welcome', 'Abhinaya and theory alongside technique', 'Come back after a break at your own pace'], 'Teens and adults'),
                ('03', 'Online, from abroad', 'monitor-play', 'Live classes from Chennai, set to your time zone',
                 ['Live with the teacher, not recorded', 'Batches set to your time zone', 'The same syllabus as the Chennai classes'], 'Online')]
-    rows = ''.join(f'''<details class="crow reveal" name="classes"{" open" if n == "01" else ""}>
-      <summary><span class="cn">{n}</span><span class="ci">{icon(ic)}</span><span class="ct"><b>{t}</b><span class="muted">{d}</span></span><span class="ca" aria-hidden="true">+</span></summary>
-      <div class="cbody"><ul>{"".join(f"<li>{e(x)}</li>" for x in pts)}</ul><a class="btn" href="/learn?class={tag.replace(" ", "+")}#enquire">Book a trial</a></div>
-    </details>''' for n, t, ic, d, pts, tag in classes)
+    flip = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13 6.5A5.5 5.5 0 0 0 3.2 4.6M3 9.5a5.5 5.5 0 0 0 9.8 1.9M3 2v3h3M13 14v-3h-3" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>'
+    cards = ''.join(f'''<article class="cc" style="--i:{i}">
+      <div class="cc-in">
+        <div class="cc-f">
+          <span class="ci">{icon(ic)}</span>
+          <h3>{t}</h3>
+          <p class="muted">{d}</p>
+          <button class="cc-flip" type="button" aria-expanded="false" aria-label="More about {t}">{flip}<span>See what you learn</span></button>
+        </div>
+        <div class="cc-b" aria-hidden="true">
+          <div class="cc-bh"><span class="ci sm">{icon(ic)}</span><h3>{t}</h3></div>
+          <ul>{"".join(f"<li>{e(x)}</li>" for x in pts)}</ul>
+          <a class="btn" href="/learn?class={tag.replace(" ", "+")}#enquire" tabindex="-1">Book a trial</a>
+          <button class="cc-flip back" type="button" tabindex="-1" aria-label="Back">{flip}<span>Back</span></button>
+        </div>
+      </div>
+    </article>''' for i, (n, t, ic, d, pts, tag) in enumerate(classes))
     return page('/', 'Divyanjali · Bharatanatyam school in Chennai since 1994',
         'Divyanjali, the Bharatanatyam school of Dr. S. Divyasena and Sri B.P. Haribabu in CIT Nagar, Chennai. See the season calendar of performances, workshops and arangetrams.', f'''
 <section class="vh" data-vh="7g505MXqnec" data-start="12" aria-label="Divyanjali on stage">
@@ -263,9 +283,10 @@ def home():
   <div class="sec-head"><div><h2>Enchanting choreographies</h2></div><a class="btn-o" href="/choreographies">All {len(PRODUCTIONS)} productions</a></div>
   <div class="bento">{''.join(bento(p, i) for i, p in enumerate(feat))}</div>
 </div></section>
-<section class="alt"><div class="wrap learn-grid">
-  <div class="stack" style="gap:12px"><h2>Find your class</h2><p class="muted">Technique, abhinaya, laya and theory, taught in small batches. Start with a trial class.</p><a class="btn" href="/learn#enquire" style="align-self:flex-start">Ask about classes</a></div>
-  <div class="crows">{rows}</div>
+<section class="alt classes"><div class="wrap">
+  <div class="cls-head"><div class="stack" style="gap:8px"><h2>Find your class</h2><p class="muted">Technique, abhinaya, laya and theory, taught in small batches. Tap a card, then book a trial.</p></div><a class="btn-o" href="/learn">All about classes</a></div>
+  <div class="cards" id="classCards">{cards}</div>
+  <div class="cc-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
 </div></section>
 <section><div class="wrap split">
   <div class="stack"><h2>71 arangetrams. Stages from Chennai to the world.</h2><p class="muted">Scholarship holders, Doordarshan graded artists and teachers with their own schools in India, the USA, the UK and Singapore.</p><a class="btn-o" href="/accolades" style="align-self:flex-start">Student's Accolades</a></div>

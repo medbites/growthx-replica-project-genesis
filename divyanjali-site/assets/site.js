@@ -205,6 +205,40 @@ $$('a.stat').forEach((a) => {
   }
 })();
 
+/* ----- Class cards: tap to flip, dots follow the swipe, a gentle tilt under the mouse ----- */
+(function classCards() {
+  const wrap = $('#classCards'); if (!wrap) return;
+  const sec = wrap.closest('section'), cards = $$('.cc', wrap), dots = $$('.cc-dots i', sec);
+  if ('IntersectionObserver' in window) new IntersectionObserver(([en], o) => { if (en.isIntersecting) { sec.classList.add('seen'); o.disconnect(); } }, { threshold: 0.2 }).observe(sec);
+  else sec.classList.add('seen');
+  function flip(card, on) {
+    $('.cc-in', card).style.transform = '';   // drop the hover tilt so the flip can run
+    card.classList.toggle('flipped', on);
+    $('.cc-f .cc-flip', card).setAttribute('aria-expanded', String(on));
+    $('.cc-b', card).setAttribute('aria-hidden', String(!on));
+    $$('.cc-b a, .cc-b button', card).forEach((el) => { el.tabIndex = on ? 0 : -1; });
+    $('.cc-f .cc-flip', card).tabIndex = on ? -1 : 0;
+    (on ? $('.cc-b .btn', card) : $('.cc-f .cc-flip', card)).focus({ preventScroll: true });
+  }
+  wrap.addEventListener('click', (ev) => {
+    const card = ev.target.closest('.cc'); if (!card || ev.target.closest('a')) return;
+    flip(card, !card.classList.contains('flipped'));
+    cards.forEach((c) => { if (c !== card && c.classList.contains('flipped')) flip(c, false); });
+  });
+  wrap.addEventListener('scroll', () => {
+    const i = Math.round(wrap.scrollLeft / (cards[0].offsetWidth + 14));
+    dots.forEach((d, j) => d.classList.toggle('on', j === i));
+  }, { passive: true });
+  if (!reduceMotion && matchMedia('(hover: hover) and (pointer: fine)').matches) cards.forEach((c) => {
+    c.addEventListener('pointermove', (ev) => {
+      if (c.classList.contains('flipped')) return;
+      const r = c.getBoundingClientRect(), x = (ev.clientX - r.left) / r.width - 0.5, y = (ev.clientY - r.top) / r.height - 0.5;
+      $('.cc-in', c).style.transform = 'rotateX(' + (-y * 6) + 'deg) rotateY(' + (x * 8) + 'deg)';
+    });
+    c.addEventListener('pointerleave', () => { $('.cc-in', c).style.transform = ''; });
+  });
+})();
+
 /* ----- WhatsApp links with a ready message ----- */
 $$('[data-wa]').forEach((a) => { a.href = waLink(a.dataset.wa || 'Hello Divyanjali'); a.target = '_blank'; a.rel = 'noopener'; });
 
