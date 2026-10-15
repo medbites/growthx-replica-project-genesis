@@ -25,6 +25,9 @@ Videos and Instagram posts for the Gallery: edit `divyanjali-site/assets/media.j
 | `faculty-mahati.jpg` | S. Mahati | 800×1000 | /about |
 | `faculty-harini.jpg` | Harini N. | 800×1000 | /about |
 | `faculty-upanisha.jpg` | Upanisha K. | 800×1000 | /about |
+| `book-essence.png` | mock-up · Essence and Essentials of Dance (PNG, transparent background) | 1200×1200 | /divyasena |
+| `book-duta-mahima.png` | mock-up · Duta Mahima (PNG, transparent background) | 1200×1200 | /divyasena |
+| `cd-nrithyaharam.png` | mock-up · Nrithyaharam (PNG, transparent background) | 1200×1200 | /divyasena |
 | `haribabu-portrait.jpg` | Sri B.P. Haribabu with mridangam | 1200×1500 | /haribabu |
 | `flood-before.jpg` | the workspace after the flood | 1200×900 | /30-years |
 | `flood-after.jpg` | the rebuilt library | 1200×900 | /30-years |

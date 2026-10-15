@@ -374,6 +374,60 @@ def about():
 {cta('Come and watch a class', 'See how we teach before you join.', 'Ask about classes', '/learn#enquire', 'Hello Divyanjali, can I come and watch a class?')}
 ''')
 
+BOOKS = [
+    dict(key='essence', file='book-essence.png', kind='Book · 2006', title='Essence and Essentials of Dance', short='Essence and Essentials', shape='book',
+         lead='The Divyanjali syllabus, in her own words.',
+         body=['Dr. S. Divyasena wrote down what Divyanjali teaches, in theory and in practice, planned around the needs and abilities of students of every age group.',
+               'It was released on 6 June 2006, and it is the syllabus every Divyanjali student learns from.'],
+         inside=['The theory of dance', 'Practical training', 'Planned by age group', 'The Divyanjali syllabus'],
+         facts=[('Author', 'Dr. S. Divyasena'), ('Released', '6 June 2006'), ('For', 'Students, parents and teachers of Bharatanatyam')]),
+    dict(key='duta', file='book-duta-mahima.png', kind='Book', title='Duta Mahima', short='Duta Mahima', shape='book',
+         lead='A book by Dr. S. Divyasena, published by Divyanjali.',
+         body=['Duta Mahima is authored by Dr. S. Divyasena and published by Divyanjali, alongside Sri B.P. Haribabu\'s book on rhythm.'],
+         inside=['Authored by Dr. S. Divyasena', 'Published by Divyanjali'],
+         facts=[('Author', 'Dr. S. Divyasena'), ('Publisher', 'Divyanjali')]),
+    dict(key='cd', file='cd-nrithyaharam.png', kind='Audio CD', title='Nrithyaharam', short='Nrithyaharam CD', shape='cd',
+         lead='The adavus of Bharatanatyam, to practise at home.',
+         body=['Dr. S. Divyasena compiled the adavus of Bharatanatyam on an audio CD, so that students can practise on their own between classes.'],
+         inside=['The adavus of Bharatanatyam', 'For practice at home'],
+         facts=[('Compiled by', 'Dr. S. Divyasena'), ('Format', 'Audio CD')]),
+]
+
+def books_section():
+    for b in BOOKS: SLOTS.append(('/divyasena', b['file'], f"mock-up · {b['title']} (PNG, transparent background)", '1200×1200'))
+    shelf = ''.join(f'<button type="button" class="shelf-i" data-b="{i}" aria-pressed="{str(i == 0).lower()}"><small>{e(b["kind"])}</small><b>{e(b["short"])}</b></button>' for i, b in enumerate(BOOKS))
+    panels = ''.join(f'''<div class="bk-info-p" data-b="{i}"{'' if i == 0 else ' hidden'}>
+      <p class="cv-role">{e(b['kind'])}</p><h3>{e(b['title'])}</h3><p class="bk-lead">{e(b['lead'])}</p>
+      {''.join(f'<p>{e(t)}</p>' for t in b['body'])}
+      <dl class="bk-facts">{''.join(f'<dt>{e(k)}</dt><dd>{e(v)}</dd>' for k, v in b['facts'])}</dl>
+      <div class="cv-acts"><a class="btn" data-wa="Hello Divyanjali, I would like a copy of {e(b['title'])} by Dr. S. Divyasena." href="#">Ask for a copy</a><a class="btn-o" href="/store">See the Store</a></div>
+    </div>''' for i, b in enumerate(BOOKS))
+    data = json.dumps([{'t': b['title'], 'k': b['kind'], 'f': '/assets/img/' + b['file'], 's': b['shape'], 'in': b['inside']} for b in BOOKS], ensure_ascii=False)
+    return f'''<section id="books" class="bio-sec bk-sec"><div class="wrap">
+  <h2>Her books and recordings</h2>
+  <p class="bio-sub">Drag the book to turn it, and tap it to open. Pick another from the shelf.</p>
+  <div class="bk-grid">
+    <div class="bk-stage" id="bkStage" aria-label="The book, in 3D. Drag to turn, tap to open.">
+      <img class="bk-mock" id="bkMock" alt="" hidden>
+      <div class="bk3d" id="bk3d" role="button" tabindex="0" aria-pressed="false">
+        <div class="bk-cover"><div class="bk-face bk-front"><span class="bk-logo"></span><b id="bkT"></b><small>Dr. S. Divyasena</small></div><div class="bk-face bk-endpaper"></div></div>
+        <div class="bk-face bk-inside"><small>Inside</small><ul id="bkIn"></ul></div>
+        <div class="bk-face bk-spine"><span id="bkSp"></span></div>
+        <div class="bk-face bk-pages"></div>
+        <div class="bk-face bk-back"></div>
+        <div class="bk-disc" aria-hidden="true"></div>
+      </div>
+      <div class="bk-shadow" aria-hidden="true"></div>
+    </div>
+    <div class="bk-side">
+      <div class="shelf">{shelf}</div>
+      {panels}
+    </div>
+  </div>
+  <script type="application/json" id="bookData">{data}</script>
+</div></section>
+'''
+
 def divyasena():
     facts = [('Art form', 'Bharatanatyam'), ('Roles', 'Dancer, choreographer, nattuvanar, guru'), ('Arangetram', '1985'),
              ('Founded', 'Divyanjali, Chennai, 1994'), ('Doordarshan', "'A' grade artist"),
@@ -401,7 +455,7 @@ def divyasena():
              ('Smt. Hema Rajagopalan, Natya Dance Theatre, Chicago', 'Divyasena has always worked very hard to maintain the integrity of the art form while being creative.', 21),
              ('Smt. Savithri Jagannath Rao', 'She has a brilliant approach in Layam. She is a very patient, brilliant and kind teacher.', 25)]
     prods = [p for p in PRODUCTIONS if p['slug']]
-    tabs = [('profile', 'Profile'), ('lineage', 'Gurus'), ('education', 'Education'), ('work', 'Work'), ('stage', 'On stage'), ('media', 'Media'), ('words', 'In her words'), ('peers', 'Peers')]
+    tabs = [('profile', 'Profile'), ('lineage', 'Gurus'), ('education', 'Education'), ('work', 'Work'), ('books', 'Books'), ('stage', 'On stage'), ('media', 'Media'), ('words', 'In her words'), ('peers', 'Peers')]
     ld = {'@context': 'https://schema.org', '@type': 'Person', 'name': 'Dr. S. Divyasena', 'honorificPrefix': 'Natyacharya Dr.',
           'jobTitle': 'Bharatanatyam dancer, choreographer, nattuvanar and teacher', 'image': '/assets/img/divyasena-portrait.webp',
           'worksFor': {'@type': 'DanceGroup', 'name': 'Divyanjali', 'foundingDate': '1994', 'address': {'@type': 'PostalAddress', 'addressLocality': 'Chennai', 'addressCountry': 'IN'}},
@@ -480,10 +534,10 @@ def divyasena():
     <li><b>2019–20</b><span>Nrithya Utsav, a season of festivals, lecture demonstrations and competitions for the Silver Jubilee</span></li>
     <li><b>2024</b><span>Thirty years of Divyanjali · <a href="/30-years">read the Souvenir 2026</a></span></li>
   </ol>
-  <h3 class="bio-h3">Publications and resources</h3>
-  <div class="edu">{''.join(f'<div class="edu-c reveal"><small>{e(k)}</small><b>{e(t)}</b><span>{e(d)}</span></div>' for k, t, d in works)}</div>
+  <p class="bio-sub" style="margin-top:22px">Her books and the Nrithyaharam CD are below. <a href="#books">See them</a></p>
 </div></section>
 
+{books_section()}
 <section id="stage" class="bio-sec"><div class="wrap">
   <h2>Choreographer and performer</h2>
   <p class="bio-sub">She has composed and presented group productions across India and abroad. <i>Andal Vaibhavam</i> was staged on 13 stages in a single year, and <i>Hanumath Margam</i> premiered at the 50th Cleveland Thyagaraja Festival in 2026.</p>

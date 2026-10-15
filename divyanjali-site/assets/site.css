@@ -977,3 +977,66 @@ a.next:hover{color:#F6EDE6;transform:translateY(-2px)}
 .pc,.pc-art,.pc-b{min-width:0}
 .pc-art.ph>.pc-t,.pc-b b{overflow-wrap:anywhere;hyphens:auto}
 @media (max-width:600px){.pc-art.ph>.pc-t{font-size:1.1rem}}
+
+/* ===== Her books: a 3D book you can turn and open ===== */
+.bk-sec{background:linear-gradient(180deg,var(--bg),var(--tint))}
+.bk-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;align-items:center}
+@media (min-width:900px){.bk-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:56px}}
+.bk-stage{position:relative;height:clamp(340px,52vw,460px);display:grid;place-items:center;perspective:1400px;cursor:grab;touch-action:pan-y;user-select:none}
+.bk-stage:active{cursor:grabbing}
+.bk3d{--w:clamp(190px,30vw,250px);--h:calc(var(--w) * 1.38);--d:28px;--ry:-24deg;--rx:6deg;position:relative;width:var(--w);height:var(--h);transform-style:preserve-3d;transform:rotateX(var(--rx)) rotateY(var(--ry));transition:transform .5s cubic-bezier(.2,.8,.2,1);animation:bkFloat 6s ease-in-out infinite;outline:none}
+.bk3d.drag{transition:none;animation:none}
+@keyframes bkFloat{50%{translate:0 -8px}}
+.bk3d:focus-visible{filter:drop-shadow(0 0 0 3px var(--saffron))}
+.bk-face{position:absolute;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.bk-cover{position:absolute;inset:0;transform-style:preserve-3d;transform:translateZ(calc(var(--d) / 2));transform-origin:left center;transition:transform .9s cubic-bezier(.3,.1,.2,1);z-index:2}
+.bk-front{inset:0;border-radius:3px 8px 8px 3px;padding:12% 10%;display:flex;flex-direction:column;justify-content:space-between;background:radial-gradient(circle at 80% 12%,rgba(255,170,90,.45),transparent 55%),linear-gradient(150deg,#8A2A18,#4A130C);color:#FFE9D8;box-shadow:inset 6px 0 10px -4px rgba(0,0,0,.45),0 30px 50px -24px rgba(26,8,4,.6)}
+.bk-endpaper{inset:0;transform:rotateY(180deg);border-radius:8px 3px 3px 8px;background:radial-gradient(circle at 30% 30%,rgba(255,170,90,.25),transparent 60%),repeating-linear-gradient(45deg,#5A1A0E 0 6px,#4A130C 6px 12px);box-shadow:inset -6px 0 12px -6px rgba(0,0,0,.5)}
+.bk-front::after{content:"";position:absolute;inset:7%;border:1px solid rgba(255,209,170,.45);border-radius:2px;pointer-events:none}
+.bk-logo{width:44%;aspect-ratio:1;background:url(/assets/logo-mark-white.webp) center/contain no-repeat;opacity:.9}
+.bk-front b{font-family:var(--serif);font-size:clamp(1.3rem,2.6vw,1.75rem);line-height:1.1;color:#FFF3EA}
+.bk-front small{font-size:.66rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#FFC79F}
+.bk-inside{inset:0;transform:translateZ(calc(var(--d) / 2 - 1px));background:#FFFDF6;border-radius:3px 8px 8px 3px;padding:14% 12%;color:var(--ink);display:flex;flex-direction:column;gap:10px;box-shadow:inset 8px 0 14px -8px rgba(0,0,0,.25)}
+.bk-inside small{font-size:.66rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--deep)}
+.bk-inside ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.bk-inside li{font-family:var(--serif);font-size:1.05rem;line-height:1.2;padding-left:14px;position:relative;opacity:0;transform:translateX(8px);transition:opacity .4s,transform .4s}
+.bk-inside li::before{content:"";position:absolute;left:0;top:.5em;width:6px;height:6px;border-radius:50%;background:var(--saffron)}
+.bk3d.open .bk-inside li{opacity:1;transform:none}
+.bk3d.open .bk-inside li:nth-child(2){transition-delay:.1s}.bk3d.open .bk-inside li:nth-child(3){transition-delay:.2s}.bk3d.open .bk-inside li:nth-child(4){transition-delay:.3s}
+.bk3d.open .bk-cover{transform:translateZ(calc(var(--d) / 2)) rotateY(-150deg)}
+.bk-spine{top:0;left:calc(var(--d) / -2);width:var(--d);height:100%;transform:rotateY(-90deg);transform-origin:center;background:linear-gradient(90deg,#3A0E09,#6E1E12 50%,#3A0E09);display:grid;place-items:center;backface-visibility:visible}
+.bk-spine span{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--serif);font-size:.72rem;color:#FFD9C2;white-space:nowrap;overflow:hidden;max-height:90%}
+.bk-pages{top:2%;left:calc(var(--w) - var(--d) / 2 - 3px);width:calc(var(--d) - 2px);height:96%;transform:rotateY(90deg);transform-origin:center;background:repeating-linear-gradient(90deg,#F4EDE2 0 2px,#E7DDCF 2px 3px);backface-visibility:visible}
+.bk-back{inset:0;transform:translateZ(calc(var(--d) / -2)) rotateY(180deg);background:#4A130C;border-radius:8px 3px 3px 8px}
+.bk-disc{display:none}
+.bk-shadow{position:absolute;bottom:6%;left:50%;width:min(300px,60%);height:24px;margin-left:min(-150px,-30%);border-radius:50%;background:radial-gradient(closest-side,rgba(26,8,4,.35),transparent);filter:blur(2px);pointer-events:none}
+/* the CD: a square case, the disc slides out when opened */
+.bk3d.cd{--h:var(--w);--d:10px}
+.bk3d.cd .bk-front{border-radius:6px;background:radial-gradient(circle at 30% 30%,rgba(255,170,90,.5),transparent 55%),linear-gradient(150deg,#B23C00,#5A1A0C)}
+.bk3d.cd .bk-inside{border-radius:6px}
+.bk3d.cd .bk-disc{display:block;position:absolute;top:6%;left:6%;width:88%;aspect-ratio:1;border-radius:50%;transform:translateZ(-2px);background:radial-gradient(circle,#FFFFFF 0 7%,#C9CED6 7.5% 9%,transparent 9.5%),conic-gradient(from 30deg,#E8ECF2,#B9C2CE,#F6F8FB,#AEB7C4,#E8ECF2);box-shadow:0 10px 20px -10px rgba(0,0,0,.5);transition:transform .9s cubic-bezier(.3,.1,.2,1);z-index:1}
+.bk3d.cd.open .bk-disc{transform:translateZ(-2px) translateX(62%) rotate(200deg)}
+.bk3d.cd.open .bk-cover{transform:translateZ(calc(var(--d) / 2)) rotateY(-115deg)}
+/* an uploaded mock-up replaces the drawn book */
+.bk-mock{max-width:min(100%,460px);max-height:100%;object-fit:contain;transform:perspective(1000px) rotateX(var(--mx,0deg)) rotateY(var(--my,0deg));transition:transform .4s cubic-bezier(.2,.8,.2,1);filter:drop-shadow(0 30px 40px rgba(26,8,4,.35));animation:bkFloat 6s ease-in-out infinite}
+.bk-stage.has-mock .bk3d,.bk-stage.has-mock .bk-shadow{display:none}
+.shelf{display:flex;gap:8px;margin-bottom:18px;overflow-x:auto;scrollbar-width:none}
+.shelf-i{flex:none;font:inherit;text-align:left;display:flex;flex-direction:column;gap:2px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;transition:border-color .2s,background .2s,transform .2s}
+.shelf-i small{font-size:.62rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--deep)}
+.shelf-i b{font-family:var(--serif);font-size:1.05rem}
+.shelf-i:hover{transform:translateY(-2px);border-color:#FFC9A6}
+.shelf-i[aria-pressed="true"]{background:var(--deep);border-color:var(--deep);color:#FFFFFF}
+.shelf-i[aria-pressed="true"] small{color:#FFD9C2}
+.bk-info-p{display:flex;flex-direction:column;gap:10px;animation:fadeUp .4s both}
+.bk-info-p h3{font-size:clamp(1.7rem,3.4vw,2.4rem);line-height:1.05}
+.bk-info-p p{margin:0}
+.bk-lead{font-family:var(--serif);font-style:italic;font-size:1.25rem}
+.bk-facts{margin:4px 0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 16px;font-size:.88rem}
+.bk-facts dt{color:var(--muted);font-weight:600}.bk-facts dd{margin:0}
+@media (prefers-reduced-motion:reduce){.bk3d,.bk-mock{animation:none}.bk-front,.bk-disc{transition:none}}
+@media print{.bk-stage,.shelf,.bk-sec .cv-acts{display:none!important}.bk-info-p[hidden]{display:flex!important}.bk-info-p{margin-bottom:12px}}
+/* an open book moves right so the turned cover stays on screen */
+.bk3d{transition:transform .5s cubic-bezier(.2,.8,.2,1),translate .7s cubic-bezier(.2,.8,.2,1)}
+.bk3d.open{translate:42% 0}
+.bk3d.cd.open{translate:-12% 0}
+@media (max-width:600px){.bk3d{--w:160px}.bk3d.open{translate:50% 0}.bk-inside li{font-size:.92rem}}

@@ -399,6 +399,46 @@ $$('[data-share]').forEach((b) => {
   $$('.bio-sec').forEach((sec) => spy.observe(sec));
 })();
 
+/* ----- Her books: drag to turn the book, tap to open it, pick another from the shelf ----- */
+(function bookShelf() {
+  const stage = $('#bkStage'), book = $('#bk3d'), raw = $('#bookData'); if (!stage || !book || !raw) return;
+  const items = JSON.parse(raw.textContent), mock = $('#bkMock');
+  const mocks = items.map((it) => { const im = new Image(); im.onload = () => { it.ok = true; if (items[cur] === it) show(cur); }; im.src = it.f; return im; });
+  let cur = 0, ry = -24, rx = 6;
+  function show(i) {
+    cur = i; const it = items[i];
+    book.classList.remove('open'); book.setAttribute('aria-pressed', 'false');
+    book.classList.toggle('cd', it.s === 'cd');
+    $('#bkT').textContent = it.t; $('#bkSp').textContent = it.t;
+    $('#bkIn').innerHTML = it.in.map((x) => '<li>' + esc(x) + '</li>').join('');
+    stage.classList.toggle('has-mock', !!it.ok);
+    mock.hidden = !it.ok; if (it.ok) { mock.src = it.f; mock.alt = it.t + ' by Dr. S. Divyasena'; }
+    $$('.shelf-i').forEach((b, j) => b.setAttribute('aria-pressed', String(j === i)));
+    $$('.bk-info-p').forEach((p, j) => { p.hidden = j !== i; });
+    ry = -24; rx = 6; book.style.setProperty('--ry', ry + 'deg'); book.style.setProperty('--rx', rx + 'deg');
+  }
+  $$('.shelf-i').forEach((b) => b.addEventListener('click', () => show(Number(b.dataset.b))));
+  const toggle = () => { const on = !book.classList.contains('open'); book.classList.toggle('open', on); book.setAttribute('aria-pressed', String(on)); if (on) { ry = book.classList.contains('cd') ? -10 : 8; book.style.setProperty('--ry', ry + 'deg'); } };
+  book.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); toggle(); } if (ev.key === 'ArrowLeft' || ev.key === 'ArrowRight') { ry += ev.key === 'ArrowLeft' ? -15 : 15; book.style.setProperty('--ry', ry + 'deg'); } });
+  // drag to turn; a tap without movement opens the cover
+  let sx = null, sy = null, r0 = 0, x0r = 0, moved = false;
+  stage.addEventListener('pointerdown', (ev) => { sx = ev.clientX; sy = ev.clientY; r0 = ry; x0r = rx; moved = false; book.classList.add('drag'); stage.setPointerCapture(ev.pointerId); });
+  stage.addEventListener('pointermove', (ev) => {
+    if (sx === null) {
+      if (stage.classList.contains('has-mock') && ev.pointerType === 'mouse') { const r = stage.getBoundingClientRect(); mock.style.setProperty('--my', ((ev.clientX - r.left) / r.width - .5) * 16 + 'deg'); mock.style.setProperty('--mx', -((ev.clientY - r.top) / r.height - .5) * 12 + 'deg'); }
+      return;
+    }
+    const dx = ev.clientX - sx, dy = ev.clientY - sy;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) moved = true;
+    ry = Math.max(-80, Math.min(60, r0 + dx * .45)); rx = Math.max(-12, Math.min(20, x0r - dy * .15));
+    book.style.setProperty('--ry', ry + 'deg'); book.style.setProperty('--rx', rx + 'deg');
+  });
+  const end = () => { if (sx === null) return; sx = null; book.classList.remove('drag'); if (!moved && !stage.classList.contains('has-mock')) toggle(); };
+  stage.addEventListener('pointerup', end); stage.addEventListener('pointercancel', end);
+  stage.addEventListener('pointerleave', () => { mock.style.setProperty('--mx', '0deg'); mock.style.setProperty('--my', '0deg'); });
+  show(0);
+})();
+
 /* ----- Choreographies: tap a production, read it in a sheet; arrows or swipe for the next ----- */
 (function prodSheet() {
   const grid = $('#prodGrid'), sheet = $('#sheet'), raw = $('#prodData'); if (!grid || !sheet || !raw) return;
